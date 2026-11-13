@@ -1,0 +1,21 @@
+python3 scripts/maint.py intake report
+%%
+git add UPSTREAM.lock UPSTREAM.md vendor/ plugin.map plugin/ && git status --short
+%%
+git diff --stat -- bin/lets lib/lets/cli.py
+%%
+git add bin/lets lib/lets/cli.py tests/run.sh
+%%
+python3 -m py_compile lib/lets/cli.py lib/lets/floor.py lib/lets/walkthrough.py
+%%
+wc -l bin/lets lib/lets/*.py
+%%
+ruff check lib/lets/cli.py lib/lets/walkthrough.py
+%%
+git log --oneline -- lib/lets/cli.py lib/lets/walkthrough.py
+%%
+grep -rn "record_pass" lib/ tests/
+%%
+tests/run.sh 2>&1 | tail -3
+%%
+bin/lets doctor

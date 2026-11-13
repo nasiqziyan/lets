@@ -1,0 +1,9 @@
+{
+  "name": "lets",
+  "version": "1.0.0",
+  "description": "LETS: one way of working in Claude Code and Codex.",
+  "author": {
+    "name": "LETS"
+  },
+  "license": "MIT"
+}

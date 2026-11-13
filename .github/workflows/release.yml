@@ -1,0 +1,38 @@
+# Publishes @nasiq/lets to npm when a version tag is pushed, after the tests pass and a maintainer approves the
+# "npm" environment. Uses npm Trusted Publishing (OIDC): no npm token is stored, and provenance is attached.
+name: release
+on:
+  push:
+    tags: ["v*.*.*"]
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.11", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "${{ matrix.python }}"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - uses: astral-sh/setup-uv@v6
+      - run: npm ci
+      - run: scripts/check.sh
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: npm          # requires a maintainer's approval
+    permissions:
+      contents: read
+      id-token: write         # npm Trusted Publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", registry-url: "https://registry.npmjs.org"}
+      - run: npm install -g npm@latest
+      - run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm publish --provenance --access public

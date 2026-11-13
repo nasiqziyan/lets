@@ -1,0 +1,26 @@
+name: Bug
+description: Something in LETS doesn't work as it should
+body:
+  - type: textarea
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: The command or prompt, and its output
+      render: text
+  - type: input
+    attributes:
+      label: "`lets --version`"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Operating system, and Claude Code or Codex version
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "`lets doctor` output"
+      render: text

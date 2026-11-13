@@ -1,0 +1,89 @@
+# Ordinary agent commands the guard must never block (one per line; run on a feature branch).
+npm test
+npx vitest run src/a.test.ts
+pytest -q tests/
+python -m pytest -k 'not slow'
+python3 scripts/plot_charge.py --run 42
+go test ./...
+cargo test --all
+make lint
+git status --short
+git diff --stat main...HEAD
+git log --oneline -20
+git add -A
+git fetch origin
+git pull --rebase origin main
+git rebase main
+git push -u origin daily
+git push --force-with-lease
+gh pr view 12
+gh pr checks
+glab mr list
+docker compose up -d
+kubectl get pods -n shop
+sed -i 's/tmp/cartEnergyMeV/' src/a.ts
+rm -rf build dist
+cp config.example.yaml config.yaml
+mkdir -p src/utils && touch src/utils/index.ts
+echo 'export const x = 1' > src/x.ts
+node scripts/gen.js > src/generated.ts
+git stash push -m wip
+git cherry-pick abc123
+git tag v1.2.0
+git worktree add ../wt feat2
+git submodule update --init
+ruff check . && mypy src
+terraform plan
+git commit --amend --no-edit
+git revert HEAD --no-edit
+git merge --no-ff feat2
+grep -rn 'TODO(human)' src
+ls -la src
+cat package.json
+grep -rn "useOrder" src
+rg -n "discount_x" --type ts
+find . -name "*.test.ts" -not -path "./node_modules/*"
+npm run build
+npm install
+npm i plotly.js-dist-min
+npx vitest run src/order.test.ts
+npx tsc --noEmit
+npx eslint . --fix
+npx prettier --write src
+pnpm test
+pytest -x
+uv run pytest
+go build ./cmd/server
+go mod tidy
+cargo test
+docker compose up -d clickhouse
+docker build -t atlas .
+chmod +x scripts/run.sh
+./scripts/run.sh
+make test
+cd frontend && npm test
+ruff check --fix .
+mypy src
+git status
+git diff --stat
+git log --oneline -10
+git add src/order.ts
+git commit -m "Fix discount function sign"
+git checkout -b fix/discount-sign
+git switch main
+git stash
+git stash pop
+git pull --rebase
+git rebase origin/main
+git push -u origin HEAD
+gh pr view --web
+gh run list --limit 5
+gh pr list
+curl -s localhost:8123/ping
+jq '.scripts' package.json
+head -50 src/order.ts
+wc -l src/*.ts
+echo $PATH
+which python3
+git restore src/order.ts
+git checkout -- src/order.ts

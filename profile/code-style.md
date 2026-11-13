@@ -1,0 +1,1 @@
+- Keep inline code comments short: one line, no paragraphs.

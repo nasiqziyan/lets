@@ -1,0 +1,1932 @@
+[
+ [
+  "py: def fit (sklearn-style estimator)",
+  "src/model.py",
+  null,
+  "class M:\n    def fit(self, X, y):\n        return self\n",
+  false
+ ],
+ [
+  "py: scipy result = fit(x, y)",
+  "analysis/cart.py",
+  null,
+  "popt = fit(xdata, ydata)\n",
+  false
+ ],
+ [
+  "go: func fit(",
+  "pkg/fit/fit.go",
+  null,
+  "package fit\nfunc fit(x []float64) float64 { return 0 }\n",
+  false
+ ],
+ [
+  "ts: it.todo placeholder",
+  "src/a.test.ts",
+  null,
+  "it.todo('handles empty storefront')\n",
+  false
+ ],
+ [
+  "java: @Disabled(\"reason\") (skips are always flagged)",
+  "src/test/java/FooTest.java",
+  null,
+  "@Disabled(\"flaky on CI, JIRA-12\")\nvoid t(){}\n",
+  true
+ ],
+ [
+  "rust: #[ignore = \"reason\"] (skips are always flagged)",
+  "tests/it.rs",
+  null,
+  "#[test]\n#[ignore = \"needs hardware\"]\nfn t(){}\n",
+  true
+ ],
+ [
+  "py: @pytest.mark.skipif(True)",
+  "tests/test_a.py",
+  null,
+  "import pytest\n@pytest.mark.skipif(True, reason='x')\ndef test_a(): pass\n",
+  true
+ ],
+ [
+  "py: pytestmark = pytest.mark.skip",
+  "tests/test_b.py",
+  null,
+  "import pytest\npytestmark = pytest.mark.skip\ndef test_b(): pass\n",
+  true
+ ],
+ [
+  "py: self.skipTest",
+  "tests/test_c.py",
+  null,
+  "class T:\n    def test_c(self):\n        self.skipTest('later')\n",
+  true
+ ],
+ [
+  "py: test function deleted",
+  "tests/test_d.py",
+  "def test_one(): assert 1\ndef test_two(): assert 2\n",
+  "def test_one(): assert 1\n",
+  true
+ ],
+ [
+  "ts: it() block deleted",
+  "src/x.test.ts",
+  "it('a',()=>{expect(1).toBe(1)})\nit('b',()=>{expect(2).toBe(2)})\n",
+  "it('a',()=>{expect(1).toBe(1)})\n",
+  true
+ ],
+ [
+  "ts: expect() assertion deleted",
+  "src/y.test.ts",
+  "it('a',()=>{\n  const r = f()\n  expect(r).toBe(1)\n})\n",
+  "it('a',()=>{\n  const r = f()\n})\n",
+  true
+ ],
+ [
+  "py: pragma no cover",
+  "src/c.py",
+  null,
+  "def f():  # pragma: no cover\n    pass\n",
+  true
+ ],
+ [
+  "ts: istanbul ignore",
+  "src/c.ts",
+  null,
+  "/* istanbul ignore next */\nexport const f = () => 1\n",
+  true
+ ],
+ [
+  "ts: as any",
+  "src/d.ts",
+  null,
+  "const x = (y as any).z\n",
+  false
+ ],
+ [
+  "tsconfig strict true->false",
+  "tsconfig.json",
+  "{\"compilerOptions\":{\"strict\":true}}\n",
+  "{\"compilerOptions\":{\"strict\":false}}\n",
+  true
+ ],
+ [
+  "eslint config rule error->off",
+  "eslint.config.js",
+  "export default [{rules:{'no-console':'error'}}]\n",
+  "export default [{rules:{'no-console':'off'}}]\n",
+  true
+ ],
+ [
+  "ruff: add ignore list",
+  "pyproject.toml",
+  "[tool.ruff.lint]\nselect = [\"E\",\"F\"]\n",
+  "[tool.ruff.lint]\nselect = [\"E\",\"F\"]\nignore = [\"F401\",\"E501\"]\n",
+  true
+ ],
+ [
+  "mypy ignore_errors",
+  "pyproject.toml",
+  "[tool.mypy]\nstrict = true\n",
+  "[tool.mypy]\nstrict = true\nignore_errors = true\n",
+  true
+ ],
+ [
+  "coverage threshold block removed",
+  "package.json",
+  "{\"jest\":{\"coverageThreshold\":{\"global\":{\"lines\":90}}}}\n",
+  "{\"jest\":{}}\n",
+  true
+ ],
+ [
+  "fail_under line deleted",
+  "pyproject.toml",
+  "[tool.coverage.report]\nfail_under = 90\n",
+  "[tool.coverage.report]\n",
+  true
+ ],
+ [
+  "CI: continue-on-error added",
+  ".github/workflows/ci.yml",
+  "jobs:\n  t:\n    steps:\n      - run: npm test\n",
+  "jobs:\n  t:\n    steps:\n      - run: npm test\n        continue-on-error: true\n",
+  true
+ ],
+ [
+  "CI: '|| true' on test",
+  ".gitlab-ci.yml",
+  "test:\n  script:\n    - pytest\n",
+  "test:\n  script:\n    - pytest || true\n",
+  true
+ ],
+ [
+  "CI: test job deleted",
+  ".gitlab-ci.yml",
+  "lint:\n  script:\n    - ruff .\ntest:\n  script:\n    - pytest\n",
+  "lint:\n  script:\n    - ruff .\n",
+  true
+ ],
+ [
+  "pytest.ini --deselect",
+  "pytest.ini",
+  "[pytest]\naddopts = -q\n",
+  "[pytest]\naddopts = -q --deselect tests/test_x.py::test_y\n",
+  true
+ ],
+ [
+  "jest testPathIgnorePatterns",
+  "jest.config.js",
+  "module.exports = {}\n",
+  "module.exports = {testPathIgnorePatterns:['cart']}\n",
+  true
+ ],
+ [
+  "rust: #![allow(warnings)]",
+  "src/lib.rs",
+  null,
+  "#![allow(warnings)]\npub fn f(){}\n",
+  true
+ ],
+ [
+  "rust: #[allow(clippy::all)]",
+  "src/m.rs",
+  null,
+  "#[allow(clippy::all)]\npub fn g(){}\n",
+  true
+ ],
+ [
+  "java: @SuppressWarnings(all)",
+  "src/main/java/A.java",
+  null,
+  "@SuppressWarnings(\"all\")\nclass A{}\n",
+  true
+ ],
+ [
+  "go: //nolint:all no reason",
+  "pkg/a.go",
+  null,
+  "package a\nfunc f() {} //nolint:all\n",
+  true
+ ],
+ [
+  "test file renamed to non-test",
+  "tests/test_e.py",
+  "def test_e(): pass\n",
+  null,
+  true
+ ],
+ [
+  "package.json dep named lines lowered (FP?)",
+  "package.json",
+  "{\"dependencies\":{\"lines\":\"2.0.0\"}}\n",
+  "{\"dependencies\":{\"lines\":\"1.9.0\"}}\n",
+  false
+ ],
+ [
+  "build/ source dir ignored",
+  "tools/build/gen.ts",
+  null,
+  "it.only('x',()=>{})\n",
+  true
+ ],
+ [
+  "vue SFC: it.only",
+  "src/C.spec.ts",
+  null,
+  "describe.only('c',()=>{})\n",
+  true
+ ],
+ [
+  "markdown docs mention it.only (no FP)",
+  "docs/testing.md",
+  null,
+  "Never commit it.only(...)\n",
+  false
+ ],
+ [
+  "kotlin: @Ignore no reason",
+  "src/test/kotlin/ATest.kt",
+  null,
+  "@Ignore\nfun t(){}\n",
+  true
+ ],
+ [
+  "py: assert in production code",
+  "src/calc.py",
+  null,
+  "def f(x):\n    assert x > 0\n    return x\n",
+  false
+ ],
+ [
+  "ts: test renamed",
+  "src/r.test.ts",
+  "it('a', () => { expect(1).toBe(1) })\n",
+  "it('b', () => { expect(1).toBe(1) })\n",
+  false
+ ],
+ [
+  "go: nolint naming the linter, with a reason",
+  "pkg/b.go",
+  null,
+  "package b\nvar _ = f() //nolint:errcheck // best effort\n",
+  false
+ ],
+ [
+  "ts: eslint-disable with rule and reason",
+  "src/e.ts",
+  null,
+  "// eslint-disable-next-line no-console -- CLI output\nconsole.log(1)\n",
+  false
+ ],
+ [
+  "CI: allow_failure added",
+  ".gitlab-ci.yml",
+  "test:\n  script: pytest\n",
+  "test:\n  script: pytest\n  allow_failure: true\n",
+  true
+ ],
+ [
+  "py: scipy curve_fit call",
+  "analysis/fit.py",
+  null,
+  "from scipy.optimize import curve_fit\npopt, _ = curve_fit(model, x, y)\n",
+  false
+ ],
+ [
+  "py: pytest parametrize added to an existing test",
+  "tests/test_p.py",
+  "def test_a():\n    assert f(1) == 1\n",
+  "import pytest\n@pytest.mark.parametrize('x', [1, 2])\ndef test_a(x):\n    assert f(x) == x\n",
+  false
+ ],
+ [
+  "toml: unrelated numeric key named lines",
+  "pyproject.toml",
+  "[tool.black]\nline-length = 100\n",
+  "[tool.black]\nline-length = 88\n",
+  false
+ ],
+ [
+  "TS: change assertion matcher",
+  "src/cart.test.ts",
+  "it('a', () => {\n  expect(f()).toBe(1)\n})\n",
+  "it('a', () => {\n  expect(f()).toEqual({ x: 1 })\n})\n",
+  true
+ ],
+ [
+  "TS: add a new test",
+  "src/cart.test.ts",
+  "it('a', () => {\n  expect(f()).toBe(1)\n})\n",
+  "it('a', () => {\n  expect(f()).toBe(1)\n})\nit('b', () => {\n  expect(g()).toBe(2)\n})\n",
+  false
+ ],
+ [
+  "TS: test helper calls fit() (cart checkout)",
+  "src/order.test.ts",
+  "import { fit } from './fit'\n",
+  "import { fit } from './fit'\nit('fits', () => {\n  const p = fit(data)\n  expect(p.discount).toBeCloseTo(1)\n})\n",
+  false
+ ],
+ [
+  "TS: production refactor",
+  "src/plot.ts",
+  "export const a = (x: number) => x * 2\n",
+  "export const a = (x: number): number => x * 2\nexport const b = 3\n",
+  false
+ ],
+ [
+  "TS: it.each consolidation of two tests (flagged by design)",
+  "src/m.test.ts",
+  "it('one', () => { expect(f(1)).toBe(1) })\nit('two', () => { expect(f(2)).toBe(2) })\n",
+  "it.each([1, 2])('f(%i)', (n) => { expect(f(n)).toBe(n) })\n",
+  true
+ ],
+ [
+  "TS: prettier wraps expect over lines",
+  "src/w.test.ts",
+  "it('a', () => { expect(someLongFunctionName(argumentOne, argumentTwo)).toStrictEqual({ a: 1 }) })\n",
+  "it('a', () => {\n  expect(\n    someLongFunctionName(argumentOne, argumentTwo),\n  ).toStrictEqual({ a: 1 })\n})\n",
+  false
+ ],
+ [
+  "TS: ts-expect-error with colon reason",
+  "src/x.ts",
+  null,
+  "// @ts-expect-error: plotly types are wrong\nPlotly.newPlot(el, data)\n",
+  false
+ ],
+ [
+  "Python: rename test",
+  "tests/test_q.py",
+  "def test_old():\n    assert q() == 1\n",
+  "def test_new_name():\n    assert q() == 1\n",
+  false
+ ],
+ [
+  "Python: unittest test moved into class",
+  "tests/test_r.py",
+  "def test_r():\n    assert r() == 1\n",
+  "class TestR:\n    def test_r(self):\n        assert r() == 1\n",
+  false
+ ],
+ [
+  "Python: scipy curve_fit in analysis",
+  "analysis/emit.py",
+  null,
+  "popt, pcov = curve_fit(gauss, x, y)\nresult = fit(x, y)\n",
+  false
+ ],
+ [
+  "Python: tighten ruff ignore list",
+  "pyproject.toml",
+  "[tool.ruff.lint]\nignore = [\"E501\", \"F401\"]\n",
+  "[tool.ruff.lint]\nignore = [\"E501\"]\n",
+  false
+ ],
+ [
+  "Python: raise fail_under",
+  "pyproject.toml",
+  "[tool.coverage.report]\nfail_under = 80\n",
+  "[tool.coverage.report]\nfail_under = 85\n",
+  false
+ ],
+ [
+  "Python: combine two asserts into one tuple assert (flagged by design)",
+  "tests/test_t.py",
+  "def test_t():\n    assert a == 1\n    assert b == 2\n",
+  "def test_t():\n    assert (a, b) == (1, 2)\n",
+  true
+ ],
+ [
+  "Python: add dependency to pyproject",
+  "pyproject.toml",
+  "[project]\ndependencies = [\"numpy\"]\n",
+  "[project]\ndependencies = [\"numpy\", \"scipy>=1.11\"]\n",
+  false
+ ],
+ [
+  "Python: noqa with code",
+  "src/u.py",
+  null,
+  "from x import *  # noqa: F403\n",
+  false
+ ],
+ [
+  "Go: table-driven refactor of two tests (flagged by design)",
+  "pkg/r/r_test.go",
+  "package r\nfunc TestA(t *testing.T) { if f(1) != 1 { t.Fatal(\"a\") } }\nfunc TestB(t *testing.T) { if f(2) != 2 { t.Fatal(\"b\") } }\n",
+  "package r\nfunc TestF(t *testing.T) {\n\tfor _, n := range []int{1, 2} {\n\t\tif f(n) != n { t.Fatalf(\"%d\", n) }\n\t}\n}\n",
+  true
+ ],
+ [
+  "Go: idiomatic testing.Short skip in integration test (flagged by design)",
+  "pkg/db/db_test.go",
+  "package db\n",
+  "package db\nfunc TestDB(t *testing.T) {\n\tif testing.Short() {\n\t\tt.Skip(\"integration\")\n\t}\n\tif q() != 1 { t.Fatal(\"x\") }\n}\n",
+  true
+ ],
+ [
+  "Go: production change",
+  "pkg/s/s.go",
+  "package s\nfunc S() int { return 1 }\n",
+  "package s\nfunc S() int { return 2 }\n",
+  false
+ ],
+ [
+  "Go: nolint with linter, no reason",
+  "pkg/s/t.go",
+  null,
+  "package s\nfunc T() { f() } //nolint:errcheck\n",
+  false
+ ],
+ [
+  "Config: eslint SwitchCase 0 option",
+  ".eslintrc.json",
+  "{\"rules\":{}}\n",
+  "{\"rules\":{\"indent\":[\"error\",2,{\"SwitchCase\": 0}]}}\n",
+  false
+ ],
+ [
+  "Config: eslint max-params 0? no: warn level",
+  "eslint.config.js",
+  "export default [{rules:{}}]\n",
+  "export default [{rules:{'no-console': ['warn', { allow: ['error'] }]}}]\n",
+  false
+ ],
+ [
+  "Config: tsconfig target bump",
+  "tsconfig.json",
+  "{\"compilerOptions\":{\"target\":\"ES2020\",\"strict\":true}}\n",
+  "{\"compilerOptions\":{\"target\":\"ES2022\",\"strict\":true}}\n",
+  false
+ ],
+ [
+  "Config: GH workflow node bump",
+  ".github/workflows/ci.yml",
+  "jobs:\n  t:\n    steps:\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 18\n      - run: npm test\n",
+  "jobs:\n  t:\n    steps:\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 20\n      - run: npm test\n",
+  false
+ ],
+ [
+  "Config: GH workflow switch npm test -> make check",
+  ".github/workflows/ci.yml",
+  "jobs:\n  t:\n    steps:\n      - run: npm test\n",
+  "jobs:\n  t:\n    steps:\n      - run: make check\n",
+  false
+ ],
+ [
+  "Config: GitLab add lint job with || true-free shell",
+  ".gitlab-ci.yml",
+  "test:\n  script:\n    - pytest\n",
+  "test:\n  script:\n    - pytest\nlint:\n  script:\n    - ruff check . || (echo 'run ruff --fix' && exit 1)\n",
+  false
+ ],
+ [
+  "Config: vitest coverage thresholds restructure",
+  "vitest.config.ts",
+  "export default { test: { coverage: { thresholds: { lines: 80, functions: 80 } } } }\n",
+  "export default {\n  test: {\n    coverage: {\n      thresholds: { lines: 80, functions: 80, branches: 70 },\n    },\n  },\n}\n",
+  false
+ ],
+ [
+  "Config: package.json script edit",
+  "package.json",
+  "{\"scripts\":{\"test\":\"vitest\"}}\n",
+  "{\"scripts\":{\"test\":\"vitest run\",\"lint\":\"eslint .\"}}\n",
+  false
+ ],
+ [
+  "Config: docker compose port",
+  "compose.yaml",
+  "services:\n  ch:\n    ports: [\"8123:8123\"]\n",
+  "services:\n  ch:\n    ports: [\"18123:8123\"]\n",
+  false
+ ],
+ [
+  "Config: GH workflow uses cache with || true in non-test step",
+  ".github/workflows/ci.yml",
+  "jobs:\n  t:\n    steps:\n      - run: npm test\n",
+  "jobs:\n  t:\n    steps:\n      - run: mkdir -p ~/.cache/x || true\n      - run: npm test\n",
+  false
+ ],
+ [
+  "Python: pytest skipif platform (by-design flag) (flagged by design)",
+  "tests/test_w.py",
+  "import sys\n",
+  "import sys, pytest\n@pytest.mark.skipif(sys.platform == 'win32', reason='posix only')\ndef test_w():\n    assert 1\n",
+  true
+ ],
+ [
+  "Python: conftest fixture refactor",
+  "tests/conftest.py",
+  "import pytest\n@pytest.fixture\ndef cart():\n    return Cart()\n",
+  "import pytest\n@pytest.fixture\ndef cart(tmp_path):\n    return Cart(tmp_path)\n",
+  false
+ ],
+ [
+  "TS: production code with context.skip method name",
+  "src/ctx.ts",
+  null,
+  "export function step(context: Ctx) { return context.skip(3) }\n",
+  false
+ ],
+ [
+  "TS: playwright test.describe.configure",
+  "e2e/plot.spec.ts",
+  null,
+  "test.describe.configure({ mode: 'serial' })\ntest('plots', async ({ page }) => { await expect(page).toHaveTitle(/Order/) })\n",
+  false
+ ],
+ [
+  "ruff per-file-ignores table ALL",
+  "pyproject.toml",
+  "[tool.ruff.lint]\nselect = [\"E\"]\n",
+  "[tool.ruff.lint]\nselect = [\"E\"]\n[tool.ruff.lint.per-file-ignores]\n\"src/*\" = [\"ALL\"]\n",
+  true
+ ],
+ [
+  "file-level # ruff: noqa",
+  "src/v.py",
+  null,
+  "# ruff: noqa\nimport os\n",
+  true
+ ],
+ [
+  "file-level # flake8: noqa",
+  "src/v2.py",
+  null,
+  "# flake8: noqa\nimport os\n",
+  true
+ ],
+ [
+  "file-level # mypy: ignore-errors",
+  "src/v3.py",
+  null,
+  "# mypy: ignore-errors\nimport os\n",
+  true
+ ],
+ [
+  "tsconfig strict line removed",
+  "tsconfig.json",
+  "{\"compilerOptions\":{\n\"target\":\"ES2022\",\n\"strict\":true\n}}\n",
+  "{\"compilerOptions\":{\n\"target\":\"ES2022\"\n}}\n",
+  true
+ ],
+ [
+  ".eslintignore added",
+  ".eslintignore",
+  null,
+  "src/\n",
+  true
+ ],
+ [
+  "pytest addopts -m not slow",
+  "pytest.ini",
+  "[pytest]\naddopts = -q\n",
+  "[pytest]\naddopts = -q -m \"not cart\"\n",
+  true
+ ],
+ [
+  "conftest collect_ignore",
+  "tests/conftest.py",
+  "import pytest\n",
+  "import pytest\ncollect_ignore = [\"test_cart.py\"]\n",
+  true
+ ],
+ [
+  "CI: test step commented out",
+  ".github/workflows/ci.yml",
+  "jobs:\n  t:\n    steps:\n      - run: npm test\n",
+  "jobs:\n  t:\n    steps:\n      # - run: npm test\n      - run: echo ok\n",
+  true
+ ],
+ [
+  "CI: test job disabled with if: false",
+  ".github/workflows/ci.yml",
+  "jobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm test\n",
+  "jobs:\n  test:\n    if: false\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm test\n",
+  true
+ ],
+ [
+  "CI: || : on test",
+  ".gitlab-ci.yml",
+  "test:\n  script:\n    - pytest\n",
+  "test:\n  script:\n    - pytest || :\n",
+  true
+ ],
+ [
+  "CI: set +e before tests",
+  ".gitlab-ci.yml",
+  "test:\n  script:\n    - pytest\n",
+  "test:\n  script:\n    - set +e; pytest; exit 0\n",
+  true
+ ],
+ [
+  "TS: it.skip via alias",
+  "src/z.test.ts",
+  null,
+  "const skip = it.skip\nskip('x', () => {})\n",
+  true
+ ],
+ [
+  "TS: describe.skipIf",
+  "src/z2.test.ts",
+  null,
+  "describe.skipIf(true)('x', () => { it('a', () => {}) })\n",
+  true
+ ],
+ [
+  "TS: test.todo replacing a test",
+  "src/z3.test.ts",
+  "it('a', () => {\n  expect(f()).toBe(1)\n})\n",
+  "it.todo('a')\n",
+  true
+ ],
+ [
+  "TS: it.only in .cy.ts",
+  "cypress/e2e/a.cy.ts",
+  null,
+  "it.only('a', () => {})\n",
+  true
+ ],
+ [
+  "TS: expect removed in .cy.ts test deletion",
+  "cypress/e2e/b.cy.ts",
+  "it('a', () => { cy.get('x').should('exist') })\nit('b', () => { cy.get('y').should('exist') })\n",
+  "it('a', () => { cy.get('x').should('exist') })\n",
+  true
+ ],
+ [
+  "Py: pytest.importorskip",
+  "tests/test_imp.py",
+  null,
+  "import pytest\nstripe = pytest.importorskip('stripe')\ndef test_x():\n    assert 1\n",
+  true
+ ],
+ [
+  "Py: unittest expectedFailure",
+  "tests/test_ef.py",
+  null,
+  "import unittest\nclass T(unittest.TestCase):\n    @unittest.expectedFailure\n    def test_x(self):\n        self.assertEqual(1, 2)\n",
+  true
+ ],
+ [
+  "Go: t.SkipNow already, but via helper skipIfNoHW",
+  "pkg/h/h_test.go",
+  "package h\n",
+  "package h\nfunc TestH(t *testing.T) {\n\tif true {\n\t\treturn\n\t}\n}\n",
+  false
+ ],
+ [
+  "package.json: test script made no-op",
+  "package.json",
+  "{\"scripts\":{\"test\":\"vitest run\"}}\n",
+  "{\"scripts\":{\"test\":\"echo skip\"}}\n",
+  true
+ ],
+ [
+  "package.json: test script || true",
+  "package.json",
+  "{\"scripts\":{\"test\":\"vitest run\"}}\n",
+  "{\"scripts\":{\"test\":\"vitest run || true\"}}\n",
+  true
+ ],
+ [
+  "mypy per-module ignore_errors in setup.cfg",
+  "setup.cfg",
+  "[mypy]\nstrict = True\n",
+  "[mypy]\nstrict = True\n[mypy-cart.*]\nignore_errors = True\n",
+  true
+ ],
+ [
+  "mypy disallow_untyped_defs off",
+  "mypy.ini",
+  "[mypy]\ndisallow_untyped_defs = True\n",
+  "[mypy]\ndisallow_untyped_defs = False\n",
+  true
+ ],
+ [
+  "coverage threshold in GitLab via --cov-fail-under lowered",
+  ".gitlab-ci.yml",
+  "test:\n  script:\n    - pytest --cov-fail-under=90\n",
+  "test:\n  script:\n    - pytest --cov-fail-under=50\n",
+  true
+ ],
+ [
+  "jest coverageThreshold lowered on multiline",
+  "jest.config.js",
+  "module.exports = {\n  coverageThreshold: {\n    global: {\n      lines: 90,\n    },\n  },\n}\n",
+  "module.exports = {\n  coverageThreshold: {\n    global: {\n      lines: 50,\n    },\n  },\n}\n",
+  true
+ ],
+ [
+  "daily: ts: new Legend component + test",
+  [
+   [
+    "frontend/src/components/Legend.test.tsx",
+    null,
+    "import { render, screen } from \"@testing-library/react\";\nimport { it, expect } from \"vitest\";\nimport { Legend } from \"./Legend\";\n\nit(\"lists each trace\", () => {\n  render(<Legend items={[\"discountX\", \"discountY\"]} />);\n  expect(screen.getAllByRole(\"listitem\")).toHaveLength(2);\n});\n"
+   ],
+   [
+    "frontend/src/components/Legend.tsx",
+    null,
+    "export function Legend({ items }: { items: string[] }) {\n  return <ul>{items.map((i) => <li key={i}>{i}</li>)}</ul>;\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: useOrder fetch with AbortController",
+  [
+   [
+    "frontend/src/hooks/useOrder.ts",
+    "export function useOrder(url: string) {\n  return { data: [], url };\n}\n",
+    "import { useEffect, useState } from \"react\";\n\nexport function useOrder(url: string) {\n  const [data, setData] = useState<number[]>([]);\n  useEffect(() => {\n    const ctrl = new AbortController();\n    fetch(url, { signal: ctrl.signal }).then((r) => r.json()).then(setData).catch(() => {});\n    return () => ctrl.abort();\n  }, [url]);\n  return { data, url };\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: rename test + sharper matcher",
+  [
+   [
+    "frontend/src/__tests__/OrderPlot.test.tsx",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders the discount trace container\", () => {\n    expect(1).toStrictEqual(1);\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: eslint-disable-next-line with rule and reason",
+  [
+   [
+    "frontend/src/components/OrderPlot.tsx",
+    "import Plot from \"plotly.js-dist-min\";\nexport function OrderPlot({ s, discountX }: { s: number[]; discountX: number[] }) {\n  return <div data-testid=\"order\" />;\n}\n",
+    "import Plot from \"plotly.js-dist-min\";\nexport function OrderPlot({ s, discountX }: { s: number[]; discountX: number[] }) {\n  return <div data-testid=\"order\" />;\n}\n// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Plotly typings lack Layout.shapes\nexport const layout: any = {};\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: @ts-expect-error with reason",
+  [
+   [
+    "frontend/src/components/OrderPlot.tsx",
+    "import Plot from \"plotly.js-dist-min\";\nexport function OrderPlot({ s, discountX }: { s: number[]; discountX: number[] }) {\n  return <div data-testid=\"order\" />;\n}\n",
+    "import Plot from \"plotly.js-dist-min\";\nexport function OrderPlot({ s, discountX }: { s: number[]; discountX: number[] }) {\n  return <div data-testid=\"order\" />;\n}\n// @ts-expect-error -- plotly.js-dist-min ships no type declarations\nimport type { Data } from \"plotly.js-dist-min\";\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: tsconfig moved to shared base (extends)",
+  [
+   [
+    "frontend/tsconfig.base.json",
+    null,
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"jsx\": \"react-jsx\"\n  }\n}\n"
+   ],
+   [
+    "frontend/tsconfig.json",
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"jsx\": \"react-jsx\"\n  }\n}\n",
+    "{\n  \"extends\": \"./tsconfig.base.json\",\n  \"include\": [\"src\"]\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: ESLint 9 flat-config migration (existing 'off' rule carried over)",
+  [
+   [
+    "frontend/.eslintrc.json",
+    "{\n  \"extends\": [\"eslint:recommended\", \"plugin:react/recommended\"],\n  \"rules\": {\n    \"react/react-in-jsx-scope\": \"off\"\n  }\n}\n",
+    null
+   ],
+   [
+    "frontend/eslint.config.js",
+    null,
+    "import js from \"@eslint/js\";\nimport react from \"eslint-plugin-react\";\nexport default [\n  js.configs.recommended,\n  react.configs.flat.recommended,\n  { rules: { \"react/react-in-jsx-scope\": \"off\" } },\n];\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: vitest thresholds raised + functions added",
+  [
+   [
+    "frontend/vitest.config.ts",
+    "import { defineConfig } from \"vitest/config\";\nexport default defineConfig({\n  test: {\n    environment: \"jsdom\",\n    coverage: { thresholds: { lines: 80, branches: 70 } },\n  },\n});\n",
+    "import { defineConfig } from \"vitest/config\";\nexport default defineConfig({\n  test: {\n    environment: \"jsdom\",\n    coverage: { thresholds: { lines: 85, branches: 75, functions: 80 } },\n  },\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: package.json add test:watch / test:coverage scripts",
+  [
+   [
+    "frontend/package.json",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"test:watch\": \"vitest\", \"test:coverage\": \"vitest run --coverage\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: add dependency",
+  [
+   [
+    "frontend/package.json",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\", \"zustand\": \"5.0.1\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: split one test into two",
+  [
+   [
+    "frontend/src/__tests__/OrderPlot.test.tsx",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n  it(\"renders an empty plot\", () => {\n    expect([]).toHaveLength(0);\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: playwright e2e spec added",
+  [
+   [
+    "frontend/e2e/overlay.spec.ts",
+    null,
+    "import { test, expect } from \"@playwright/test\";\n\ntest(\"overlay toggles\", async ({ page }) => {\n  await page.goto(\"/\");\n  await page.getByRole(\"checkbox\", { name: \"Dispersion\" }).check();\n  await expect(page.getByTestId(\"order\")).toBeVisible();\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: colocate test file (rename)",
+  [
+   [
+    "frontend/src/__tests__/OrderPlot.test.tsx",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n",
+    null
+   ],
+   [
+    "frontend/src/components/OrderPlot.test.tsx",
+    null,
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ts: flaky e2e assertion -> expect.poll",
+  [
+   [
+    "frontend/e2e/load.spec.ts",
+    "import { test, expect } from \"@playwright/test\";\n\ntest(\"loads catalog\", async ({ page }) => {\n  await page.goto(\"/\");\n  expect(await page.getByTestId(\"elements\").count()).toBe(42);\n});\n",
+    "import { test, expect } from \"@playwright/test\";\n\ntest(\"loads catalog\", async ({ page }) => {\n  await page.goto(\"/\");\n  await expect.poll(() => page.getByTestId(\"elements\").count()).toBe(42);\n});\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "daily: ts: hook test with renderHook + waitFor",
+  [
+   [
+    "frontend/src/hooks/useOrder.test.ts",
+    null,
+    "import { renderHook, waitFor } from \"@testing-library/react\";\nimport { it, expect, vi } from \"vitest\";\nimport { useOrder } from \"./useOrder\";\n\nit(\"returns the url\", async () => {\n  vi.stubGlobal(\"fetch\", vi.fn());\n  const { result } = renderHook(() => useOrder(\"/api/order\"));\n  await waitFor(() => expect(result.current.url).toBe(\"/api/order\"));\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: new function + test with assert_allclose",
+  [
+   [
+    "analysis/src/shop_analysis/checkout.py",
+    "import numpy as np\n\n\ndef discount_rate(s: np.ndarray, discount0: float, fee0: float) -> np.ndarray:\n    tax0 = (1 + fee0**2) / discount0\n    return discount0 - 2 * fee0 * s + tax0 * s**2\n",
+    "import numpy as np\n\n\ndef discount_rate(s: np.ndarray, discount0: float, fee0: float) -> np.ndarray:\n    tax0 = (1 + fee0**2) / discount0\n    return discount0 - 2 * fee0 * s + tax0 * s**2\n\n\ndef dispersion(s: np.ndarray, d0: float, dp0: float) -> np.ndarray:\n    return d0 + dp0 * s\n"
+   ],
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_dispersion_linear():\n    from shop_analysis.checkout import dispersion\n    np.testing.assert_allclose(dispersion(np.array([0.0, 1.0]), 1.0, 0.5), [1.0, 1.5])\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: parametrize an existing test with more cases",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\nimport pytest\n\n\n@pytest.mark.parametrize(\"discount0\", [1.0, 2.0, 5.0])\ndef test_discount_at_zero(discount0):\n    assert discount_rate(np.array([0.0]), discount0, 0.0)[0] == discount0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: conftest fixture added",
+  [
+   [
+    "analysis/tests/conftest.py",
+    null,
+    "import numpy as np\nimport pytest\n\n\n@pytest.fixture\ndef s_grid():\n    return np.linspace(-1.0, 1.0, 101)\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: coded noqa + coded type: ignore",
+  [
+   [
+    "analysis/src/shop_analysis/checkout.py",
+    "import numpy as np\n\n\ndef discount_rate(s: np.ndarray, discount0: float, fee0: float) -> np.ndarray:\n    tax0 = (1 + fee0**2) / discount0\n    return discount0 - 2 * fee0 * s + tax0 * s**2\n",
+    "import numpy as np\n\n\ndef discount_rate(s: np.ndarray, discount0: float, fee0: float) -> np.ndarray:\n    tax0 = (1 + fee0**2) / discount0\n    return discount0 - 2 * fee0 * s + tax0 * s**2\n\nfrom scipy.optimize import curve_fit  # type: ignore[import-untyped]\nsq = lambda x: x * x  # noqa: E731\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: ruff select extended with UP and SIM",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\", \"UP\", \"SIM\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: ruff select = ALL (strictest)",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"ALL\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: unittest -> pytest migration (assertRaises -> pytest.raises)",
+  [
+   [
+    "analysis/tests/test_validate.py",
+    "import unittest\n\nimport numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\nclass TestDiscount(unittest.TestCase):\n    def test_positive(self):\n        self.assertGreater(discount_rate(np.array([0.5]), 2.0, 0.0)[0], 0)\n\n    def test_bad_discount(self):\n        self.assertRaises(ZeroDivisionError, discount_rate, np.array([0.0]), 0.0, 0.0)\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_positive():\n    assert discount_rate(np.array([0.5]), 2.0, 0.0)[0] > 0\n\n\ndef test_bad_discount():\n    with pytest.raises(ZeroDivisionError):\n        discount_rate(np.array([0.0]), 0.0, 0.0)\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "daily: py: raise fail_under 85 -> 90",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 90\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: mypy override for scipy stubs",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n\n[[tool.mypy.overrides]]\nmodule = [\"scipy.*\"]\nignore_missing_imports = true\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: add pytest marker + filterwarnings",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\", \"gpu: needs CUDA\"]\nfilterwarnings = [\"error\", \"ignore::DeprecationWarning:scipy.*\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: exact equality -> pytest.approx",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == pytest.approx(2.0)\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: TYPE_CHECKING import block in production",
+  [
+   [
+    "analysis/src/shop_analysis/checkout.py",
+    "import numpy as np\n\n\ndef discount_rate(s: np.ndarray, discount0: float, fee0: float) -> np.ndarray:\n    tax0 = (1 + fee0**2) / discount0\n    return discount0 - 2 * fee0 * s + tax0 * s**2\n",
+    "from typing import TYPE_CHECKING\n\nimport numpy as np\n\nif TYPE_CHECKING:\n    from numpy.typing import NDArray\n\n\ndef discount_rate(s: np.ndarray, discount0: float, fee0: float) -> np.ndarray:\n    tax0 = (1 + fee0**2) / discount0\n    return discount0 - 2 * fee0 * s + tax0 * s**2\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: py: black reformat of long assert",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert (\n        discount_rate(np.array([0.0]), 2.0, 0.0)[0]\n        == 2.0\n    )\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: go: new handler + table-driven test",
+  [
+   [
+    "services/snapshot/internal/store/key.go",
+    null,
+    "package store\n\nimport \"strings\"\n\nfunc Key(pv string) string { return strings.ToUpper(pv) }\n"
+   ],
+   [
+    "services/snapshot/internal/store/key_test.go",
+    null,
+    "package store\n\nimport \"testing\"\n\nfunc TestKey(t *testing.T) {\n\tfor _, tc := range []struct{ in, want string }{{\"a\", \"A\"}, {\"shop:sku1\", \"SHOP:SKU1\"}} {\n\t\tif got := Key(tc.in); got != tc.want {\n\t\t\tt.Errorf(\"Key(%q) = %q, want %q\", tc.in, got, tc.want)\n\t\t}\n\t}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: go: store_test.go migrated to testify require",
+  [
+   [
+    "services/snapshot/internal/store/store_test.go",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\tif err := Put(\"a\"); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n}\n",
+    "package store\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/require\"\n)\n\nfunc TestPut(t *testing.T) {\n\trequire.NoError(t, Put(\"a\"))\n}\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "daily: go: //go:build ignore code generator (go:generate)",
+  [
+   [
+    "services/snapshot/internal/store/gen_fixtures.go",
+    null,
+    "//go:build ignore\n\n// gen_fixtures writes testdata/snapshots.json; run with go generate.\npackage main\n\nfunc main() {}\n"
+   ],
+   [
+    "services/snapshot/internal/store/store.go",
+    "package store\n\nfunc Put(k string) error { return nil }\n",
+    "package store\n\nfunc Put(k string) error { return nil }\n\n//go:generate go run gen_fixtures.go\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: go: nolint naming linter with reason",
+  [
+   [
+    "services/snapshot/internal/store/store.go",
+    "package store\n\nfunc Put(k string) error { return nil }\n",
+    "package store\n\nfunc Put(k string) error { return nil }\n\nfunc closeQuietly(c interface{ Close() error }) {\n\tc.Close() //nolint:errcheck // best-effort close on shutdown\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: go: go.mod bump + require",
+  [
+   [
+    "services/snapshot/go.mod",
+    "module gitlab.example/shop/snapshot\n\ngo 1.23\n",
+    "module gitlab.example/shop/snapshot\n\ngo 1.23.4\n\nrequire github.com/ClickHouse/clickhouse-go/v2 v2.30.0\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: go: t.Fatalf -> t.Fatal + extra subtest",
+  [
+   [
+    "services/snapshot/internal/store/store_test.go",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\tif err := Put(\"a\"); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n}\n",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\tif err := Put(\"a\"); err != nil {\n\t\tt.Fatal(err)\n\t}\n\tt.Run(\"empty key\", func(t *testing.T) {\n\t\tif err := Put(\"\"); err != nil {\n\t\t\tt.Errorf(\"empty: %v\", err)\n\t\t}\n\t})\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: add manual production deploy job",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n\ndeploy:production:\n  stage: build\n  image: alpine/helm:3.16.2\n  environment: production\n  script:\n    - helm upgrade --install snapshot deploy/helm/snapshot -n shop\n  rules:\n    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH\n      when: manual\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: review app with stop job",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n\nreview:\n  stage: build\n  script:\n    - helm upgrade --install review-$CI_COMMIT_REF_SLUG deploy/helm/snapshot\n  environment:\n    name: review/$CI_COMMIT_REF_SLUG\n    on_stop: stop_review\n\nstop_review:\n  stage: build\n  script:\n    - helm uninstall review-$CI_COMMIT_REF_SLUG\n  environment:\n    name: review/$CI_COMMIT_REF_SLUG\n    action: stop\n  when: manual\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: junit report + test-compose cleanup with || true",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - docker compose -f compose.test.yaml up -d --wait\n    - cd services/snapshot && go test ./...\n  after_script:\n    - docker compose -f compose.test.yaml down -v || true\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: split test jobs into .gitlab/ci/test.yml (include)",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\ninclude:\n  - local: .gitlab/ci/test.yml\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ],
+   [
+    ".gitlab/ci/test.yml",
+    null,
+    "test:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: DRY refactor with extends template",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\n.test:\n  stage: test\n  interruptible: true\n\ntest:analysis:\n  extends: .test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  extends: .test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: add junit to pytest line + new job for second package (own threshold)",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85 --junitxml=report.xml\n  artifacts:\n    reports:\n      junit: analysis/report.xml\n\ntest:reports:\n  stage: test\n  image: python:3.12\n  script:\n    - cd reports && pip install -e .[test] && pytest -q --cov --cov-fail-under=70\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: ci: MR pipeline rules + cache",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nworkflow:\n  rules:\n    - if: $CI_PIPELINE_SOURCE == \"merge_request_event\"\n    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH\n\ndefault:\n  cache:\n    key: $CI_COMMIT_REF_SLUG\n    paths: [frontend/node_modules/]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: docker: Dockerfile adds non-root user + healthcheck",
+  [
+   [
+    "services/snapshot/Dockerfile",
+    "FROM golang:1.23 AS build\nWORKDIR /src\nCOPY . .\nRUN go build -o /out/server ./cmd/server\n\nFROM gcr.io/distroless/static\nCOPY --from=build /out/server /server\nENTRYPOINT [\"/server\"]\n",
+    "FROM golang:1.23 AS build\nWORKDIR /src\nCOPY . .\nRUN go build -o /out/server ./cmd/server\n\nFROM gcr.io/distroless/static\nCOPY --from=build /out/server /server\nUSER 65532:65532\nEXPOSE 8080\nENTRYPOINT [\"/server\"]\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: compose: add healthcheck + snapshot service",
+  [
+   [
+    "compose.yaml",
+    "services:\n  clickhouse:\n    image: clickhouse/clickhouse-server:24.8\n    ports: [\"8123:8123\"]\n",
+    "services:\n  clickhouse:\n    image: clickhouse/clickhouse-server:24.8\n    ports: [\"8123:8123\"]\n    healthcheck:\n      test: [\"CMD\", \"wget\", \"-qO-\", \"http://localhost:8123/ping\"]\n      interval: 5s\n  snapshot:\n    build: services/snapshot\n    depends_on:\n      clickhouse:\n        condition: service_healthy\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: helm/k8s: probes, resources, replicas",
+  [
+   [
+    "deploy/helm/snapshot/values.yaml",
+    "replicaCount: 1\nimage:\n  repository: registry.example/shop/snapshot\n  tag: latest\n",
+    "replicaCount: 1\nimage:\n  repository: registry.example/shop/snapshot\n  tag: latest\nresources:\n  limits:\n    memory: 256Mi\nlivenessProbe:\n  httpGet: {path: /healthz, port: 8080}\n"
+   ],
+   [
+    "deploy/k8s/deployment.yaml",
+    "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: snapshot\nspec:\n  replicas: 1\n",
+    "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: snapshot\nspec:\n  replicas: 2\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: json: new tool package scaffolded with npm init",
+  [
+   [
+    "tools/catalog-cli/package.json",
+    null,
+    "{\n  \"name\": \"catalog-cli\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"license\": \"MIT\"\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: toml: pyproject version bump + optional deps",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.4.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.14\"]\n\n[project.optional-dependencies]\ntest = [\"pytest>=8\", \"pytest-cov>=5\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: json: renovate config",
+  [
+   [
+    "renovate.json",
+    null,
+    "{\n  \"extends\": [\"config:recommended\"],\n  \"packageRules\": [{\"matchManagers\": [\"npm\"], \"groupName\": \"frontend deps\"}]\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily: proto: add field",
+  [
+   [
+    "proto/snapshot.proto",
+    "syntax = \"proto3\";\nmessage Snapshot { string pv = 1; double value = 2; }\n",
+    "syntax = \"proto3\";\nmessage Snapshot { string pv = 1; double value = 2; int64 ts_ns = 3; }\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): OrderPlot draws discount_y, test covers both traces",
+  [
+   [
+    "frontend/src/components/OrderPlot.tsx",
+    "import Plot from \"plotly.js-dist-min\";\nexport function OrderPlot({ s, discountX }: { s: number[]; discountX: number[] }) {\n  return <div data-testid=\"order\" />;\n}\n",
+    "import Plot from \"plotly.js-dist-min\";\nexport function OrderPlot({ s, discountX, discountY }: { s: number[]; discountX: number[]; discountY?: number[] }) {\n  const traces = discountY ? 2 : 1;\n  return <div data-testid=\"order\" data-traces={traces} />;\n}\n"
+   ],
+   [
+    "frontend/src/__tests__/OrderPlot.test.tsx",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n\n  it(\"draws a second trace when discountY is given\", () => {\n    const traces = [1, 2].length;\n    expect(traces).toBe(2);\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): useOrder fetches with AbortController, new hook test",
+  [
+   [
+    "frontend/src/hooks/useOrder.ts",
+    "export function useOrder(url: string) {\n  return { data: [], url };\n}\n",
+    "import { useEffect, useState } from \"react\";\n\nexport type OrderRow = { s: number; discountX: number; discountY: number };\n\nexport function useOrder(url: string) {\n  const [data, setData] = useState<OrderRow[]>([]);\n  useEffect(() => {\n    const ctrl = new AbortController();\n    fetch(url, { signal: ctrl.signal })\n      .then((r) => r.json())\n      .then(setData)\n      .catch((e: unknown) => {\n        if ((e as Error).name !== \"AbortError\") throw e;\n      });\n    return () => ctrl.abort();\n  }, [url]);\n  return { data, url };\n}\n"
+   ],
+   [
+    "frontend/src/__tests__/useOrder.test.ts",
+    null,
+    "import { describe, it, expect, vi } from \"vitest\";\nimport { renderHook, waitFor } from \"@testing-library/react\";\nimport { useOrder } from \"../hooks/useOrder\";\n\ndescribe(\"useOrder\", () => {\n  it(\"loads rows from the url\", async () => {\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ json: () => Promise.resolve([{ s: 0, discountX: 1, discountY: 2 }]) }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.data).toHaveLength(1));\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Colocate OrderPlot test with the component",
+  [
+   [
+    "frontend/src/__tests__/OrderPlot.test.tsx",
+    "import { describe, it, expect } from \"vitest\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n",
+    null
+   ],
+   [
+    "frontend/src/components/OrderPlot.test.tsx",
+    null,
+    "import { describe, it, expect } from \"vitest\";\nimport { OrderPlot } from \"./OrderPlot\";\ndescribe(\"OrderPlot\", () => {\n  it(\"renders\", () => {\n    expect(1).toBe(1);\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): tsconfig split into app/node project references (Vite template layout)",
+  [
+   [
+    "frontend/tsconfig.json",
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"jsx\": \"react-jsx\"\n  }\n}\n",
+    "{\n  \"files\": [],\n  \"references\": [{ \"path\": \"./tsconfig.app.json\" }, { \"path\": \"./tsconfig.node.json\" }]\n}\n"
+   ],
+   [
+    "frontend/tsconfig.app.json",
+    null,
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"jsx\": \"react-jsx\",\n    \"noEmit\": true\n  },\n  \"include\": [\"src\"]\n}\n"
+   ],
+   [
+    "frontend/tsconfig.node.json",
+    null,
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"ESNext\",\n    \"strict\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"vite.config.ts\", \"vitest.config.ts\"]\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): typescript-eslint: swap base no-unused-vars for the TS-aware rule",
+  [
+   [
+    "frontend/eslint.config.js",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { rules: { \"no-unused-vars\": \"error\", \"prefer-const\": \"error\" } },\n];\n",
+    "import js from \"@eslint/js\";\nimport tseslint from \"typescript-eslint\";\n\nexport default tseslint.config(\n  js.configs.recommended,\n  ...tseslint.configs.recommended,\n  {\n    rules: {\n      \"no-unused-vars\": \"off\",\n      \"@typescript-eslint/no-unused-vars\": [\"error\", { argsIgnorePattern: \"^_\" }],\n      \"prefer-const\": \"error\",\n    },\n  },\n);\n"
+   ],
+   [
+    "frontend/package.json",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\", \"typescript-eslint\": \"8.15.0\"}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Raise vitest coverage thresholds and add functions",
+  [
+   [
+    "frontend/vitest.config.ts",
+    "import { defineConfig } from \"vitest/config\";\nexport default defineConfig({\n  test: {\n    environment: \"jsdom\",\n    coverage: { thresholds: { lines: 80, branches: 70 } },\n  },\n});\n",
+    "import { defineConfig } from \"vitest/config\";\nexport default defineConfig({\n  test: {\n    environment: \"jsdom\",\n    coverage: { provider: \"v8\", thresholds: { lines: 85, branches: 75, functions: 80 } },\n  },\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Plotly relayout hook with reasoned suppressions",
+  [
+   [
+    "frontend/src/hooks/useRelayout.ts",
+    null,
+    "import { useEffect } from \"react\";\n// @ts-expect-error -- plotly.js-dist-min ships no type declarations\nimport Plotly from \"plotly.js-dist-min\";\n\nexport function useRelayout(div: HTMLElement | null, range: [number, number]) {\n  useEffect(() => {\n    if (div) Plotly.relayout(div, { \"xaxis.range\": range });\n    // eslint-disable-next-line react-hooks/exhaustive-deps -- range is compared by value upstream\n  }, [div, range[0], range[1]]);\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): package.json: add e2e and coverage scripts",
+  [
+   [
+    "frontend/package.json",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n",
+    "{\n  \"name\": \"order-ui\",\n  \"private\": true,\n  \"scripts\": {\"dev\": \"vite\", \"build\": \"tsc -b && vite build\", \"test\": \"vitest run\", \"test:coverage\": \"vitest run --coverage\", \"test:e2e\": \"playwright test\", \"lint\": \"eslint .\", \"typecheck\": \"tsc --noEmit\"},\n  \"dependencies\": {\"react\": \"18.3.1\", \"react-dom\": \"18.3.1\", \"plotly.js-dist-min\": \"2.35.2\"},\n  \"devDependencies\": {\"vitest\": \"2.1.8\", \"typescript\": \"5.6.3\", \"eslint\": \"9.15.0\"}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Playwright e2e spec for the overlay",
+  [
+   [
+    "frontend/e2e/overlay.spec.ts",
+    null,
+    "import { test, expect } from \"@playwright/test\";\n\ntest.describe(\"overlay\", () => {\n  test.describe.configure({ mode: \"serial\" });\n\n  test.beforeEach(async ({ page }) => {\n    await page.goto(\"/\");\n  });\n\n  test(\"hides the design trace\", async ({ page }) => {\n    await page.getByLabel(/design/).uncheck();\n    await expect(page.getByTestId(\"order\")).toHaveAttribute(\"data-traces\", \"1\");\n  });\n});\n"
+   ],
+   [
+    "frontend/playwright.config.ts",
+    null,
+    "import { defineConfig } from \"@playwright/test\";\n\nexport default defineConfig({\n  testDir: \"e2e\",\n  use: { baseURL: \"http://localhost:5173\" },\n  webServer: { command: \"npm run dev\", port: 5173, reuseExistingServer: true },\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Unit formatting util with it.each table",
+  [
+   [
+    "frontend/src/utils/format.ts",
+    null,
+    "export function formatDiscount(m: number): string {\n  return m >= 100 ? `${(m / 1000).toFixed(2)} km` : `${m.toFixed(2)} m`;\n}\n"
+   ],
+   [
+    "frontend/src/__tests__/format.test.ts",
+    null,
+    "import { describe, it, expect } from \"vitest\";\nimport { formatDiscount } from \"../utils/format\";\n\ndescribe(\"formatDiscount\", () => {\n  it.each([\n    [1.5, \"1.50 m\"],\n    [12, \"12.00 m\"],\n    [1500, \"1.50 km\"],\n  ])(\"formats %f\", (m, want) => {\n    expect(formatDiscount(m)).toBe(want);\n  });\n});\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Item-scan margin fit with tests",
+  [
+   [
+    "analysis/src/shop_analysis/margin.py",
+    null,
+    "import numpy as np\nfrom scipy.optimize import curve_fit\n\n\ndef _parabola(k: np.ndarray, a: float, b: float, c: float) -> np.ndarray:\n    return a * (k - b) ** 2 + c\n\n\ndef item_scan_margin(k: np.ndarray, sigma2: np.ndarray, flat: float, length: float) -> tuple[float, float]:\n    popt, pcov = curve_fit(_parabola, k, sigma2)\n    a, _b, c = popt\n    eps = np.sqrt(a * c) / (flat**2 * length)\n    err = 0.5 * eps * np.sqrt(pcov[0, 0] / a**2 + pcov[2, 2] / c**2)\n    return float(eps), float(err)\n"
+   ],
+   [
+    "analysis/tests/test_margin.py",
+    null,
+    "import numpy as np\nimport pytest\n\nfrom shop_analysis.margin import item_scan_margin\n\n\ndef test_recovers_known_margin():\n    k = np.linspace(-2, 2, 21)\n    sigma2 = 4.0 * (k - 0.1) ** 2 + 1.0\n    eps, err = item_scan_margin(k, sigma2, flat=1.0, length=1.0)\n    assert eps == pytest.approx(2.0, rel=1e-6)\n    assert err < 1e-6\n\n\ndef test_rejects_too_few_points():\n    with pytest.raises(TypeError):\n        item_scan_margin(np.array([0.0]), np.array([1.0]), flat=1.0, length=1.0)\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Parametrize discount-at-zero test over discount0",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate\n\n\n@pytest.mark.parametrize(\"discount0\", [0.5, 2.0, 7.5])\ndef test_discount_at_zero(discount0):\n    assert discount_rate(np.array([0.0]), discount0, 0.0)[0] == discount0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Slow-marked tracking test",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\n@pytest.mark.slow\ndef test_discount_dense_grid_is_positive():\n    s = np.linspace(-50, 50, 2_000_001)\n    assert np.all(discount_rate(s, 2.0, 0.3) > 0)\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Bump numpy/scipy floors and add h5py",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=2.0\", \"scipy>=1.14\", \"h5py>=3.12\"]\n\n[project.optional-dependencies]\ntest = [\"pytest>=8.3\", \"pytest-cov>=6.0\", \"pytest-xdist>=3.6\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Ruff: extend select with pyupgrade and numpy rules",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\", \"UP\", \"NPY\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): mypy: per-module missing-stub overrides for scipy and h5py",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[[tool.mypy.overrides]]\nmodule = [\"scipy.*\", \"h5py.*\"]\nignore_missing_imports = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): HDF5 loader with coded type-ignore and noqa",
+  [
+   [
+    "analysis/src/shop_analysis/io.py",
+    null,
+    "from pathlib import Path\n\nimport h5py\nimport numpy as np\n\n\ndef load_sku(path: Path, K1: float) -> np.ndarray:  # noqa: N803 - K1 is the accelerator convention\n    with h5py.File(path) as f:\n        data = f[\"sku/x\"][()]  # type: ignore[index]\n    return np.asarray(data) * K1\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): conftest with a seeded rng fixture",
+  [
+   [
+    "analysis/tests/conftest.py",
+    null,
+    "import numpy as np\nimport pytest\n\n\n@pytest.fixture\ndef rng() -> np.random.Generator:\n    return np.random.default_rng(20261027)\n"
+   ],
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric(rng):\n    s = np.sort(rng.uniform(-1, 1, 5))\n    s = np.concatenate([s, -s[::-1]])\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): pytest: make warnings errors and xfail strict",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\nxfail_strict = true\nfilterwarnings = [\n    \"error\",\n    \"ignore::DeprecationWarning:h5py.*\",\n]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Move coverage settings from pyproject to .coveragerc",
+  [
+   [
+    "analysis/pyproject.toml",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n[tool.coverage.report]\nfail_under = 85\n",
+    "[project]\nname = \"shop-analysis\"\nversion = \"0.3.0\"\ndependencies = [\"numpy>=1.26\", \"scipy>=1.13\"]\n\n[tool.pytest.ini_options]\naddopts = \"-ra --strict-markers\"\ntestpaths = [\"tests\"]\nmarkers = [\"slow: long-running\"]\n\n[tool.ruff]\nline-length = 100\n\n[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n\n[tool.mypy]\nstrict = true\n\n"
+   ],
+   [
+    "analysis/.coveragerc",
+    null,
+    "[run]\nsource = shop_analysis\nbranch = true\n\n[report]\nfail_under = 85\nshow_missing = true\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Delete unused catalog helper from tests",
+  [
+   [
+    "analysis/tests/helpers.py",
+    "import numpy as np\n\n\ndef flat_matrix(length: float) -> np.ndarray:\n    return np.array([[1.0, length], [0.0, 1.0]])\n",
+    null
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Go: store.Get with table-driven test",
+  [
+   [
+    "services/snapshot/internal/store/store.go",
+    "package store\n\nfunc Put(k string) error { return nil }\n",
+    "package store\n\nimport \"errors\"\n\nfunc Put(k string) error { return nil }\n\nvar ErrNotFound = errors.New(\"not found\")\n\nfunc Get(k string) (string, error) {\n\tif k == \"\" {\n\t\treturn \"\", ErrNotFound\n\t}\n\treturn k, nil\n}\n"
+   ],
+   [
+    "services/snapshot/internal/store/store_test.go",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\tif err := Put(\"a\"); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n}\n",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\tif err := Put(\"a\"); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n}\n\nfunc TestGet(t *testing.T) {\n\tcases := []struct {\n\t\tkey     string\n\t\twantErr bool\n\t}{\n\t\t{\"pv:SKU01\", false},\n\t\t{\"\", true},\n\t}\n\tfor _, c := range cases {\n\t\tt.Run(c.key, func(t *testing.T) {\n\t\t\t_, err := Get(c.key)\n\t\t\tif (err != nil) != c.wantErr {\n\t\t\t\tt.Errorf(\"Get(%q) err = %v, wantErr %v\", c.key, err, c.wantErr)\n\t\t\t}\n\t\t})\n\t}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Go: health handler with httptest",
+  [
+   [
+    "services/snapshot/cmd/server/health.go",
+    null,
+    "package main\n\nimport \"net/http\"\n\nfunc health(w http.ResponseWriter, _ *http.Request) {\n\tw.WriteHeader(http.StatusOK)\n\t_, _ = w.Write([]byte(\"ok\"))\n}\n"
+   ],
+   [
+    "services/snapshot/cmd/server/health_test.go",
+    null,
+    "package main\n\nimport (\n\t\"net/http\"\n\t\"net/http/httptest\"\n\t\"testing\"\n)\n\nfunc TestHealth(t *testing.T) {\n\trec := httptest.NewRecorder()\n\thealth(rec, httptest.NewRequest(http.MethodGet, \"/healthz\", nil))\n\tif rec.Code != http.StatusOK {\n\t\tt.Fatalf(\"status = %d\", rec.Code)\n\t}\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Go: pprof listener with a named nolint",
+  [
+   [
+    "services/snapshot/cmd/server/main.go",
+    "package main\n\nfunc main() {}\n",
+    "package main\n\nimport (\n\t\"log\"\n\t\"net/http\"\n\t_ \"net/http/pprof\"\n)\n\nfunc main() {\n\tgo func() {\n\t\tlog.Println(http.ListenAndServe(\"localhost:6060\", nil)) //nolint:gosec // G114: dev-only pprof listener\n\t}()\n\thttp.HandleFunc(\"/healthz\", health)\n\tlog.Fatal(http.ListenAndServe(\":8080\", nil)) //nolint:gosec // G114: timeouts set by the ingress\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Go: extract a test helper with t.Helper",
+  [
+   [
+    "services/snapshot/internal/store/store_test.go",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\tif err := Put(\"a\"); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n}\n",
+    "package store\n\nimport \"testing\"\n\nfunc mustPut(t *testing.T, k string) {\n\tt.Helper()\n\tif err := Put(k); err != nil {\n\t\tt.Fatalf(\"put %q: %v\", k, err)\n\t}\n}\n\nfunc TestPut(t *testing.T) {\n\tmustPut(t, \"a\")\n}\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): GitLab CI: helm lint job and a manual dev deploy",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build, deploy]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n\nlint:helm:\n  stage: lint\n  image: alpine/helm:3.16.2\n  script:\n    - helm lint deploy/helm/snapshot --strict\n\ndeploy:dev:\n  stage: deploy\n  image: alpine/helm:3.16.2\n  environment: shop-dev\n  rules:\n    - if: $CI_COMMIT_BRANCH\n      when: manual\n      allow_failure: true\n  script:\n    - helm upgrade --install snapshot deploy/helm/snapshot -n shop-dev --set image.tag=$CI_COMMIT_SHORT_SHA --wait\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): GitLab CI: pip cache and junit reports for analysis tests",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85 --junitxml=report.xml\n  variables:\n    PIP_CACHE_DIR: $CI_PROJECT_DIR/.cache/pip\n  cache:\n    key: pip-$CI_COMMIT_REF_SLUG\n    paths: [.cache/pip]\n  artifacts:\n    when: always\n    reports:\n      junit: analysis/report.xml\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): GitLab CI: move the snapshot job into the service's own include",
+  [
+   [
+    ".gitlab-ci.yml",
+    "stages: [lint, test, build]\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\ntest:snapshot:\n  stage: test\n  image: golang:1.23\n  script:\n    - cd services/snapshot && go test ./...\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n",
+    "stages: [lint, test, build]\n\ninclude:\n  - local: services/snapshot/.gitlab-ci.yml\n\nlint:frontend:\n  stage: lint\n  image: node:22\n  script:\n    - cd frontend && npm ci && npm run lint\n\ntest:analysis:\n  stage: test\n  image: python:3.12\n  script:\n    - cd analysis && pip install -e .[test] && pytest -q --cov --cov-fail-under=85\n\nbuild:image:\n  stage: build\n  script:\n    - docker build -t $CI_REGISTRY_IMAGE/snapshot:$CI_COMMIT_SHORT_SHA services/snapshot\n"
+   ],
+   [
+    "services/snapshot/.gitlab-ci.yml",
+    null,
+    "test:snapshot:\n  stage: test\n  image: golang:1.23.2\n  script:\n    - cd services/snapshot && go test -race ./...\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Helm: Service, readiness probe and chart 0.2.0",
+  [
+   [
+    "deploy/helm/snapshot/Chart.yaml",
+    "apiVersion: v2\nname: snapshot\nversion: 0.1.0\n",
+    "apiVersion: v2\nname: snapshot\nversion: 0.2.0\nappVersion: \"0.2.0\"\n"
+   ],
+   [
+    "deploy/helm/snapshot/templates/service.yaml",
+    null,
+    "apiVersion: v1\nkind: Service\nmetadata:\n  name: {{ .Release.Name }}\nspec:\n  selector:\n    app.kubernetes.io/name: snapshot\n  ports:\n    - name: http\n      port: 8080\n      targetPort: http\n"
+   ],
+   [
+    "deploy/helm/snapshot/values.yaml",
+    "replicaCount: 1\nimage:\n  repository: registry.example/shop/snapshot\n  tag: latest\n",
+    "replicaCount: 1\nimage:\n  repository: registry.example/shop/snapshot\n  tag: latest\nreadinessProbe:\n  httpGet:\n    path: /healthz\n    port: http\n  periodSeconds: 10\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "daily (fifth check): Dockerfile non-root runtime and compose service with healthcheck",
+  [
+   [
+    "services/snapshot/Dockerfile",
+    "FROM golang:1.23 AS build\nWORKDIR /src\nCOPY . .\nRUN go build -o /out/server ./cmd/server\n\nFROM gcr.io/distroless/static\nCOPY --from=build /out/server /server\nENTRYPOINT [\"/server\"]\n",
+    "FROM golang:1.23 AS build\nWORKDIR /src\nCOPY . .\nRUN go build -o /out/server ./cmd/server\n\nFROM gcr.io/distroless/static:nonroot\nUSER nonroot:nonroot\nCOPY --from=build /out/server /server\nENTRYPOINT [\"/server\"]\n"
+   ],
+   [
+    "compose.yaml",
+    "services:\n  clickhouse:\n    image: clickhouse/clickhouse-server:24.8\n    ports: [\"8123:8123\"]\n",
+    "services:\n  clickhouse:\n    image: clickhouse/clickhouse-server:24.8\n    ports: [\"8123:8123\"]\n  snapshot:\n    build: services/snapshot\n    ports: [\"8080:8080\"]\n    depends_on: [clickhouse]\n    healthcheck:\n      test: [\"CMD\", \"/server\", \"--health\"]\n      interval: 10s\n"
+   ]
+  ],
+  false
+ ],
+ [
+  "former gap, now asked or blocked (v10): pyright: basic downgrade comment",
+  "src/v4.py",
+  null,
+  "# pyright: basic\nimport os\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): tsconfig exclude src from typecheck",
+  "tsconfig.json",
+  "{\"compilerOptions\":{\"strict\":true},\"include\":[\"src\"]}\n",
+  "{\"compilerOptions\":{\"strict\":true},\"include\":[\"src\"],\"exclude\":[\"src/cart\"]}\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): eslint rule removed",
+  "eslint.config.js",
+  "export default [{rules:{\n'no-console':'error',\n'eqeqeq':'error'\n}}]\n",
+  "export default [{rules:{\n'eqeqeq':'error'\n}}]\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): eslint global ignores",
+  "eslint.config.js",
+  "export default [{rules:{'eqeqeq':'error'}}]\n",
+  "export default [{ignores:['src/**']},{rules:{'eqeqeq':'error'}}]\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): eslint rule to warn",
+  "eslint.config.js",
+  "export default [{rules:{\n'no-explicit-any':'error'\n}}]\n",
+  "export default [{rules:{\n'no-explicit-any':'warn'\n}}]\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): vitest test exclude",
+  "vitest.config.ts",
+  "export default { test: {} }\n",
+  "export default { test: { exclude: ['**/cart/**'] } }\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): vitest coverage exclude",
+  "vitest.config.ts",
+  "export default { test: { coverage: {} } }\n",
+  "export default { test: { coverage: { exclude: ['src/cart/**'] } } }\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): coveragerc omit",
+  ".coveragerc",
+  "[run]\nsource = src\n",
+  "[run]\nsource = src\nomit = src/cart/*\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): Go: build tag excludes test file",
+  "pkg/q/q_test.go",
+  "package q\nfunc TestQ(t *testing.T) {}\n",
+  "//go:build never\n\npackage q\nfunc TestQ(t *testing.T) {}\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): pre-commit config hook removed",
+  ".pre-commit-config.yaml",
+  "repos:\n- repo: local\n  hooks:\n  - id: pytest\n    entry: pytest\n",
+  "repos: []\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): husky pre-commit emptied",
+  ".husky/pre-commit",
+  "npm test\n",
+  "exit 0\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): CI: GitLab when manual",
+  ".gitlab-ci.yml",
+  "test:\n  script:\n    - pytest\n",
+  "test:\n  when: manual\n  script:\n    - pytest\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): GitLab test job switched off with rules: when: never",
+  ".gitlab-ci.yml",
+  "test:analysis:\n  script:\n    - pytest -q\n",
+  "test:analysis:\n  rules:\n    - when: never\n  script:\n    - pytest -q\n",
+  true
+ ],
+ [
+  "former gap, now asked or blocked (v10): ruff select narrowed to drop a rule family",
+  "analysis/pyproject.toml",
+  "[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\", \"B\"]\n",
+  "[tool.ruff.lint]\nselect = [\"E\", \"F\", \"I\"]\n",
+  true
+ ],
+ [
+  "former gap, now asked (v13): sixth check: [semantic] real assertion replaced by a trivial assert b is not None",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    assert b is not None\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): sixth check: [semantic] exact expectation weakened to toBeDefined",
+  [
+   [
+    "frontend/src/hooks/useOrder.test.ts",
+    "import { describe, it, expect } from \"vitest\";\nimport { useOrder } from \"./useOrder\";\n\ndescribe(\"useOrder\", () => {\n  it(\"returns the url and empty data before the first fetch\", () => {\n    const result = useOrder(\"/api/order?catalog=shop-fe\");\n    expect(result.url).toBe(\"/api/order?catalog=shop-fe\");\n    expect(result.data).toEqual([]);\n  });\n});\n",
+    "import { describe, it, expect } from \"vitest\";\nimport { useOrder } from \"./useOrder\";\n\ndescribe(\"useOrder\", () => {\n  it(\"returns the url and empty data before the first fetch\", () => {\n    const result = useOrder(\"/api/order?catalog=shop-fe\");\n    expect(result.url).toBe(\"/api/order?catalog=shop-fe\");\n    expect(result.data).toBeDefined();\n  });\n});\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): seventh check (blind): fe: replace exact data assertion with toBeDefined",
+  [
+   [
+    "frontend/src/__tests__/useOrder.test.ts",
+    "import { describe, it, expect, vi, afterEach } from \"vitest\";\nimport { renderHook, waitFor } from \"@testing-library/react\";\nimport { useOrder } from \"../hooks/useOrder\";\n\nafterEach(() => {\n  vi.unstubAllGlobals();\n});\n\ndescribe(\"useOrder\", () => {\n  it(\"loads order data from the url\", async () => {\n    const body = { s: [0, 1], discountX: [1, 2], discountY: [2, 1] };\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(body) }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.data).toEqual(body));\n    expect(result.current.error).toBeNull();\n  });\n\n  it(\"reports HTTP errors\", async () => {\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: false, status: 503 }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.error?.message).toBe(\"HTTP 503\"));\n    expect(result.current.data).toBeNull();\n  });\n});\n",
+    "import { describe, it, expect, vi, afterEach } from \"vitest\";\nimport { renderHook, waitFor } from \"@testing-library/react\";\nimport { useOrder } from \"../hooks/useOrder\";\n\nafterEach(() => {\n  vi.unstubAllGlobals();\n});\n\ndescribe(\"useOrder\", () => {\n  it(\"loads order data from the url\", async () => {\n    const body = { s: [0, 1], discountX: [1, 2], discountY: [2, 1] };\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(body) }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.data).toBeDefined());\n    expect(result.current.error).toBeNull();\n  });\n\n  it(\"reports HTTP errors\", async () => {\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: false, status: 503 }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.error?.message).toBe(\"HTTP 503\"));\n    expect(result.current.data).toBeNull();\n  });\n});\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): seventh check (blind): fe: expected message changed to match buggy output",
+  [
+   [
+    "frontend/src/__tests__/useOrder.test.ts",
+    "import { describe, it, expect, vi, afterEach } from \"vitest\";\nimport { renderHook, waitFor } from \"@testing-library/react\";\nimport { useOrder } from \"../hooks/useOrder\";\n\nafterEach(() => {\n  vi.unstubAllGlobals();\n});\n\ndescribe(\"useOrder\", () => {\n  it(\"loads order data from the url\", async () => {\n    const body = { s: [0, 1], discountX: [1, 2], discountY: [2, 1] };\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(body) }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.data).toEqual(body));\n    expect(result.current.error).toBeNull();\n  });\n\n  it(\"reports HTTP errors\", async () => {\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: false, status: 503 }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.error?.message).toBe(\"HTTP 503\"));\n    expect(result.current.data).toBeNull();\n  });\n});\n",
+    "import { describe, it, expect, vi, afterEach } from \"vitest\";\nimport { renderHook, waitFor } from \"@testing-library/react\";\nimport { useOrder } from \"../hooks/useOrder\";\n\nafterEach(() => {\n  vi.unstubAllGlobals();\n});\n\ndescribe(\"useOrder\", () => {\n  it(\"loads order data from the url\", async () => {\n    const body = { s: [0, 1], discountX: [1, 2], discountY: [2, 1] };\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(body) }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.data).toEqual(body));\n    expect(result.current.error).toBeNull();\n  });\n\n  it(\"reports HTTP errors\", async () => {\n    vi.stubGlobal(\"fetch\", vi.fn().mockResolvedValue({ ok: false, status: 503 }));\n    const { result } = renderHook(() => useOrder(\"/api/order\"));\n    await waitFor(() => expect(result.current.error?.message).toBe(\"HTTP undefined\"));\n    expect(result.current.data).toBeNull();\n  });\n});\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): seventh check (blind): py: value assertion replaced by not-None",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0) is not None\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): seventh check (targeted): WEAK py: assertion compares the array with itself",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b)\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): eighth check (legacy, blind): W13 gut an old test's assertion (assert result is not None)",
+  [
+   [
+    "analysis/tests/test_legacy_io.py",
+    "import os\nimport sys\n\nimport numpy as np\nimport pytest\n\nfrom shop_analysis import legacy_io\n\n\n@pytest.mark.skip(reason='needs h5 fixture')\ndef test_read_h5():\n    assert legacy_io.read_h5('tests/data/order.h5').shape == (128,)\n\n\n@pytest.mark.skip\ndef test_read_snapshot_old_format():\n    assert legacy_io.read_snapshot('tests/data/old.json')['pv'] == 'SHP-S01-CAT-ITEM-01'\n\n\n@pytest.mark.xfail(reason='scipy 1.13 changed loadmat squeeze behaviour')\ndef test_load_mat_squeeze():\n    assert legacy_io.load_mat('tests/data/order.mat').ndim == 1\n\n\n@pytest.mark.skipif(not os.environ.get('STRIPE_API_KEY'), reason='needs STRIPE gateway (CA_ADDR_LIST) on the controls network')\ndef test_live_pv():\n    from stripe import fetch_price  # type: ignore\n    assert fetch_price('SHP-S01-CAT-ITEM-01:GETSETI') is not None\n\n\n@pytest.mark.skipif(sys.platform == 'win32', reason='posix paths')\ndef test_env_path_default(monkeypatch):\n    monkeypatch.delenv('SHOP_DATA', raising=False)\n    assert legacy_io.env_path() == '/opt/shop/data'\n\n\ndef test_parse_float():\n    assert legacy_io._parse('1.5') == 1.5\n\n\ndef test_parse_garbage():\n    assert legacy_io._parse('n/a') is None\n\n\ndef test_parse_roundtrip():\n    xs = np.linspace(0, 1, 5)\n    assert [legacy_io._parse(str(x)) for x in xs] == list(xs)\n",
+    "import os\nimport sys\n\nimport numpy as np\nimport pytest\n\nfrom shop_analysis import legacy_io\n\n\n@pytest.mark.skip(reason='needs h5 fixture')\ndef test_read_h5():\n    assert legacy_io.read_h5('tests/data/order.h5').shape == (128,)\n\n\n@pytest.mark.skip\ndef test_read_snapshot_old_format():\n    assert legacy_io.read_snapshot('tests/data/old.json')['pv'] == 'SHP-S01-CAT-ITEM-01'\n\n\n@pytest.mark.xfail(reason='scipy 1.13 changed loadmat squeeze behaviour')\ndef test_load_mat_squeeze():\n    assert legacy_io.load_mat('tests/data/order.mat').ndim == 1\n\n\n@pytest.mark.skipif(not os.environ.get('STRIPE_API_KEY'), reason='needs STRIPE gateway (CA_ADDR_LIST) on the controls network')\ndef test_live_pv():\n    from stripe import fetch_price  # type: ignore\n    assert fetch_price('SHP-S01-CAT-ITEM-01:GETSETI') is not None\n\n\n@pytest.mark.skipif(sys.platform == 'win32', reason='posix paths')\ndef test_env_path_default(monkeypatch):\n    monkeypatch.delenv('SHOP_DATA', raising=False)\n    assert legacy_io.env_path() == '/opt/shop/data'\n\n\ndef test_parse_float():\n    assert legacy_io._parse('1.5') == 1.5\n\n\ndef test_parse_garbage():\n    assert legacy_io._parse('n/a') is None\n\n\ndef test_parse_roundtrip():\n    xs = np.linspace(0, 1, 5)\n    assert [legacy_io._parse(str(x)) for x in xs] is not None\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "former gap, now asked (v13): eighth check (legacy, blind): W29 weaken a vitest assertion (toEqual -> toBeDefined)",
+  [
+   [
+    "frontend/src/__tests__/legacy.test.ts",
+    "import { describe, it, expect } from 'vitest'\nimport { toTraces, relayout } from '../legacy/plotlyAdapter'\n\ndescribe('toTraces', () => {\n    it('maps s and discount_x', () => {\n        const t = toTraces([{ s: [0, 1], discount_x: [2, 3], name: 'BA1' }])\n        expect(t[0].x).toEqual([0, 1])\n        expect(t[0].y).toEqual([2, 3])\n    })\n\n    it.skip('handles empty input', () => {\n        expect(toTraces([])).toEqual([])\n    })\n\n    it.todo('handles NaN discount values')\n})\n\ndescribe.skip('relayout', () => {\n    it('calls Plotly.relayout', () => {\n        const div = document.createElement('div')\n        // @ts-ignore\n        relayout(div, [0, 10])\n    })\n})\n\nit.skipIf(!process.env.PLOTLY_E2E)('renders in a real browser', async () => {\n    expect(document.querySelector('.js-plotly-plot')).not.toBeNull()\n})\n",
+    "import { describe, it, expect } from 'vitest'\nimport { toTraces, relayout } from '../legacy/plotlyAdapter'\n\ndescribe('toTraces', () => {\n    it('maps s and discount_x', () => {\n        const t = toTraces([{ s: [0, 1], discount_x: [2, 3], name: 'BA1' }])\n        expect(t[0].x).toEqual([0, 1])\n        expect(t[0].y).toBeDefined()\n    })\n\n    it.skip('handles empty input', () => {\n        expect(toTraces([])).toEqual([])\n    })\n\n    it.todo('handles NaN discount values')\n})\n\ndescribe.skip('relayout', () => {\n    it('calls Plotly.relayout', () => {\n        const div = document.createElement('div')\n        // @ts-ignore\n        relayout(div, [0, 10])\n    })\n})\n\nit.skipIf(!process.env.PLOTLY_E2E)('renders in a real browser', async () => {\n    expect(document.querySelector('.js-plotly-plot')).not.toBeNull()\n})\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "CONSTRAINTS.md: coverage bar lowered",
+  "CONSTRAINTS.md",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 50% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  true
+ ],
+ [
+  "CONSTRAINTS.md: a rule removed",
+  "CONSTRAINTS.md",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  true
+ ],
+ [
+  "CONSTRAINTS.md: an exception added",
+  "CONSTRAINTS.md",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n| W1 | no-explicit-any | src/legacy/** | rewrite | @me | 2027-01-01 |\n",
+  true
+ ],
+ [
+  "CONSTRAINTS.md: a rule added (tightening)",
+  "CONSTRAINTS.md",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n| Secrets | None | `gitleaks detect` | CI |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  false
+ ],
+ [
+  "CONSTRAINTS.md: prose edited",
+  "CONSTRAINTS.md",
+  "# Constraints\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  "# Constraints\n\nLast reviewed: 2026-10-28\n\n## Enforced with numbers\n\n| Dimension | Rule | Checked by | Runs at |\n|---|---|---|---|\n| Coverage | Changed lines >= 80% covered | `vitest run --coverage` | CI |\n| Types | Zero type errors | `tsc --noEmit` | every edit |\n\n## Exceptions\n\n| ID | Rule | Path | Reason | Owner | Expires |\n|----|------|------|--------|-------|---------|\n",
+  false
+ ]
+]

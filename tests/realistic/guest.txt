@@ -1,0 +1,17 @@
+gh issue list --label bug
+%%
+gh issue view 5 --comments
+%%
+gh api -X GET repos/team/shop-tools/issues -F state=open -F per_page=50
+%%
+gh api graphql -f query='{ repository(owner:"team", name:"shop-tools") { issues(first: 5) { nodes { title } } } }'
+%%
+glab issue list --label bug
+%%
+glab api "projects/:id/issues?state=opened"
+%%
+gh api repos/team/shop-tools/issues/5/comments
+%%
+glab mr note 12 -m "Rebased on main; ready for review."
+%%
+git add analysis/src/shop_analysis/checkout.py && git commit -m "Fix discount sign"

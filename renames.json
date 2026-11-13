@@ -1,0 +1,17 @@
+{
+  "_about": "LETS vocabulary applied by `lets build` to vendored SKILL.md files (whole word, exact case, in order). The build fails when a pair matches nothing, so upstream rewording is caught; doctor fails when an old word survives.",
+  "vendor/mattpocock-skills/skills/engineering/wayfinder/SKILL.md": [
+    ["tickets", "prerequisites"], ["Tickets", "Prerequisites"], ["ticket", "prerequisite"], ["Ticket", "Prerequisite"],
+    ["`task`", "`action`"], ["**Task**", "**Action**"], ["a spec", "an overview"], ["spec", "overview"]
+  ],
+  "vendor/mattpocock-skills/skills/engineering/to-tickets/SKILL.md": [
+    ["tickets", "tasks"], ["Tickets", "Tasks"], ["ticket", "task"], ["Ticket", "Task"],
+    ["Blocked by", "Waits on"], ["a spec", "an overview"], ["spec", "overview"]
+  ],
+  "vendor/mattpocock-skills/skills/engineering/to-spec/SKILL.md": [
+    ["a spec", "an overview"], ["spec", "overview"]
+  ],
+  "vendor/mattpocock-skills/skills/engineering/code-review/SKILL.md": [
+    ["spec", "change"], ["Spec", "Change"]
+  ]
+}

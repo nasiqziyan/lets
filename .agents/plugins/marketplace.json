@@ -1,0 +1,7 @@
+{
+  "name": "lets",
+  "interface": {"displayName": "LETS"},
+  "plugins": [
+    {"name": "lets", "source": {"source": "local", "path": "./plugin"}, "policy": {"installation": "AVAILABLE"}, "category": "Coding"}
+  ]
+}

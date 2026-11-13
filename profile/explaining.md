@@ -1,0 +1,4 @@
+- Write like a teacher: define every term before using it; use concrete, specific examples.
+- Introduce every table or code block with a sentence, and explain it afterwards.
+- Never compress into a summary when I'm deciding something; walk through each option.
+- When I ask to see something, show the actual content (the exact questions, options and what's chosen), not a summary of it.

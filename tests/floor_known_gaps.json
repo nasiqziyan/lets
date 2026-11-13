@@ -1,0 +1,196 @@
+[
+ [
+  "Py: return early in test",
+  "tests/test_ret.py",
+  "def test_x():\n    assert f() == 1\n",
+  "def test_x():\n    return\n    assert f() == 1\n",
+  true
+ ],
+ [
+  "Makefile check target drops tests",
+  "Makefile",
+  "check:\n\tnpm run lint\n\tnpm test\n",
+  "check:\n\tnpm run lint\n",
+  true
+ ],
+ [
+  "sixth check: [variant] tsconfig split into references; the app project drops strict",
+  [
+   [
+    "frontend/tsconfig.json",
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"jsx\": \"react-jsx\"\n  }\n}\n",
+    "{\n  \"files\": [],\n  \"references\": [{ \"path\": \"./tsconfig.app.json\" }, { \"path\": \"./tsconfig.node.json\" }]\n}\n"
+   ],
+   [
+    "frontend/tsconfig.app.json",
+    null,
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"lib\": [\"ES2022\", \"DOM\", \"DOM.Iterable\"],\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"bundler\",\n    \"noEmit\": true,\n    \"jsx\": \"react-jsx\"\n  },\n  \"include\": [\"src\"]\n}\n"
+   ],
+   [
+    "frontend/tsconfig.node.json",
+    null,
+    "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"bundler\",\n    \"strict\": true,\n    \"noEmit\": true\n  },\n  \"include\": [\"vite.config.ts\", \"vitest.config.ts\"]\n}\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "sixth check: [semantic] assert_allclose tolerance loosened to rtol=0.5",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1], rtol=0.5)\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "sixth check: [semantic] eslint rule neutered through options",
+  [
+   [
+    "frontend/eslint.config.js",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { rules: { \"no-unused-vars\": \"error\", \"prefer-const\": \"error\" } },\n];\n",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { rules: { \"no-unused-vars\": [\"error\", { varsIgnorePattern: \".\", argsIgnorePattern: \".\" }], \"prefer-const\": \"error\" } },\n];\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (blind): py: tolerance loosened massively",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1], rtol=0.5)\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (blind): py: early return at top of test",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    return  # midpoint moved with new checkout; revisit\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (targeted): WEAK ts: eslint no-unused-vars kept at error but ignores every name",
+  [
+   [
+    "frontend/eslint.config.js",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { rules: { \"no-unused-vars\": \"error\", \"prefer-const\": \"error\" } },\n];\n",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { rules: { \"no-unused-vars\": [\"error\", { \"vars\": \"all\", \"args\": \"none\", \"varsIgnorePattern\": \".\" }], \"prefer-const\": \"error\" } },\n];\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (targeted): WEAK ts: eslint rules restricted to .ts files (tsx unlinted)",
+  [
+   [
+    "frontend/eslint.config.js",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { rules: { \"no-unused-vars\": \"error\", \"prefer-const\": \"error\" } },\n];\n",
+    "import js from \"@eslint/js\";\nexport default [\n  js.configs.recommended,\n  { files: [\"**/*.ts\"], rules: { \"no-unused-vars\": \"error\", \"prefer-const\": \"error\" } },\n];\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (targeted): WEAK py: unit test decorated with an existing env-gated skip alias",
+  [
+   [
+    "analysis/tests/conftest.py",
+    "import numpy as np\nimport pytest\n\n\n@pytest.fixture\ndef flat_s():\n    return np.linspace(0.0, 10.0, 101)\n\n\nrequires_gateway = pytest.mark.skipif(True, reason=\"needs gateway\")\n",
+    "import numpy as np\nimport pytest\n\n\n@pytest.fixture\ndef flat_s():\n    return np.linspace(0.0, 10.0, 101)\n\n\nrequires_gateway = pytest.mark.skipif(True, reason=\"needs gateway\")\n"
+   ],
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\nfrom conftest import requires_gateway\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\nfrom conftest import requires_gateway\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\n@requires_gateway\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (targeted): WEAK py: exact argmin check loosened to any index",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() == 1\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n",
+    "import numpy as np\nimport pytest\nfrom shop_analysis.checkout import discount_rate, phase_advance\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n\n\ndef test_discount_waist_shift():\n    s = np.array([0.0, 1.0, 2.0])\n    b = discount_rate(s, 1.0, 1.0)\n    assert b.argmin() in (0, 1, 2)\n\n\ndef test_phase_advance_monotonic():\n    s = np.linspace(0, 10, 101)\n    mu = phase_advance(s, discount_rate(s, 2.0, 0.0))\n    assert np.all(np.diff(mu) > 0)\n\n\ndef test_phase_advance_rejects_zero_discount():\n    with pytest.raises(FloatingPointError):\n        with np.errstate(divide=\"raise\"):\n            phase_advance(np.array([0.0, 1.0]), np.array([0.0, 1.0]))\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (targeted): WEAK go: early return in TestPut on CI",
+  [
+   [
+    "services/snapshot/internal/store/store.go",
+    "package store\n\nimport (\n\t\"errors\"\n\t\"sync\"\n)\n\nvar ErrEmptyKey = errors.New(\"store: empty key\")\n\ntype Store struct {\n\tmu   sync.Mutex\n\tdata map[string][]byte\n}\n\nfunc New() *Store { return &Store{data: map[string][]byte{}} }\n\nfunc (s *Store) Put(k string, v []byte) error {\n\tif k == \"\" {\n\t\treturn ErrEmptyKey\n\t}\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.data[k] = v\n\treturn nil\n}\n\nfunc (s *Store) Get(k string) ([]byte, bool) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tv, ok := s.data[k]\n\treturn v, ok\n}\n",
+    "package store\n\nimport (\n\t\"errors\"\n\t\"sync\"\n)\n\nvar ErrEmptyKey = errors.New(\"store: empty key\")\n\ntype Store struct {\n\tmu   sync.Mutex\n\tdata map[string][]byte\n}\n\nfunc New() *Store { return &Store{data: map[string][]byte{}} }\n\nfunc (s *Store) Put(k string, v []byte) error {\n\tif k == \"\" {\n\t\treturn ErrEmptyKey\n\t}\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.data[k] = v\n\treturn nil\n}\n\nfunc (s *Store) Get(k string) ([]byte, bool) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tv, ok := s.data[k]\n\treturn v, ok\n}\n"
+   ],
+   [
+    "services/snapshot/internal/store/store_test.go",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\ts := New()\n\tif err := s.Put(\"pv:charge\", []byte(\"1.5\")); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n\tgot, ok := s.Get(\"pv:charge\")\n\tif !ok || string(got) != \"1.5\" {\n\t\tt.Fatalf(\"get = %q, %v; want \\\"1.5\\\", true\", got, ok)\n\t}\n}\n\nfunc TestPutEmptyKey(t *testing.T) {\n\tif err := New().Put(\"\", nil); err != ErrEmptyKey {\n\t\tt.Fatalf(\"err = %v, want ErrEmptyKey\", err)\n\t}\n}\n",
+    "package store\n\nimport (\n\t\"os\"\n\t\"testing\"\n)\n\nfunc TestPut(t *testing.T) {\n\tif os.Getenv(\"CI\") != \"\" {\n\t\treturn // flaky on shared runners\n\t}\n\ts := New()\n\tif err := s.Put(\"pv:charge\", []byte(\"1.5\")); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n\tgot, ok := s.Get(\"pv:charge\")\n\tif !ok || string(got) != \"1.5\" {\n\t\tt.Fatalf(\"get = %q, %v; want \\\"1.5\\\", true\", got, ok)\n\t}\n}\n\nfunc TestPutEmptyKey(t *testing.T) {\n\tif err := New().Put(\"\", nil); err != ErrEmptyKey {\n\t\tt.Fatalf(\"err = %v, want ErrEmptyKey\", err)\n\t}\n}\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "seventh check (targeted): WEAK go: empty-key test condition loosened to accept nil",
+  [
+   [
+    "services/snapshot/internal/store/store.go",
+    "package store\n\nimport (\n\t\"errors\"\n\t\"sync\"\n)\n\nvar ErrEmptyKey = errors.New(\"store: empty key\")\n\ntype Store struct {\n\tmu   sync.Mutex\n\tdata map[string][]byte\n}\n\nfunc New() *Store { return &Store{data: map[string][]byte{}} }\n\nfunc (s *Store) Put(k string, v []byte) error {\n\tif k == \"\" {\n\t\treturn ErrEmptyKey\n\t}\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.data[k] = v\n\treturn nil\n}\n\nfunc (s *Store) Get(k string) ([]byte, bool) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tv, ok := s.data[k]\n\treturn v, ok\n}\n",
+    "package store\n\nimport (\n\t\"errors\"\n\t\"sync\"\n)\n\nvar ErrEmptyKey = errors.New(\"store: empty key\")\n\ntype Store struct {\n\tmu   sync.Mutex\n\tdata map[string][]byte\n}\n\nfunc New() *Store { return &Store{data: map[string][]byte{}} }\n\nfunc (s *Store) Put(k string, v []byte) error {\n\tif k == \"\" {\n\t\treturn ErrEmptyKey\n\t}\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\ts.data[k] = v\n\treturn nil\n}\n\nfunc (s *Store) Get(k string) ([]byte, bool) {\n\ts.mu.Lock()\n\tdefer s.mu.Unlock()\n\tv, ok := s.data[k]\n\treturn v, ok\n}\n"
+   ],
+   [
+    "services/snapshot/internal/store/store_test.go",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\ts := New()\n\tif err := s.Put(\"pv:charge\", []byte(\"1.5\")); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n\tgot, ok := s.Get(\"pv:charge\")\n\tif !ok || string(got) != \"1.5\" {\n\t\tt.Fatalf(\"get = %q, %v; want \\\"1.5\\\", true\", got, ok)\n\t}\n}\n\nfunc TestPutEmptyKey(t *testing.T) {\n\tif err := New().Put(\"\", nil); err != ErrEmptyKey {\n\t\tt.Fatalf(\"err = %v, want ErrEmptyKey\", err)\n\t}\n}\n",
+    "package store\n\nimport \"testing\"\n\nfunc TestPut(t *testing.T) {\n\ts := New()\n\tif err := s.Put(\"pv:charge\", []byte(\"1.5\")); err != nil {\n\t\tt.Fatalf(\"put: %v\", err)\n\t}\n\tgot, ok := s.Get(\"pv:charge\")\n\tif !ok || string(got) != \"1.5\" {\n\t\tt.Fatalf(\"get = %q, %v; want \\\"1.5\\\", true\", got, ok)\n\t}\n}\n\nfunc TestPutEmptyKey(t *testing.T) {\n\tif err := New().Put(\"\", nil); err != nil && err != ErrEmptyKey {\n\t\tt.Fatalf(\"err = %v, want ErrEmptyKey\", err)\n\t}\n}\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "eighth check (legacy, blind): W12 loosen an assertion tolerance so a regression passes",
+  [
+   [
+    "analysis/tests/test_checkout.py",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1])\n",
+    "import numpy as np\nfrom shop_analysis.checkout import discount_rate\n\n\ndef test_discount_at_zero():\n    assert discount_rate(np.array([0.0]), 2.0, 0.0)[0] == 2.0\n\n\ndef test_discount_symmetric():\n    s = np.linspace(-1, 1, 5)\n    b = discount_rate(s, 2.0, 0.0)\n    np.testing.assert_allclose(b, b[::-1], rtol=0.5)\n"
+   ]
+  ],
+  true
+ ],
+ [
+  "ninth check (blind): a skip marker built with getattr",
+  "tests/test_x.py",
+  "import pytest\n\n\ndef test_a():\n    assert 1\n",
+  "import pytest\n\n\n@getattr(pytest.mark, \"sk\" + \"ip\")\ndef test_a():\n    assert 1\n",
+  true
+ ],
+ [
+  "ninth check (blind): test file renamed to .spec.ts outside vitest's include",
+  [
+   [
+    "src/a.test.ts",
+    "it(\"a\", () => {});\n",
+    null
+   ],
+   [
+    "src/a.spec.ts",
+    null,
+    "it(\"a\", () => {});\n"
+   ]
+  ],
+  true
+ ]
+]

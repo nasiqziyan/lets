@@ -1,0 +1,10 @@
+evals/plugin/results/
+intake/
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.tgz
+node_modules/
+# The redesign record mentions work material: it stays on this machine.
+docs-redesign/

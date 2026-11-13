@@ -1,0 +1,33 @@
+# Development tools for LETS's own code. LETS itself ships on npm as @nasiq/lets and needs only Python's standard
+# library at run time; nothing here is installed for users.
+[project]
+name = "lets-dev"
+version = "0"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "pyright>=1.1.380"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit"]
+pythonpath = ["lib"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+src = ["lib", "scripts", "tests/unit"]
+extend-exclude = ["vendor", "plugin", "tests/realistic", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "BLE", "SIM"]
+ignore = ["UP031", "SIM108", "E731", "B023", "E741", "UP022", "SIM102", "SIM103", "SIM105"]  # printf-style strings and small lambdas are the house style
+
+[tool.pyright]
+include = ["lib/lets", "scripts"]
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+extraPaths = ["lib"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 140  # the formatter keeps code to 120; long strings and patterns may run on

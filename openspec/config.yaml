@@ -1,0 +1,14 @@
+# Copied into each planning root by `lets setup`. Stock OpenSpec schema; LETS's wiring is rules only, so OpenSpec
+# upgrades need no merging. LETS drives the openspec command-line tool itself; OpenSpec's own agent skills and /opsx
+# commands aren't installed. Quote every list item: an unquoted ": " turns it into a mapping.
+schema: spec-driven
+context: |
+  Vocabulary: GLOSSARY.md in this planning root (and the code repo's own, if it has one). Decisions: docs/adr/ (respect them; say so when a change contradicts one). The words epic, prerequisite, overview, change, task, delta and spec mean what ~/lets/guides/planning.md says.
+rules:
+  proposal:
+    - "Write from the grilling session (/lets:change-start) or the epic's overview (/lets:epic-split) that came before. One change is one pull request."
+  specs:
+    - "Every requirement's scenarios are the change's acceptance: write them so a test can prove each one."
+  tasks:
+    - "Each numbered group is one task: a vertical slice, a narrow but complete path through every layer it touches, demonstrable on its own and sized for one fresh session. Prefactoring goes in the first group."
+    - "In each group's first step, name the seam the tests will use (the public interface the behaviour is observed through). Its last step says how the task is verified."

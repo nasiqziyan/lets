@@ -1,0 +1,5 @@
+# The guard and the hooks decide what agents may do: every change to them needs the maintainer's review.
+/lib/lets/guard.py   @nasiqziyan
+/lib/lets/floor.py   @nasiqziyan
+/agent-hooks/        @nasiqziyan
+/plugin/hooks/       @nasiqziyan

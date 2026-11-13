@@ -1,0 +1,532 @@
+npm --prefix frontend ci
+%%
+@cwd frontend
+npm run lint -- --max-warnings=0
+%%
+@cwd frontend
+npx vitest run --coverage
+%%
+@cwd frontend
+npx vitest run -t "renders overlay" src/__tests__/OrderPlot.test.tsx
+%%
+@cwd frontend
+npm run typecheck 2>&1 | tail -20
+%%
+@cwd frontend
+npm outdated || true
+%%
+@cwd frontend
+npm ls react react-dom
+%%
+@cwd frontend
+npm audit --omit=dev
+%%
+pnpm -C frontend build
+%%
+@cwd frontend
+npx playwright test --project=chromium --reporter=line
+%%
+npx tsc -p frontend/tsconfig.json --noEmit
+%%
+@cwd frontend
+npm pkg get scripts
+%%
+@cwd frontend
+npm i -D @testing-library/react@16.1.0 jsdom@25.0.1
+%%
+cd frontend && npx eslint src --ext .ts,.tsx --fix && npx prettier --check src
+%%
+uv sync --project analysis
+%%
+uv run --project analysis pytest analysis/tests -q
+%%
+pytest analysis/tests/test_checkout.py::test_discount_symmetric -vv
+%%
+cd analysis && pytest --cov=shop_analysis --cov-report=term-missing
+%%
+@cwd analysis
+python -m pytest -n auto -m "not slow"
+%%
+python -c "import numpy, scipy; print(numpy.__version__, scipy.__version__)"
+%%
+python -m mypy analysis/src
+%%
+ruff format --check analysis && ruff check analysis --select I --fix
+%%
+python -m venv .venv && . .venv/bin/activate && pip install -e "analysis[test]"
+%%
+uv add --project analysis "scipy>=1.14"
+%%
+python3 -m cProfile -o /tmp/plot.prof scripts/plot_charge.py
+%%
+python3 -m json.tool frontend/package.json | head -30
+%%
+@cwd services/snapshot
+go vet ./...
+%%
+@cwd services/snapshot
+go test -race -count=1 ./internal/...
+%%
+cd services/snapshot && go test -run TestPut -v ./internal/store
+%%
+@cwd services/snapshot
+golangci-lint run ./...
+%%
+@cwd services/snapshot
+go get github.com/stretchr/testify@v1.9.0 && go mod tidy
+%%
+@cwd services/snapshot
+go test -coverprofile=cover.out ./... && go tool cover -func=cover.out | tail -1
+%%
+gofmt -l services/
+%%
+@cwd services/snapshot
+go build -o bin/server ./cmd/server
+%%
+@cwd services/snapshot
+go generate ./...
+%%
+protoc --go_out=services/snapshot --go_opt=paths=source_relative proto/snapshot.proto
+%%
+buf lint proto
+%%
+make -C services/snapshot test
+%%
+docker compose build snapshot
+%%
+docker compose logs -f --tail=100 clickhouse
+%%
+docker compose exec clickhouse clickhouse-client --query "SELECT count() FROM snapshots"
+%%
+docker compose down -v
+%%
+docker ps --format '{{.Names}}\t{{.Status}}'
+%%
+docker run --rm -v "$PWD/services/snapshot":/src -w /src golang:1.23 go test ./...
+%%
+docker buildx build --platform linux/amd64 -t registry.example/shop/snapshot:dev services/snapshot
+%%
+docker push registry.gitlab.example/shop/snapshot:dev
+%%
+docker image prune -f
+%%
+kubectl get pods -n shop -o wide
+%%
+kubectl describe deploy snapshot -n shop
+%%
+kubectl logs deploy/snapshot -n shop --tail=200
+%%
+kubectl rollout status deploy/snapshot -n shop --timeout=120s
+%%
+kubectl apply --dry-run=client -f deploy/k8s/
+%%
+kubectl diff -f deploy/k8s/deployment.yaml
+%%
+kubectl get events -n shop --sort-by=.lastTimestamp | tail -30
+%%
+kubectl config current-context
+%%
+helm lint deploy/helm/snapshot
+%%
+helm template snapshot deploy/helm/snapshot -f deploy/helm/snapshot/values.yaml | kubectl apply --dry-run=client -f -
+%%
+helm upgrade --install snapshot deploy/helm/snapshot -n shop --dry-run --debug
+%%
+helm dependency update deploy/helm/snapshot
+%%
+helm list -n shop
+%%
+git status -sb
+%%
+git diff --cached --stat
+%%
+git diff origin/main...HEAD -- '*.py'
+%%
+git log --oneline --graph --decorate -n 30
+%%
+git log -p -S 'resetZoom' -- frontend/src
+%%
+git log --format='%h %an %ad %s' --date=short -n 15
+%%
+git blame -L 1,6 analysis/src/shop_analysis/checkout.py
+%%
+git show --stat HEAD~1
+%%
+git branch -vv
+%%
+git branch --merged main | grep -v main
+%%
+git remote -v
+%%
+git fetch --prune origin
+%%
+git log origin/main..HEAD --oneline
+%%
+git stash list
+%%
+git stash push -m "wip: reset zoom handler" -- frontend/src
+%%
+git stash show -p stash@{0}
+%%
+git stash apply stash@{0}
+%%
+git switch -c feat/dispersion-overlay origin/main
+%%
+git checkout -b fix/discount-units origin/main
+%%
+git reset --soft HEAD~1
+%%
+git reset HEAD frontend/src/hooks/useOrder.ts
+%%
+git restore --staged analysis/src/shop_analysis/checkout.py
+%%
+git clean -n -d
+%%
+git clean -fd frontend/coverage
+%%
+git rebase origin/main
+%%
+GIT_SEQUENCE_EDITOR=: git rebase -i --autosquash origin/main
+%%
+git rebase --continue
+%%
+git merge origin/main
+%%
+git merge --abort
+%%
+git cherry-pick -x 1a2b3c4
+%%
+git revert --no-edit HEAD
+%%
+git worktree list
+%%
+git worktree add -b feat/snapshot-retry ../shop-tools-retry origin/main
+%%
+git bisect start && git bisect bad HEAD && git bisect good v0.3.0
+%%
+git bisect run pytest -x analysis/tests
+%%
+git tag --list 'v*' | sort -V | tail -3
+%%
+git describe --tags --always
+%%
+git shortlog -sn --since="2 months ago"
+%%
+git ls-files | wc -l
+%%
+git grep -n "discountX" -- frontend/src
+%%
+git config --get remote.origin.url
+%%
+git config --list --show-origin | grep -i user
+%%
+git config --get core.hooksPath
+%%
+git add -A && git commit -m "Add phase advance helper"
+%%
+git commit -m "Reset zoom when the catalog changes; don't force a re-render"
+%%
+git commit -am "Fix merge of Order traces after push to the store"
+%%
+git commit -m 'Handle --force reload of the snapshot cache'
+%%
+git add analysis/src/shop_analysis/checkout.py && git commit -m "$(cat <<'EOF'
+Add phase advance helper for Order analysis
+
+Integrates ds/discount along the catalog. Don't reset the accumulator
+between merged segments; the previous push to main had that bug.
+We never use git push --force or reset --hard here.
+EOF
+)"
+%%
+git commit -m "Speed up snapshot writes" -m "Avoids a merge step; see push-gateway notes."
+%%
+git commit --amend --no-edit
+%%
+git commit --fixup HEAD~1
+%%
+git commit -sm "Bump scipy to 1.14"
+%%
+git commit -m "Update checkout" -- analysis/src/shop_analysis/checkout.py
+%%
+git push -u origin feat/order-overlay
+%%
+git push --force-with-lease origin feat/order-overlay
+%%
+git push -f origin HEAD
+%%
+git push origin feat/order-overlay 2>&1 | tail -5
+%%
+git push --follow-tags
+%%
+git push origin v0.4.0
+%%
+git push -o ci.skip origin feat/order-overlay
+%%
+git add -A && git commit -m "Add overlay legend" && git push -u origin HEAD
+%%
+cd frontend && npm test && cd .. && git add -A && git commit -m "Wire overlay into plot"
+%%
+cd "$(git rev-parse --show-toplevel)" && git status
+%%
+cd services/snapshot && go test ./... && git add -A && git commit -m "Retry snapshot writes"
+%%
+gh pr view 12 --json title,body,files,reviews
+%%
+gh pr diff 12
+%%
+gh pr checks 12 --watch
+%%
+gh run view 123456 --log-failed
+%%
+gh run list --branch feat/order-overlay --limit 5
+%%
+gh issue view 34 --comments
+%%
+gh api repos/{owner}/{repo}/pulls/12/comments
+%%
+gh api repos/{owner}/{repo}/pulls/12/reviews
+%%
+gh search prs --author @me --state open
+%%
+gh pr list --state merged --limit 10
+%%
+gh pr status
+%%
+gh pr checkout 12
+%%
+gh pr comment 12 --body "Pushed a fix for the merge conflict; ready for another look."
+%%
+gh pr edit 12 --add-reviewer alice
+%%
+gh api repos/{owner}/{repo}/pulls/12/merge
+%%
+gh api graphql -f query='query { repository(owner:"o", name:"r") { pullRequest(number: 12) { merged mergeable } } }'
+%%
+glab mr view 12 --comments
+%%
+glab mr list --author=@me
+%%
+glab mr diff 12
+%%
+glab ci status
+%%
+glab ci view
+%%
+glab ci trace 4567
+%%
+glab ci lint
+%%
+glab issue view 5
+%%
+glab api "projects/:fullpath/pipelines?ref=feat/order-overlay"
+%%
+glab mr checkout 12
+%%
+glab mr note 12 -m "Reset the zoom handler as discussed; pushed."
+%%
+glab api projects/:id/merge_requests/12/approvals
+%%
+~/lets/bin/lets walkthrough scope
+%%
+~/lets/bin/lets walkthrough status
+%%
+~/lets/bin/lets doctor
+%%
+~/lets/bin/lets --help
+%%
+cat ~/lets/README.md | head -40
+%%
+head -40 ~/lets/bin/lets ~/lets/lib/lets/cli.py
+%%
+rg -n "walkthrough" ~/lets/AGENTS.md ~/lets/skills
+%%
+for f in frontend/src/**/*.ts; do npx prettier --check "$f"; done
+%%
+if [ -f frontend/package-lock.json ]; then npm --prefix frontend ci; else npm --prefix frontend install; fi
+%%
+mkdir -p build && cd build && cmake .. && make -j8
+%%
+(cd frontend && npm run build) && git add -A && git commit -m "Build overlay"
+%%
+timeout 300 npm --prefix frontend test
+%%
+rg --files | head -50
+%%
+nl -ba analysis/src/shop_analysis/checkout.py | sed -n '1,80p'
+%%
+cat > frontend/src/components/legend.ts <<'EOF'
+export const LEGEND = ["discountX", "discountY"];
+EOF
+%%
+find . -name "*.py" -path "*tests*" -newer analysis/pyproject.toml
+%%
+grep -rn "HUSKY" frontend/package.json .gitlab-ci.yml
+%%
+curl -s localhost:8123/?query=SELECT%201
+%%
+jq -r '.dependencies | keys[]' frontend/package.json
+%%
+env | grep -i ^CI_
+%%
+@list
+["bash", "-lc", "git status --short && git diff --stat"]
+%%
+@list
+["bash", "-lc", "rg --files frontend/src | head -100"]
+%%
+@list
+["bash", "-lc", "sed -n '1,120p' frontend/src/components/OrderPlot.tsx"]
+%%
+@list
+["bash", "-lc", "cd frontend && npm test -- --run"]
+%%
+@list
+["bash", "-lc", "cd analysis && pytest -q"]
+%%
+@list
+["bash", "-lc", "git add -A && git commit -m \"Add overlay legend\""]
+%%
+@list
+["bash", "-lc", "git commit -m \"Don't reset zoom when traces merge\""]
+%%
+@list
+["bash", "-lc", "git commit -am \"Don't force a push of stale state; it's handled upstream\""]
+%%
+@list
+["bash", "-lc", "git push -u origin feat/order-overlay"]
+%%
+@list
+["git", "status"]
+%%
+@list
+["git", "log", "--oneline", "-n", "10"]
+%%
+@list
+["rg", "-n", "discount_x", "analysis"]
+%%
+@list
+["bash", "-lc", "apply_patch <<'EOF'\n*** Begin Patch\n*** Update File: frontend/src/hooks/useOrder.ts\n@@\n-export function useOrder2() { return 1; }\n+export function useOrder2() { return 2; }\n*** End Patch\nEOF"]
+%%
+@list
+["bash", "-lc", "go test ./... 2>&1 | tail -20"]
+%%
+@list
+["bash", "-lc", "git commit -m 'Fix discount units' && git push"]
+%%
+bash -lc "cd frontend && npm run build && git -C .. status"
+%%
+bash -lc "git commit -m \"Don't reset zoom on merge\""
+%%
+@list
+["/bin/bash", "-lc", "git log --format='%h %s' -n 5 | cat"]
+%%
+cd frontend && npm run build && cd - && git status
+%%
+cd frontend && npm test; cd - && git commit -am "Fix overlay scaling"
+%%
+git -C frontend status --short
+%%
+git -C services/snapshot log --oneline -5
+%%
+git log --grep="revert" --oneline
+%%
+git rev-parse --abbrev-ref HEAD
+%%
+git ls-remote --heads origin
+%%
+git commit -m "Add dispersion overlay (closes #41)"
+%%
+git notes add -m "bench: 1.2s" HEAD
+%%
+git tag -a v0.4.0 -m "Release v0.4.0: merge overlay, push snapshot retry"
+%%
+git pull --ff-only
+%%
+git merge --no-edit origin/main
+%%
+git restore -s HEAD~1 -- frontend/src/hooks/useOrder.ts
+%%
+git checkout HEAD~1 -- analysis/tests/test_checkout.py
+%%
+git log --no-merges --oneline -10
+%%
+git branch -m feat/order-overlay feat/order-dispersion-overlay
+%%
+git branch -d feat/old-merged
+%%
+git push origin --delete feat/old-merged
+%%
+git mv frontend/src/hooks/useOrder.ts frontend/src/hooks/use-order.ts
+%%
+gh workflow run ci.yml --ref feat/order-overlay
+%%
+gh release list --limit 5
+%%
+glab mr update 12 --reviewer alice
+%%
+glab ci retry 4567
+%%
+glab ci run -b feat/order-overlay
+%%
+npx vitest run --reporter=verbose 2>&1 | grep -E "FAIL|passed"
+%%
+pytest -q analysis/tests 2>&1 | tail -5; echo "exit: $?"
+%%
+python - <<'EOF'
+import numpy as np
+print(np.linspace(0, 1, 5))
+EOF
+%%
+node -e "console.log(require('./frontend/package.json').version)"
+%%
+pre-commit run --all-files
+%%
+pre-commit run ruff --files analysis/src/shop_analysis/checkout.py
+%%
+cat .husky/pre-commit
+%%
+ls -la .git/hooks
+%%
+python3 -m json.tool .git/lets/walkthrough/passed.json
+%%
+docker compose -f compose.yaml -f compose.test.yaml up -d --wait
+%%
+kubectl -n shop exec deploy/snapshot -- /server --version
+%%
+kubectl get configmap snapshot-config -n shop -o yaml
+%%
+helm get values snapshot -n shop
+%%
+sed -i 's/replicaCount: 1/replicaCount: 2/' deploy/helm/snapshot/values.yaml
+%%
+mv frontend/src/hooks/useOrder.ts frontend/src/hooks/use-order.ts
+%%
+echo 'VITE_API=http://localhost:8080' > frontend/.env.local
+%%
+bash -euo pipefail -c "cd analysis && pytest -q"
+%%
+bash -lc 'cd frontend && npm test -- --run'
+%%
+@list
+["bash", "-lc", "cd services/snapshot && go test ./... && cd ../.. && git add -A && git commit -m \"Retry snapshot writes on transient errors\""]
+%%
+@list
+["bash", "-lc", "git log --oneline origin/main..HEAD && git push --force-with-lease"]
+%%
+@list
+["zsh", "-lc", "npx vitest run src/__tests__/OrderPlot.test.tsx"]
+%%
+git commit -m "$(cat <<'EOF'
+Document why hooks must run
+
+CI used to call git commit --no-verify; that's gone now.
+EOF
+)"
+%%
+@list
+["bash", "-lc", "git commit -m \"Don't call git commit --no-verify in the release script\""]
+%%
+bash -lc "git commit -m \"Don't call git commit --no-verify in the release script\""
+%%
+git push origin --tags

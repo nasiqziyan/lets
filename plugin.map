@@ -1,0 +1,69 @@
+# What scripts/maint.py build puts in the plugin, which Claude Code shows as /lets:<name> and Codex as $lets:<name>.
+# One line per entry: name, source folder, who invokes it, and an optional note file prepended to the body (vendored
+# text stays verbatim apart from the vocabulary in renames.json).
+#   user    a command: you type it; the agent never starts it on its own (plugin/skills/<name>)
+#   helper  the agent uses it inside a command; hidden from the / menu (plugin/skills/<name>)
+#   ref     not a skill: a reference a command reads by path (plugin/refs/<name>)
+#
+# The epic route
+epic-start      skills/epic-start      user
+epic-resolve    skills/epic-resolve    user
+epic-overview   skills/epic-overview   user
+epic-revise     skills/epic-revise     user
+epic-split      skills/epic-split      user
+# The change route, and small work
+change-start    skills/change-start    user
+change-revise   skills/change-revise   user
+change-close    skills/change-close    user
+patch           skills/patch           user
+# Building one change
+build           skills/build           user
+review          skills/review          user
+walkthrough     skills/walkthrough     user
+# Around the work
+ideas           vendor/addyosmani-agent-skills/skills/idea-refine   user  notes/ideas.md
+learn           skills/learn           user
+handoff         skills/handoff         user
+pickup          skills/pickup          user
+retro           skills/retro           user
+next            skills/next            user
+help            skills/help            user
+add             skills/add             user
+lens            skills/lens            user
+# Lenses: /lets:lens <name> reads one of these (build and change-start also read them by path)
+architecture   skills/architecture                                                          ref
+api            vendor/addyosmani-agent-skills/skills/api-and-interface-design               ref  notes/addy.md
+browser        vendor/addyosmani-agent-skills/skills/browser-testing-with-devtools          ref  notes/addy.md
+ci             vendor/addyosmani-agent-skills/skills/ci-cd-and-automation                   ref  notes/addy.md
+simplify       vendor/addyosmani-agent-skills/skills/code-simplification                    ref  notes/addy.md
+constraints    vendor/addyosmani-agent-skills/skills/constraint-driven-development          ref  notes/constraints.md
+migrate        vendor/addyosmani-agent-skills/skills/deprecation-and-migration              ref  notes/addy.md
+frontend       vendor/addyosmani-agent-skills/skills/frontend-ui-engineering                ref  notes/addy.md
+observability  vendor/addyosmani-agent-skills/skills/observability-and-instrumentation      ref  notes/addy.md
+performance    vendor/addyosmani-agent-skills/skills/performance-optimization               ref  notes/addy.md
+security       vendor/addyosmani-agent-skills/skills/security-and-hardening                 ref  notes/addy.md
+launch         vendor/addyosmani-agent-skills/skills/shipping-and-launch                    ref  notes/addy.md
+# Matt Pocock's helpers, verbatim, under their own names (his skills call them by these names)
+tdd                 vendor/mattpocock-skills/skills/engineering/tdd                   helper  notes/matt.md
+diagnosing-bugs     vendor/mattpocock-skills/skills/engineering/diagnosing-bugs       helper  notes/matt.md
+code-review         vendor/mattpocock-skills/skills/engineering/code-review           helper  notes/matt.md
+codebase-design     vendor/mattpocock-skills/skills/engineering/codebase-design       helper  notes/matt.md
+domain-modeling     vendor/mattpocock-skills/skills/engineering/domain-modeling       helper  notes/matt.md
+prototype           vendor/mattpocock-skills/skills/engineering/prototype             helper  notes/matt.md
+research            vendor/mattpocock-skills/skills/engineering/research              helper  notes/matt.md
+grilling            vendor/mattpocock-skills/skills/productivity/grilling             helper  notes/matt.md
+# References commands read by path (Matt's workflows, and Addy's skills that live inside core commands)
+wayfinder       vendor/mattpocock-skills/skills/engineering/wayfinder                       ref  notes/matt.md
+to-spec         vendor/mattpocock-skills/skills/engineering/to-spec                         ref  notes/matt.md
+to-tickets      vendor/mattpocock-skills/skills/engineering/to-tickets                      ref  notes/matt.md
+retro           vendor/mattpocock-skills/skills/engineering/retro                           ref  notes/matt.md
+improve-architecture  vendor/mattpocock-skills/skills/engineering/improve-codebase-architecture  ref  notes/matt.md
+handoff         vendor/mattpocock-skills/skills/productivity/handoff                        ref  notes/matt.md
+to-questionnaire  vendor/mattpocock-skills/skills/productivity/to-questionnaire             ref  notes/matt.md
+doubt           vendor/addyosmani-agent-skills/skills/doubt-driven-development              ref  notes/addy.md
+document        vendor/addyosmani-agent-skills/skills/documentation-and-adrs                ref  notes/addy.md
+sources         vendor/addyosmani-agent-skills/skills/source-driven-development             ref  notes/addy.md
+git             vendor/addyosmani-agent-skills/skills/git-workflow-and-versioning           ref  notes/git.md
+quality         vendor/addyosmani-agent-skills/skills/code-review-and-quality               ref  notes/addy.md
+pr              vendor/mattpocock-skills/skills/engineering/pr                              ref  notes/matt.md
+# Addy's checklists are copied as they are into refs/checklists/ (see scripts/maint.py)

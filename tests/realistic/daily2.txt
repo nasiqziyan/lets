@@ -1,0 +1,381 @@
+@cwd frontend
+npm ci --no-audit --no-fund
+%%
+git status -sb && git diff --stat HEAD
+%%
+git log --oneline --graph --decorate -12
+%%
+@list
+["bash","-lc","cd frontend && npx vitest run src/__tests__/OrderPlot.test.tsx --reporter=verbose"]
+%%
+@cwd frontend
+npx tsc --noEmit -p tsconfig.json 2>&1 | head -40
+%%
+rg -n "useOrder\(" frontend/src -g '*.ts' -g '*.tsx'
+%%
+@list
+["bash","-lc","rg --files frontend/src | sort | head -50"]
+%%
+jq '{deps: .dependencies, dev: .devDependencies}' frontend/package.json
+%%
+@cwd frontend
+npm i plotly.js-basic-dist-min@2.35.2 && npm i -D @types/plotly.js@2.33.4 @testing-library/user-event@14.5.2
+%%
+mkdir -p frontend/src/components/overlay && cat > frontend/src/components/overlay/OverlayLegend.tsx <<'EOF'
+type Trace = { name: string; visible: boolean; dash: "solid" | "dot" };
+
+export function OverlayLegend({ traces, onToggle }: { traces: Trace[]; onToggle: (name: string) => void }) {
+  return (
+    <ul className="overlay-legend">
+      {traces.map((t) => (
+        <li key={t.name}>
+          <label>
+            <input type="checkbox" checked={t.visible} onChange={() => onToggle(t.name)} />
+            {t.name} ({t.dash === "dot" ? "design" : "measured"})
+          </label>
+        </li>
+      ))}
+    </ul>
+  );
+}
+EOF
+%%
+cat > frontend/src/__tests__/OverlayLegend.test.tsx <<'EOF'
+import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { OverlayLegend } from "../components/overlay/OverlayLegend";
+
+describe("OverlayLegend", () => {
+  it("toggles a trace when its checkbox is clicked", () => {
+    const onToggle = vi.fn();
+    render(<OverlayLegend traces={[{ name: "discount_x", visible: true, dash: "solid" }]} onToggle={onToggle} />);
+    fireEvent.click(screen.getByRole("checkbox"));
+    expect(onToggle).toHaveBeenCalledWith("discount_x");
+  });
+});
+EOF
+%%
+git add frontend/src/components/overlay/OverlayLegend.tsx frontend/src/__tests__/OverlayLegend.test.tsx && git commit -m "$(cat <<'EOF'
+Add overlay legend for measured vs design Order traces
+
+Each trace gets a checkbox; dotted lines are the design catalog and
+solid lines the measured checkout from the last item scan.
+EOF
+)"
+%%
+git push
+%%
+@cwd frontend
+npx eslint src --max-warnings 0 --format stylish
+%%
+@cwd frontend
+npx prettier --write "src/**/*.{ts,tsx}" && git diff --stat -- src
+%%
+@list
+["bash","-lc","cd frontend && npm run build 2>&1 | tail -25"]
+%%
+@cwd frontend
+npx vitest run --coverage --coverage.reporter=text-summary
+%%
+git diff -- frontend/src/hooks/useOrder.ts
+%%
+git restore --staged frontend/src/hooks/useOrder.ts
+%%
+git stash push -m "wip: useOrder refactor" -- frontend/src/hooks/useOrder.ts && git stash list
+%%
+git stash pop --index
+%%
+@list
+["git","switch","-c","feat/order-tooltips"]
+%%
+git switch feat/order-overlay
+%%
+git fetch origin --prune && git rebase origin/main
+%%
+git log origin/main..HEAD --format='%h %s (%an)'
+%%
+@cwd frontend
+npx vitest run -u src/__tests__/OrderPlot.test.tsx
+%%
+@list
+["bash","-lc","cd frontend && git add -A src && git commit -m 'Wire overlay legend into OrderPlot'"]
+%%
+git commit --amend --no-edit --date=now
+%%
+git push --force-with-lease=feat/order-overlay origin HEAD
+%%
+git show --stat --format=fuller HEAD
+%%
+@cwd frontend
+npx playwright test e2e/overlay.spec.ts --reporter=list --workers=2
+%%
+@cwd frontend/src/components
+ls -la && wc -l *.tsx *.ts
+%%
+cd frontend/src/components && git add OrderPlot.tsx overlay.ts && git commit -m "Type OrderPlot props through an interface"
+%%
+glab mr list --source-branch=feat/order-overlay
+%%
+glab mr create --draft --fill --target-branch main --label frontend --yes
+%%
+glab mr view feat/order-overlay --comments
+%%
+@cwd frontend
+node -e "const p=require('./package.json'); console.log(Object.keys(p.scripts).join(' '))"
+%%
+@list
+["bash","-lc","cd frontend && npm outdated --json | jq 'keys'"]
+%%
+git diff --cached --name-only | grep -E '\.(ts|tsx)$' || true
+%%
+cd frontend && npm run typecheck && npm run lint && npx vitest run && cd .. && git add frontend && git commit -m "Debounce overlay toggles and cover them in tests" && git push origin HEAD
+%%
+cd analysis && uv venv --python 3.12 && uv pip install -e ".[test]"
+%%
+@cwd analysis
+python -m pytest -q -x
+%%
+@list
+["bash","-lc","cd analysis && pytest tests/test_checkout.py::test_discount_symmetric -vv"]
+%%
+@cwd analysis
+pytest -q -m "not slow" --maxfail=3
+%%
+@cwd analysis
+ruff check src tests && ruff format --check src tests
+%%
+@cwd analysis
+mypy src --pretty
+%%
+python3 - <<'PY'
+import numpy as np
+from scipy.optimize import curve_fit
+
+k = np.linspace(-2.0, 2.0, 9)
+sigma2 = 0.4 * (k - 0.3) ** 2 + 0.05
+popt, pcov = curve_fit(lambda k, a, b, c: a * (k - b) ** 2 + c, k, sigma2)
+print(popt, np.sqrt(np.diag(pcov)))
+PY
+%%
+cat > analysis/src/shop_analysis/margin.py <<'EOF'
+import numpy as np
+from scipy.optimize import curve_fit
+
+
+def _parabola(k: np.ndarray, a: float, b: float, c: float) -> np.ndarray:
+    return a * (k - b) ** 2 + c
+
+
+def item_scan_margin(k: np.ndarray, sigma2: np.ndarray, flat: float, length: float) -> tuple[float, float]:
+    popt, pcov = curve_fit(_parabola, k, sigma2)
+    a, _b, c = popt
+    eps = np.sqrt(a * c) / (flat**2 * length)
+    err = 0.5 * eps * np.sqrt(pcov[0, 0] / a**2 + pcov[2, 2] / c**2)
+    return float(eps), float(err)
+EOF
+%%
+cat > analysis/tests/test_margin.py <<'EOF'
+import numpy as np
+import pytest
+
+from shop_analysis.margin import item_scan_margin
+
+
+def test_recovers_known_margin():
+    k = np.linspace(-2, 2, 21)
+    sigma2 = 4.0 * (k - 0.1) ** 2 + 1.0
+    eps, err = item_scan_margin(k, sigma2, flat=1.0, length=1.0)
+    assert eps == pytest.approx(2.0, rel=1e-6)
+    assert err < 1e-6
+EOF
+%%
+@cwd analysis
+pytest tests/test_margin.py -q --cov=shop_analysis.margin --cov-report=term-missing
+%%
+git add analysis/src/shop_analysis/margin.py analysis/tests/test_margin.py && git commit -m "$(cat <<'EOF'
+Add item-scan margin fit
+
+Fits sigma^2(k) with a parabola via scipy.optimize.curve_fit and
+returns the geometric margin with its 1-sigma uncertainty.
+EOF
+)" && git push -u origin HEAD
+%%
+@list
+["bash","-lc","cd analysis && python -m pytest -q --durations=10"]
+%%
+jupyter nbconvert --to notebook --execute notebooks/item_scan.ipynb --output /tmp/item_scan.out.ipynb
+%%
+@cwd analysis
+uv add h5py==3.12.1 && uv lock
+%%
+git diff --cached -- analysis/pyproject.toml
+%%
+@cwd analysis
+pytest -q -k "margin and not slow" -p no:cacheprovider
+%%
+@list
+["python3","-c","import numpy as np; a = np.load('/tmp/discount.npy'); print(a.shape, a.dtype, a.min(), a.max())"]
+%%
+git log -p -3 -- analysis/src/shop_analysis/checkout.py
+%%
+git add -u analysis && git commit -m "Vectorise phase advance with np.cumsum"
+%%
+@cwd analysis
+ruff check --fix src && git diff --stat
+%%
+cd analysis && git add src tests && git commit -m "Handle zero-length flat in discount_rate" && git push
+%%
+@list
+["bash","-lc","cd analysis && git add -A . && git commit -m 'Propagate fit covariance into margin error' && git push origin feat/order-overlay"]
+%%
+git checkout -- analysis/src/shop_analysis/checkout.py
+%%
+git restore --source=HEAD~1 -- analysis/tests/test_checkout.py
+%%
+python -m pip list --format=freeze | grep -iE "^(numpy|scipy|h5py)=="
+%%
+@cwd analysis
+python -m pytest --lf -q
+%%
+@cwd analysis
+pytest -q -n auto --dist loadfile
+%%
+find analysis -name "__pycache__" -type d -prune -exec rm -rf {} +
+%%
+git clean -fdX analysis/.pytest_cache analysis/.mypy_cache
+%%
+git commit -m "Add numpy-style docstrings to checkout" -m "So the Sphinx API page renders parameter tables."
+%%
+git cherry-pick -x f69681f
+%%
+@cwd analysis/tests
+pytest -q test_checkout.py -W error::RuntimeWarning
+%%
+@list
+["bash","-lc","cd analysis && python - <<'PY'\nimport numpy as np\nfrom shop_analysis.checkout import discount_rate, phase_advance\ns = np.linspace(0, 5, 11)\nb = discount_rate(s, 2.0, -0.5)\nprint(b)\nprint(phase_advance(s, b)[-1] / (2 * np.pi))\nPY"]
+%%
+git mv analysis/src/shop_analysis/checkout.py analysis/src/shop_analysis/order.py && sed -i 's/shop_analysis.checkout/shop_analysis.order/' analysis/tests/test_checkout.py
+%%
+@cwd analysis
+git add -A && git commit -m "Rename checkout module to order" && git push --force-with-lease origin feat/order-overlay
+%%
+@list
+["bash","-lc","cd analysis && mypy src && pytest -q && git commit -am 'Annotate return types in order module'"]
+%%
+git -C analysis log -1 --format='%H %s'
+%%
+git -C analysis commit -m "Tighten phase advance test tolerance"
+%%
+@cwd analysis
+python -m pytest -q --cov=shop_analysis --cov-report=xml:coverage.xml && python -c "import xml.etree.ElementTree as ET; print(ET.parse('coverage.xml').getroot().get('line-rate'))"
+%%
+@cwd analysis
+pre-commit run --files src/shop_analysis/checkout.py tests/test_checkout.py
+%%
+glab ci list --per-page 5
+%%
+glab ci trace 884213
+%%
+glab ci lint .gitlab-ci.yml --dry-run --ref feat/order-overlay
+%%
+docker build -t shop/snapshot:dev services/snapshot
+%%
+docker compose up -d clickhouse && docker compose ps --format '{{.Name}} {{.Status}}'
+%%
+cd services/snapshot && go test ./... -race -count=1
+%%
+@cwd services/snapshot
+go vet ./... && golangci-lint run --timeout 3m ./...
+%%
+@list
+["bash","-lc","cd services/snapshot && go build -o /tmp/snapshot-server ./cmd/server && /tmp/snapshot-server --help"]
+%%
+helm lint deploy/helm/snapshot --strict
+%%
+helm template snapshot deploy/helm/snapshot --set image.tag=$(git rev-parse --short HEAD) | kubeconform -strict -summary
+%%
+kubectl -n shop-dev get pods -l app.kubernetes.io/name=snapshot -o wide
+%%
+helm upgrade --install snapshot deploy/helm/snapshot -n shop-dev --set image.tag=dev-$(git rev-parse --short HEAD) --wait --timeout 5m
+%%
+cat > deploy/helm/snapshot/templates/service.yaml <<'EOF'
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app.kubernetes.io/name: snapshot
+spec:
+  selector:
+    app.kubernetes.io/name: snapshot
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+EOF
+%%
+git add .gitlab-ci.yml deploy/helm/snapshot && git commit -m "$(cat <<'EOF'
+ci: lint the snapshot chart and add a manual dev deploy
+
+helm lint --strict runs in the lint stage; deploy:dev runs
+helm upgrade --install against shop-dev when triggered by hand.
+EOF
+)"
+%%
+git push origin feat/order-overlay
+%%
+glab ci run --branch feat/order-overlay --variables DEPLOY_ENV:dev
+%%
+glab api "projects/:fullpath/pipelines?ref=feat/order-overlay&per_page=3" | jq -r '.[] | "\(.id) \(.status)"'
+%%
+glab mr note 42 -m "Pinned golang:1.23.2 and added helm lint; pipeline is green again."
+%%
+glab mr update 42 --label "devops,helm" --reviewer alex
+%%
+@list
+["glab","mr","view","42","-F","json"]
+%%
+@list
+["bash","-lc","cat > scripts/publish_chart.sh <<'EOF'\n#!/usr/bin/env bash\nset -euo pipefail\ncd \"$(dirname \"$0\")/..\"\nversion=$(yq '.version' deploy/helm/snapshot/Chart.yaml)\nhelm package deploy/helm/snapshot -d dist\ngit tag -a \"chart-v${version}\" -m \"snapshot chart ${version}\"\ngit push origin \"chart-v${version}\"\nEOF\nchmod +x scripts/publish_chart.sh"]
+%%
+git tag -a snapshot-v0.2.0 -m "snapshot service 0.2.0" && git push origin snapshot-v0.2.0
+%%
+sed -i 's/^version: 0.1.0/version: 0.2.0/' deploy/helm/snapshot/Chart.yaml && git diff deploy/helm
+%%
+@list
+["bash","-lc","git add deploy && git commit -m 'helm: add Service and readiness probe' && git push"]
+%%
+docker buildx build --platform linux/amd64 -t registry.example/shop/snapshot:$(git rev-parse --short HEAD) --push services/snapshot
+%%
+@cwd deploy/helm/snapshot
+helm dependency build && helm package . -d /tmp/charts
+%%
+git switch -c ci/split-pipeline
+%%
+git push -u origin ci/split-pipeline
+%%
+git push -o merge_request.create -o merge_request.target=main -o merge_request.draft origin feat/order-overlay
+%%
+git worktree add -b fix/chart-port ../shop-tools-chartfix origin/main
+%%
+@list
+["bash","-lc","cd services/snapshot && go mod tidy && git diff --exit-code go.mod go.sum || git commit -am 'go mod tidy'"]
+%%
+cd deploy/helm/snapshot && helm template . --debug | head -60
+%%
+glab mr diff 42 --color=never | head -200
+%%
+kubectl -n shop-dev port-forward svc/snapshot 8080:8080 >/tmp/pf.log 2>&1 & sleep 2; curl -sf localhost:8080/healthz
+%%
+@list
+["bash","-lc","docker compose -f compose.yaml config --quiet && echo compose-ok"]
+%%
+git fetch origin main:refs/remotes/origin/main && git log --oneline HEAD..origin/main
+%%
+git merge --no-ff origin/main -m "Merge origin/main into feat/order-overlay"
+%%
+glab mr update 42 --ready
+%%
+git push --tags
+%%
+git diff origin/main...HEAD --stat
