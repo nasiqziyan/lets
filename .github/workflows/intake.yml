@@ -1,5 +1,5 @@
 # Monthly reminder with the work done: builds the upstream intake report and opens an issue with it.
-# Then run /intake in ~/lets to decide on each change; nothing is adopted without you.
+# Then run the intake skill (scripts/intake-skill) in this repo to decide on each change; nothing is adopted without you.
 name: intake
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - name: Build the report
-        run: echo "REPORT=$(bin/lets intake report | tail -n 1)" >> "$GITHUB_ENV"
+        run: echo "REPORT=$(python3 scripts/maint.py intake report | tail -n 1)" >> "$GITHUB_ENV"
       - name: Open an issue with it
         run: gh issue create --title "Upstream intake $(date +%F)" --body-file "$REPORT"
         env:

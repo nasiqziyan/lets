@@ -454,7 +454,7 @@ ed_allowed "MultiEdit adds a named noqa" MultiEdit '{"file_path":"src/m.py","edi
 ed_blocked "Codex apply_patch adds a bare type: ignore" apply_patch '{"command":"*** Begin Patch\n*** Update File: src/m.py\n@@\n def f(x):\n-    return x\n+    return x  # type: ignore\n*** End Patch"}'
 ed_blocked "Codex apply_patch adds a focused test file" apply_patch '{"command":"*** Begin Patch\n*** Add File: src/c.test.ts\n+describe.only(\"c\", () => {});\n*** End Patch"}'
 ed_allowed "Codex apply_patch, an ordinary change" apply_patch '{"command":"*** Begin Patch\n*** Update File: src/m.py\n@@\n def f(x):\n-    return x\n+    return x + 1\n*** End Patch"}'
-sed -i 's/it("adds"/it.skip("adds"/' src/a.test.ts
+perl -pi -e 's/it\("adds"/it.skip("adds"/' src/a.test.ts  # perl: sed -i differs on macOS
 ed_allowed "a skip I made myself isn't charged to the agent's next edit" Edit '{"file_path":"src/a.test.ts","old_string":"1 + 1","new_string":"2 + 0"}'
 git checkout -q -- .
 python3 -c 'import json,sys; print(json.dumps({"tool_name":"Edit","tool_input":{"file_path":"src/a.test.ts","old_string":"it(\"adds\"","new_string":"it.skip(\"adds\""},"cwd":sys.argv[1]}))' "$PWD" | python3 "$REPO/agent-hooks/guard.py" 2>&1 >/dev/null | sed -n "s/^  ! //p" > "$T/approve-edit.sh"
@@ -584,7 +584,7 @@ SL() { echo '{"workspace":{"current_dir":"'"$PWD"'"}}' | NO_COLOR=1 "$LETS" stat
 check "the status line infers the change from the branch name, with epic and task progress" "[ \"\$(SL)\" = 'shop-checkout ●◉○ › take-card-payment ●◉○ › Validate the card number   ✎ pair' ]"
 "$LETS" note change take-card-payment --mode agent >/dev/null
 check "a branch note sets the change and the mode" "SL | grep -q '⚙ agent' && \"$LETS\" note | grep -qx 'change: take-card-payment'"
-sed -i 's/- \[ \]/- [x]/' "$C/tasks.md"
+perl -pi -e 's/- \[ \]/- [x]/' "$C/tasks.md"
 check "a finished change shows what's next instead of a task" "SL | grep -q 'take-card-payment ●●● › next: review'"
 "$LETS" note reviewed >/dev/null
 check "after review, next is the walkthrough" "SL | grep -q 'next: walkthrough'"
