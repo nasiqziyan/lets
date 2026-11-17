@@ -1,14 +1,28 @@
 {
   "name": "@nasiq/lets",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "LETS: one way of working with coding agents in Claude Code and Codex: plan, build in pairs, review, walk through.",
-  "keywords": ["claude-code", "codex", "agent-skills", "spec-driven-development", "openspec", "workflow"],
+  "keywords": [
+    "claude-code",
+    "codex",
+    "agent-skills",
+    "spec-driven-development",
+    "openspec",
+    "workflow"
+  ],
   "license": "MIT",
   "author": "Nasiq Ziyan",
   "homepage": "https://github.com/nasiqziyan/lets#readme",
-  "repository": {"type": "git", "url": "git+https://github.com/nasiqziyan/lets.git"},
-  "bugs": {"url": "https://github.com/nasiqziyan/lets/issues"},
-  "bin": {"lets": "bin/lets"},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nasiqziyan/lets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nasiqziyan/lets/issues"
+  },
+  "bin": {
+    "lets": "bin/lets"
+  },
   "files": [
     "bin/",
     "lib/lets/*.py",
@@ -26,7 +40,14 @@
   "dependencies": {
     "@fission-ai/openspec": "1.15.0"
   },
-  "engines": {"node": ">=20"},
-  "os": ["linux", "darwin"],
-  "publishConfig": {"access": "public"}
+  "engines": {
+    "node": ">=20"
+  },
+  "os": [
+    "linux",
+    "darwin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
