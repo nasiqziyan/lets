@@ -20,6 +20,7 @@
   "bugs": {
     "url": "https://github.com/nasiqziyan/lets/issues"
   },
+  "scripts": {"version": "python3 scripts/maint.py build && git add plugin"},
   "bin": {
     "lets": "bin/lets"
   },
