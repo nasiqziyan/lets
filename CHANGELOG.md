@@ -3,11 +3,17 @@
 LETS follows [semantic versioning](https://semver.org). Each release lists what changes for you, and anything you
 need to do.
 
+## 1.0.1
+
+- LETS recognises your home folder when it's reached through a link (as on macOS), so settings keep their short
+  `~/…` paths and still work on another computer.
+- Releases are staged on npm, and go public only once a maintainer approves them with two-factor authentication.
+
 ## 1.0.0
 
 The first release as a package: `npm install -g @nasiq/lets`, then `lets install`.
 
-- 19 commands in Claude Code and Codex, from planning an epic to closing a change, plus `/lets:patch` for small fixes
+- 21 commands in Claude Code and Codex, from planning an epic to closing a change, plus `/lets:patch` for small fixes
   and `/lets:lens` for looking at code through one lens.
 - The branch work merges into: `lets setup --base`, `lets note base` for stacked pull requests, shown by `lets where`.
 - `lets statusline on` and `off`: LETS's status line in Claude Code at any time, not only at install.
