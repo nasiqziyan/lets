@@ -17,5 +17,9 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: "22"}
       - uses: astral-sh/setup-uv@v6
+      - if: runner.os == 'macOS'
+        run: |  # the test fixtures use GNU sed
+          brew install gnu-sed
+          echo "$(brew --prefix gnu-sed)/libexec/gnubin" >> "$GITHUB_PATH"
       - run: npm ci
       - run: scripts/check.sh

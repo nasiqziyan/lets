@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # End-to-end tests for LETS's command, guard and setup. Uses a throwaway HOME; never touches the real one.
-# Usage: tests/run.sh   (needs git, python3 3.11+ and `npm install` run once in the repo, for OpenSpec)
+# Usage: tests/run.sh   (needs git, python3 3.11+, GNU sed for the fixtures (macOS: brew install gnu-sed) and
+# `npm install` run once in the repo, for OpenSpec)
 set -u
 REPO="$(cd "$(dirname "$0")/.." && pwd -P)"
-T="$(mktemp -d)"
+T="$(cd "$(mktemp -d)" && pwd -P)"  # the real path: on macOS the temp folder is behind a link
 export HOME="$T/home" LETS_TEST_HOME="$T/home" XDG_CONFIG_HOME="$T/home/.config" XDG_STATE_HOME="$T/home/.local/state" \
        XDG_DATA_HOME="$T/home/.local/share" XDG_CACHE_HOME="$T/home/.cache" CODEX_HOME="$T/home/.codex"
 export GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t OPENSPEC_TELEMETRY=0

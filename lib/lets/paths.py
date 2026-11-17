@@ -123,8 +123,11 @@ P = Paths()
 
 def short_path(p: os.PathLike | str) -> str:
     """A path as people type it: ~/... under the home folder."""
-    s, home = str(p), str(P.home)
-    return "~" + s[len(home) :] if s == home or s.startswith(home + os.sep) else s
+    s = str(p)
+    for home in dict.fromkeys((str(P.home), os.path.realpath(P.home))):  # HOME may be a link (/var -> /private/var)
+        if s == home or s.startswith(home + os.sep):
+            return "~" + s[len(home) :]
+    return s
 
 
 def tilde(p: os.PathLike | str) -> str:
