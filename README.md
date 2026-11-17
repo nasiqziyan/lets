@@ -1,4 +1,7 @@
-# LETS
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner-dark.svg">
+  <img alt="LETS" src="docs/images/banner-light.svg" width="100%">
+</picture>
 
 A complete workflow for [Claude Code](https://code.claude.com/docs) and [Codex](https://developers.openai.com/codex), combining [Matt Pocock's skills](https://github.com/mattpocock/skills), [Addy Osmani's agent skills](https://github.com/addyosmani/agent-skills) and [OpenSpec](https://github.com/Fission-AI/OpenSpec) under one coherent vocabulary.
 
