@@ -1,5 +1,6 @@
-# Publishes @nasiq/lets to npm when a version tag is pushed, after the tests pass and a maintainer approves the
-# "npm" environment. Uses npm Trusted Publishing (OIDC): no npm token is stored, and provenance is attached.
+# Stages @nasiq/lets on npm when a version tag is pushed, after the tests pass. It goes public only once a maintainer
+# approves it on npmjs.com (or `npm stage approve`) with 2FA. Uses npm Trusted Publishing (OIDC): no npm token is
+# stored, and provenance is attached.
 name: release
 on:
   push:
@@ -39,4 +40,4 @@ jobs:
         with: {node-version: "22", registry-url: "https://registry.npmjs.org"}
       - run: npm install -g npm@latest
       - run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
-      - run: npm publish --provenance --access public
+      - run: npm stage publish --access public

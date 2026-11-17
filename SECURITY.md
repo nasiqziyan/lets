@@ -15,6 +15,7 @@ stopped, the exact command or edit, and the output of `lets --version` and `lets
 - LETS never loosens Claude Code's or Codex's own permissions.
 - LETS sends nothing about you anywhere. Its only network call is the update check (the npm registry's latest version
   number), which you can turn off.
-- Releases are published from GitHub Actions with npm provenance, after a manual approval.
+- Releases are staged from GitHub Actions with npm provenance, and go public only after a maintainer approves them
+  on npm with two-factor authentication.
 
 When working with code or content you don't trust, run your agent in a dev container or VM.
