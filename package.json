@@ -1,6 +1,6 @@
 {
   "name": "@nasiq/lets",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "LETS: one way of working with coding agents in Claude Code and Codex: plan, build in pairs, review, walk through.",
   "keywords": [
     "claude-code",
@@ -20,7 +20,9 @@
   "bugs": {
     "url": "https://github.com/nasiqziyan/lets/issues"
   },
-  "scripts": {"version": "python3 scripts/maint.py build && git add plugin"},
+  "scripts": {
+    "version": "python3 scripts/maint.py build && git add plugin"
+  },
   "bin": {
     "lets": "bin/lets"
   },
