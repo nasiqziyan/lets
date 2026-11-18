@@ -29,6 +29,7 @@
     "lib/lets/*.py",
     "agent-hooks/",
     "plugin/",
+    ".agents/plugins/marketplace.json",
     "guides/",
     "profile/",
     "openspec/config.yaml",

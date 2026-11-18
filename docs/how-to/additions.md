@@ -10,12 +10,14 @@ The easy way: describe the rule in your own words.
 ```
 
 The agent works out which commands it affects (here `build` and `patch`, which draft commit messages), asks whether
-it's just for you or for the team, shows the exact lines, and saves them only once you agree.
+it applies in every repo of yours or only to this repo's plans, shows the exact lines, and saves them only once you
+agree.
 
 Each addition is a Markdown file named after the command, which you can also write or edit yourself:
 
 - Yours, in every repo: `~/.config/lets/additions/<command>.md`
-- The team's, committed with the plans: `plans/additions/<command>.md` (or `additions/` in a planning repo)
+- For one repo's plans, committed with them: `plans/additions/<command>.md` (or `additions/` in a planning repo).
+  Everyone working on those plans follows it; in a private planning repo, that's only you.
 
 ```markdown
 <!-- ~/.config/lets/additions/build.md -->

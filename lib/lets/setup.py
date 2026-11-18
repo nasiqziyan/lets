@@ -32,6 +32,7 @@ from .planning import (
     repo_root,
     uses_lets_here,
 )
+from .upgrade import SETUP_VERSION, is_outdated, remember_repo, remove_attribution_file, set_up_by
 
 REPO_QUESTIONS = {
     "build": "How do you want to build in %s?",
@@ -51,6 +52,7 @@ DEFAULTS = dict(
     check=None,
     base=None,
     ai_credit=None,
+    team_agreed=None,
     yes=False,
     remove=False,
 )
@@ -78,17 +80,105 @@ def suggest_check(root: pathlib.Path) -> str | None:
     return None
 
 
-def choice_for_repo(key: str, flag: str | None, label: str, current: str) -> str:
-    """A per-repo build choice: the flag if given, else asked with the repo's (or the profile's) answer as default."""
-    if flag:
-        return flag
+def choice_for_repo(key: str, flag: str | None, label: str, current: str, hide: tuple[str, ...] = ()) -> str:
+    """A per-repo build choice: the flag if given, else asked with the repo's (or the profile's) answer as default.
+    Options in `hide` aren't offered (and fall back to the first that is)."""
     c = profile.choice(key)
+    keys = [o.key for o in c.options if o.key not in hide]
+    if flag:
+        if flag in hide:
+            raise LetsError("%s isn't available here: %s" % (flag, TEAM_NOT_AGREED_SHIP))
+        return flag
+    default = current or profile.answer(key)
+    if default not in keys:
+        default = keys[-1]
+    if not ui.interactive():
+        return default
     return ui.select(
         REPO_QUESTIONS[key] % label,
-        [(o.key, o.label, o.hint) for o in c.options],
-        current or profile.answer(key),
+        [(o.key, o.label, o.hint) for o in c.options if o.key in keys],
+        default,
         "Your profile's answer is chosen already." if not current else "This repo's current answer is chosen already.",
     )
+
+
+TEAM_NOT_AGREED_SHIP = "opening merge requests uses the team's GitLab or GitHub, which needs the team's agreement"
+NOT_AGREED = [
+    "Agents will leave the team's way of working alone:",
+    "- the team's AI instructions: CLAUDE.md, AGENTS.md, .claude/",
+    "- the team's own docs in the repo: its glossary, ADRs and coding standards",
+    "- the team's GitLab or GitHub: no glab or gh",
+    "Agents still help you write code; you commit and push it as usual.",
+]
+
+
+def ask_team(repos: list[pathlib.Path], flag: str | None, planning_flag: str | None) -> str:
+    """Has the team agreed to agents working in these repos? Returns lets.kind: own (yes) or other (no). Without a
+    terminal, an older script's --planning keeps its old meaning (private: no; in-repo or team: yes)."""
+    if flag is not None:
+        if flag not in ("yes", "no"):
+            raise LetsError("--team-agreed takes yes or no.")
+        return "own" if flag == "yes" else "other"
+    current = {git_config("lets.kind", r) for r in repos} - {""}
+    by_flag = {"private": "other", "in-repo": "own", "team": "own"}.get(planning_flag or "")
+    guess = by_flag or (current.pop() if len(current) == 1 else "other")
+    if not ui.interactive():
+        return guess
+    label = repos[0].name if len(repos) == 1 else "these repos"
+    pick = ui.select(
+        "Has the team agreed to agents working in %s?" % label,
+        [
+            ("yes", "Yes", "it's my own repo, or the team has agreed to agents working in it"),
+            ("no", "No", "the team hasn't agreed: agents leave the team's way of working alone"),
+        ],
+        "yes" if guess == "own" else "no",
+        "Agents never merge, approve or push to a shared branch, whatever you choose.",
+    )
+    if pick == "no":
+        for line in NOT_AGREED:
+            ui.note(line)
+    return "own" if pick == "yes" else "other"
+
+
+def upgrade_setup(repos: list[pathlib.Path], a: argparse.Namespace, screen) -> None:
+    """Bring repos set up by an older LETS up to date: ask only what's new since then, keep every other answer, and
+    take out what this version no longer creates."""
+    screen("LETS setup", "what's new")
+    for r in repos:
+        ui.note("%s was set up by %s." % (r.name, set_up_by(r)))
+    ui.out("LETS %s asks a new question about the team; your other answers stay as they are." % SETUP_VERSION)
+    kind = ask_team(repos, a.team_agreed, None)
+    bases = {r.name: ask_base(r, a.base) for r in repos}
+    changes = []
+    for r in repos:
+        agents = git_config("lets.agents", r)
+        what = ["the team %s (git config; nothing committed)" % ("has agreed" if kind == "own" else "hasn't agreed")]
+        if kind == "other" and agents == "ship":
+            what.append("git: Commit instead of Ship (" + TEAM_NOT_AGREED_SHIP + ")")
+        local = r / ".claude" / "settings.local.json"
+        if "attribution" in json_of(local) or "includeCoAuthoredBy" in json_of(local):
+            what.append("take LETS's old Claude Code settings out of .claude/settings.local.json")
+
+        def apply(r: pathlib.Path = r, agents: str = agents) -> None:
+            git("config", "lets.kind", kind, cwd=r)
+            git("config", "lets.version", SETUP_VERSION, cwd=r)
+            if kind == "other" and agents == "ship":
+                git("config", "lets.agents", "commit", cwd=r)
+            if bases.get(r.name):
+                git("config", "lets.base", bases[r.name], cwd=r)
+            remove_attribution_file(r)
+            remember_repo(r)
+            if kind == "other":
+                exclude(r, ["CLAUDE.local.md"])
+
+        changes.append(Change(r, "; ".join(what), apply=apply))
+    agree(changes, "setup", a.yes, one_by_one=False)
+    ui.out()
+    ui.ok(
+        "%s now up to date with LETS %s."
+        % (", ".join(r.name for r in repos) + (" is" if len(repos) == 1 else " are"), SETUP_VERSION)
+    )
+    ui.note("To change any other answer, run `lets setup` again: it goes through every question.")
 
 
 def credit_flag(flag: str | None) -> str | None:
@@ -168,7 +258,16 @@ def cmd_setup(a: argparse.Namespace) -> None:
             raise LetsError("No repos chosen.")
 
     # 2. Where should the plans live?
-    screen("LETS setup", "2 · plans")
+    if (
+        all(git_config("lets.kind", r) for r in repos)
+        and any(is_outdated(r) for r in repos)
+        and not any((a.planning, a.url, a.plans_dir, a.build, a.tests, a.agents))
+        and a.check is None
+    ):
+        upgrade_setup(repos, a, screen)
+        return
+
+    screen("LETS setup", "2 · team and plans")
     for d in DOCS_DIRS:
         hits = [r.name for r in repos if (r / d).is_dir()]
         if hits:
@@ -188,24 +287,35 @@ def cmd_setup(a: argparse.Namespace) -> None:
             ):
                 joined = gp
                 planning = git_config("lets.sharing", gp) or "team"
+    kind = ask_team(repos, a.team_agreed, a.planning)
     if not planning:
         current = was[repos[0].name][1] if mode == "one" else None
         opts = (
-            [("in-repo", "In this repo", "in plans/, committed with the code: your repo, or a team that uses LETS")]
-            if mode == "one"
+            [("in-repo", "In this repo", "in plans/, committed with the code")]
+            if mode == "one" and kind == "own"
             else []
         ) + [
-            ("team", "In a planning repo for the team", "the team uses LETS, but keeps plans apart from the code"),
-            ("private", "In a private planning repo", "the team doesn't use LETS: only you see the plans"),
+            ("team", "In a team planning repo", "a separate repo your teammates read and add to; work can link to it"),
+            ("private", "In a private planning repo", "a separate repo only you see; nothing links to it"),
         ]
+        keys = [o[0] for o in opts]
+        default = (
+            current if current in keys else ("private" if kind == "other" else ("in-repo" if mode == "one" else "team"))
+        )
         planning = ui.select(
-            "LETS keeps planning files: plans, specs and decisions. Where should they live?",
+            "LETS keeps planning files: plans, specs and decisions. Where should the plans for %s live?"
+            % (repos[0].name if len(repos) == 1 else "these repos"),
             opts,
-            current if current in ("in-repo", "team", "private") else ("private" if mode == "one" else "team"),
+            default,
         )
     if planning == "in-repo":
         if mode != "one":
             raise LetsError("Plans can live in the repo only when you set up one repo.")
+        if kind != "own":
+            raise LetsError(
+                "Plans can live in the repo only where the team has agreed to agents working in it: committing "
+                "them puts agent-made files in the team's repo. Choose a planning repo instead."
+            )
         if foreign_plans(repos[0]):
             raise LetsError(
                 "%s already has a plans/ folder that isn't LETS's. LETS keeps its plans there, so it won't "
@@ -244,7 +354,7 @@ def cmd_setup(a: argparse.Namespace) -> None:
     cur = (lambda key: git_config(key, repos[0])) if len(repos) == 1 else (lambda key: "")
     build = choice_for_repo("build", a.build, label, cur("lets.build"))
     tests = choice_for_repo("tests", a.tests, label, cur("lets.tests"))
-    agents = choice_for_repo("git", a.agents, label, cur("lets.agents"))
+    agents = choice_for_repo("git", a.agents, label, cur("lets.agents"), () if kind == "own" else ("ship",))
     checks = {}
     for r in repos:
         if a.check is not None:
@@ -277,7 +387,7 @@ def cmd_setup(a: argparse.Namespace) -> None:
     ]
 
     # 6. The changes, shown and agreed
-    changes = setup_changes(repos, planning, url, dest, build, tests, agents, checks, bases, credit)
+    changes = setup_changes(repos, planning, url, dest, build, tests, agents, checks, bases, credit, kind)
     for m in moves:
         changes.append(m.change())
     agree(changes, "setup", a.yes, one_by_one=False)
@@ -300,8 +410,9 @@ def cmd_setup(a: argparse.Namespace) -> None:
 
 
 def ask_base(r: pathlib.Path, flag: str | None) -> str | None:
-    """The branch work in this repo merges into: the flag (`auto` clears it), else what's set, else asked only when
-    it can't be told (no remote default branch, and more than one usual trunk). None leaves it to detection."""
+    """The branch work in this repo merges into: the flag (`auto` clears it), else what's set, else asked whenever
+    there's a choice: another usual trunk (develop, trunk…) besides the remote's default branch, or several trunks and
+    no default. None leaves it to detection (the remote's default branch)."""
     from .walkthrough import CANDIDATES
 
     if flag is not None:
@@ -309,21 +420,26 @@ def ask_base(r: pathlib.Path, flag: str | None) -> str | None:
     current = git_config("lets.base", r)
     if current:
         return current
-    if git("symbolic-ref", "--quiet", "refs/remotes/origin/HEAD", cwd=r, check=False):
-        return None
+    head = git("symbolic-ref", "--quiet", "refs/remotes/origin/HEAD", cwd=r, check=False)
+    default = head.rsplit("/", 1)[-1] if head else ""
     trunks = [
         n
         for n in CANDIDATES
         if git("rev-parse", "--verify", "--quiet", n, cwd=r, check=False)
         or git("rev-parse", "--verify", "--quiet", "origin/" + n, cwd=r, check=False)
     ]
-    if len(trunks) < 2 or not ui.interactive():
+    if default and default in trunks:
+        trunks.remove(default)
+    choices = ([default] if default else []) + trunks
+    if len(choices) < 2 or not ui.interactive():
         return None
-    return ui.select(
+    pick = ui.select(
         "Which branch does work in %s merge into?" % r.name,
-        [(n, n, "") for n in trunks],
-        trunks[0],
+        [(n, n, "the remote's default branch" if n == default else "") for n in choices],
+        choices[0],
+        "Reviews and walkthroughs compare your work with this branch.",
     )
+    return None if pick == default else pick
 
 
 def choose_planning_repo(
@@ -385,6 +501,7 @@ def setup_changes(
     checks: dict[str, str],
     bases: dict[str, str | None] | None = None,
     credit: str | None = None,
+    kind: str | None = None,
 ) -> list[Change]:
     """Everything setup would change, as Changes (made only once agreed)."""
     changes: list[Change] = []
@@ -451,7 +568,8 @@ def setup_changes(
 
         def configure(r: pathlib.Path = r) -> None:
             values = {
-                "lets.kind": "other" if planning == "private" else "own",
+                "lets.kind": kind or ("other" if planning == "private" else "own"),
+                "lets.version": SETUP_VERSION,
                 "lets.build": build,
                 "lets.tests": tests,
                 "lets.agents": agents,
@@ -478,14 +596,10 @@ def setup_changes(
             elif credit == "":
                 git("config", "--unset", "lets.ai-credit", cwd=r, check=False)
             exclude(r, [".lets/"])
-            if planning == "private":
-                local = r / ".claude" / "settings.local.json"
-                data = json_of(local)
-                data["attribution"] = {"commit": "", "pr": ""}
-                data["includeCoAuthoredBy"] = False
-                local.parent.mkdir(exist_ok=True)
-                local.write_text(json.dumps(data, indent=2) + "\n")
-                exclude(r, [".claude/settings.local.json", "CLAUDE.local.md"])
+            remove_attribution_file(r)
+            remember_repo(r)
+            if (kind or ("other" if planning == "private" else "own")) == "other":
+                exclude(r, ["CLAUDE.local.md"])
                 if (
                     (r / "AGENTS.md").exists()
                     and not (r / "CLAUDE.md").exists()
@@ -501,8 +615,6 @@ def setup_changes(
         what = ["settings (git config; nothing committed)"]
         if planning == "in-repo":
             what.append("plans/ for its plans")
-        if planning == "private":
-            what.append("no AI attribution from Claude Code (a private settings file)")
         changes.append(
             Change(
                 r,

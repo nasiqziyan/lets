@@ -12,8 +12,8 @@ planning pull request.
    **With `--drop`** the epic is stopped: ask for one line of why, drop each of its open changes as
    `/lets:change-close <change> --drop` does, mark the map `Dropped: <why>` under its title, commit as the guide says,
    and stop.
-2. Ask me to paste the comments, with who made each one if it matters. In a repo whose plans are private you can't
-   read its forge; never try.
+2. Ask me to paste the comments, with who made each one if it matters. Where the team hasn't agreed to agents (`lets where`:
+   team), you can't read its forge; never try.
 3. Take them **one at a time**, as a short grilling (call the Skill tool with "grilling"). For each, say what it
    touches (a user story, a decision and its prerequisite, the Delivery list) and propose one of:
    - **Agree, and it's a wording or a detail**: update the overview.

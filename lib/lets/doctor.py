@@ -141,6 +141,13 @@ def cmd_doctor(a) -> None:
     for name, found_it, used in (("Claude Code", has_claude(), uses_claude()), ("Codex", has_codex(), uses_codex())):
         if found_it:
             say("  %s: %s" % (name, "set up" if used else "not set up (your choice; `lets profile tools` to change)"))
+    from .upgrade import SETUP_VERSION, describe, outdated_repos
+
+    for r in outdated_repos():
+        say(
+            "  set up before LETS %s: %s. Run `lets setup` there: it asks only what's new."
+            % (SETUP_VERSION, describe(r))
+        )
     if not found:
         say("Doctor: all checks pass.")
         return

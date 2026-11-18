@@ -28,6 +28,7 @@ Every question has a flag, for scripts: `--mode one|group`, `--path <repo or fol
 `--planning in-repo|team|private`, `--url <planning repo clone URL>`, `--plans-dir <folder>`,
 `--build pair|agent`, `--tests propose|always|ask`, `--agents local|commit|ship`, `--check '<command>'`,
 `--base <branch>` (the branch work merges into; `auto` to detect it),
+`--team-agreed yes|no` (has the team agreed to agents working in the repo?),
 `--ai-credit never|trailer|trailer-pr|profile` (`trailer:'<line>'` for a trailer of your own), `--yes`.
 `--remove` clears a repo's LETS settings (its plans stay).
 

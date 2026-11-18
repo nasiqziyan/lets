@@ -99,6 +99,12 @@ def parser() -> argparse.ArgumentParser:
     s.add_argument("--check", help="the repo's quick check, e.g. 'npm run -s check' ('' for none)")
     s.add_argument("--base", help="the branch work here merges into, e.g. develop ('auto' to detect it)")
     s.add_argument(
+        "--team-agreed",
+        choices=["yes", "no"],
+        help="has the team agreed to agents working in the repo? (no: agents leave its AI instructions, docs and "
+        "GitLab/GitHub alone)",
+    )
+    s.add_argument(
         "--ai-credit",
         help="AI credit here: never, trailer, trailer-pr (or trailer:'<line>'), or profile to follow your profile",
     )

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import pathlib
 import time
 
 from . import profile, settings
@@ -70,6 +71,18 @@ def cmd_session_start(a=None) -> None:
             "LETS was updated to %s but not re-wired (it was %s). Tell me to run `lets install`."
             % (version(), installed)
         )
+    try:
+        from .core import git
+        from .upgrade import SETUP_VERSION, is_outdated, set_up_by
+
+        top = git("rev-parse", "--show-toplevel", check=False)
+        if top and is_outdated(pathlib.Path(top)):
+            lines.append(
+                "This repo was set up by %s. Tell me to run `lets setup` here: it asks only what's new in %s "
+                "and keeps my other answers." % (set_up_by(pathlib.Path(top)), SETUP_VERSION)
+            )
+    except Exception:  # noqa: BLE001  never let a notice get in the way
+        pass
     n = notice()
     if n:
         lines.append(n + " Mention it to me once, briefly.")

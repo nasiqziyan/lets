@@ -23,12 +23,13 @@ decisions and risks in it, and only you can record it as done.
 ## Gates the agent can't loosen
 
 The guard runs on every agent command and edit. It keeps git as local as you choose, refuses edits that weaken a test
-or a check, keeps AI mentions out of every repo, and keeps agents off a team's forge where your plans are private.
+or a check, keeps AI mentions out of every repo, and keeps agents off a team's forge where the team hasn't agreed to them.
 
 ## Plans live where the team works
 
 Plans are plain Markdown: in the repo's `plans/` folder when the team uses LETS, in a planning repo shared by the team
-(or a group of repos), or in a private planning repo when the team doesn't. You can move between them later.
+(or a group of repos), or in a private planning repo when the plans are yours alone. Separately, you say whether the
+team has agreed to agents working in its repo. You can change either later.
 
 ## Small and quiet
 

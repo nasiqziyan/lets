@@ -4,7 +4,8 @@
 
 | Key | Values | Set by |
 |---|---|---|
-| `lets.kind` | `own` (the team uses LETS) or `other` (plans are private) | `lets setup` |
+| `lets.kind` | `own` (your repo, or the team has agreed to agents working in it) or `other` (it hasn't: agents leave its AI instructions, docs and GitLab/GitHub alone) | `lets setup` ("Has the team agreed…?", or `--team-agreed`) |
+| `lets.version` | the LETS release whose setup questions this repo was set up with | `lets setup` |
 | `lets.plans` | the planning repo, as `~/...` (unset: plans in `plans/`) | `lets setup` |
 | `lets.sharing` | `team` or `private` | `lets setup` |
 | `lets.build` | `pair` or `agent` | `lets setup` |
@@ -26,7 +27,7 @@ A planning repo has `lets.role planning`.
 | Where | What | Travels between computers? |
 |---|---|---|
 | `~/.config/lets/profile.md` | your profile | yes |
-| `~/.config/lets/config.json` | where planning repos are kept, which tools LETS is set up in, your learning-notes folder, your own status line while LETS's is on, the version last wired up | yes |
+| `~/.config/lets/config.json` | where planning repos are kept, which tools LETS is set up in, your learning-notes folder, your own status line while LETS's is on, the code repos you set up, the version last wired up | yes |
 | `~/.config/lets/additions/` | your additions to commands | yes |
 | `~/.local/state/lets/backups/` | each file LETS edited, as it was before | no |
 | `~/.local/state/lets/logs/` | details of unexpected errors | no |

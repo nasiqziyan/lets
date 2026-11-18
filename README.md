@@ -1,7 +1,4 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner-dark.svg">
-  <img alt="LETS" src="docs/images/banner-light.svg" width="100%">
-</picture>
+<img alt="LETS" src="docs/images/banner-dark.svg" width="100%">
 
 A complete workflow for [Claude Code](https://code.claude.com/docs) and [Codex](https://developers.openai.com/codex), combining [Matt Pocock's skills](https://github.com/mattpocock/skills), [Addy Osmani's agent skills](https://github.com/addyosmani/agent-skills) and [OpenSpec](https://github.com/Fission-AI/OpenSpec) under one coherent vocabulary.
 
@@ -62,10 +59,11 @@ Working well with a coding agent takes three layers, and three popular projects 
 
 - **Choose where plans live** to match how your team works:
   - In the code repo, under `plans/`, committed alongside the code: when your team uses **LETS** and plans are reviewed in the same pull requests as the code.
-  - In a shared planning repo: when your team prefers to keep plans separate from the code, whether working in a single repo or across several related repos.
-  - In a private planning repo: when your team doesn't use **LETS**, so your plans stay out of their repository.
+  - In a shared planning repo: when your team reads and adds to the plans but keeps them separate from the code, whether working in a single repo or across several related repos.
+  - In a private planning repo: when the plans are for you alone, so they stay out of your team's repositories.
 
   You can move plans between these locations later.
+- **Respect a team that hasn't agreed to agents:** in its repos, agents leave the team's way of working alone: its AI instructions, its own docs and its GitLab or GitHub. You still get the whole workflow, and you commit and push as usual.
 - **Learning detours:** `/lets:learn <concept>` teaches you a concept in a separate branch of your session, then `/resume` (Claude Code) brings you back to where you left off. Optionally, save what you've learned to a folder of your choice for future reference.
 
 ### Yours, for your whole career
@@ -85,6 +83,8 @@ lets install
 ```
 
 `lets install` asks how you like to work, shows every change it would make, and makes only the ones you agree to.
+
+If you use Codex, open it once afterwards, type `/hooks` and trust **LETS**'s hooks: until you do, Codex won't run the guard.
 
 ## Quick start
 

@@ -27,6 +27,6 @@ The aim: I understand every line I ship, whoever typed it. Explain first, then c
    command in a terminal). Never run it yourself; the guard blocks you. Then draft the pull request description in a
    code block I can copy, with a title: follow `~/lets/plugin/refs/pr/SKILL.md` (what changes and why from the
    proposal, how it was tested from the tasks' verification, what a reviewer should look at first). With plans in this
-   repo, link the change folder. Write it the way the team writes theirs: no mention of AI or agents (except the
+   repo or a team planning repo, link the change folder (a planning repo's address comes from its remote). Write it the way the team writes theirs: no mention of AI or agents (except the
    pull request note `lets where` shows as the AI credit, if any), nothing that names a private planning repo. I push and open it, unless `lets.agents` is `ship` and I ask you to. After approval:
    `/lets:change-close <change>`, then I merge.

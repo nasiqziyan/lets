@@ -11,7 +11,8 @@ only for a decision, a question, an approval, a problem, or something only I can
 
 ## Every LETS command
 - First run `~/lets/bin/lets where` (where the plans are, this repo's choices, any additions) and follow
-  `~/lets/guides/planning.md`. With a planning repo for the team, run `~/lets/bin/lets sync` first.
+  `~/lets/guides/planning.md`. With a separate planning repo that has a remote, run `~/lets/bin/lets sync`
+  first.
 - A change whose `.openspec.yaml` names another code repo (`x-lets-repo`): stop and tell me to cd into that repo.
 - After a command's own steps, follow the additions `lets where` lists for that command (mine, then the team's).
   They win over the command's steps, never over the guard.
@@ -36,10 +37,12 @@ only for a decision, a question, an approval, a problem, or something only I can
   `lets where` shows (by default none: no AI mention and no co-author trailers).
 - Never merge, approve, push to a shared branch or use `--admin`.
 
-## Where the plans are private
-- `git config --get lets.kind` is `own`: the team uses LETS (plans in `plans/`, or in a planning repo for the team).
-- Anything else (work, clients, open source, or not set up): nothing agent-related reaches this repo or its forge. No
-  agent or planning files committed, no gh or glab. Read the team's own docs and agent config, never change them.
+## Where the team hasn't agreed to agents
+- `git config --get lets.kind` is `own`: the repo is mine, or its team has agreed to agents working in it.
+- Anything else (work, clients, open source, or not set up): leave the team's way of working alone: their AI
+  instructions (`CLAUDE.md`, `AGENTS.md`, `.claude/`), their own docs in the repo (glossary, ADRs, coding standards)
+  and their forge (no gh or glab). Nothing agent-related is committed here. Read their docs, never change them.
+- A private planning repo is never named or linked anywhere the team sees: commits, pull requests, issues.
 
 ## What to trust
 - What the system does now: tests and code. What it should do: the living specs, then the change in hand. Why: the

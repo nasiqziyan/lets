@@ -1,7 +1,12 @@
 # Track changes as issues
 
-Optional. At the end of `/lets:epic-split` and `/lets:change-start`, where the plans are shared with the team and `gh`
-or `glab` works, the agent offers to create issues. Issues point at the plans; they never copy them.
+Optional. At the end of `/lets:epic-split` and `/lets:change-start`, where `gh` or `glab` works, the agent offers to
+create issues. Issues point at the plans; they never copy them. Where they go depends on the plans:
+
+- **Plans in the repo, or a team planning repo, where the team has agreed to agents:** the code repo's own issues.
+- **A private planning repo:** the planning repo's own GitLab or GitHub project, which only you see. Nothing is created
+  in the team's repo.
+- **A team planning repo where the team hasn't agreed:** issues aren't offered.
 
 - One issue per change (its tasks stay in `tasks.md`), plus one for an epic. The title is the change's name in plain
   words; the body links to the change's folder and gives the command that builds it.

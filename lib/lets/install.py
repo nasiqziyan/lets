@@ -492,8 +492,7 @@ def cmd_install(a) -> None:
                 "Codex plugin: run `codex plugin marketplace add ~/lets && codex plugin add lets@lets` (%s)"
                 % (r2.stdout + r2.stderr + r1.stderr).strip()[-200:]
             )
-        if any(c.path == P.codex_hooks for c in made):
-            ui.note("Codex asks before running a new hook: open Codex once and trust LETS's hooks with /hooks.")
+    trust_hooks = uses_codex() and any(c.path == P.codex_hooks for c in made)
     run(
         [openspec_bin(), "config", "set", "telemetry.enabled", "false"],
         check=False,
@@ -506,11 +505,10 @@ def cmd_install(a) -> None:
 
     errors = [p.text for p in problems()]
     ui.out()
-    if errors:
-        for e in errors:
-            ui.warn(e)
-        raise LetsError("LETS is installed, but the checks above failed: `lets doctor` can fix most of them.")
-    ui.ok("LETS %s is installed, and its checks pass." % version())
+    for e in errors:
+        ui.warn(e)
+    if not errors:
+        ui.ok("LETS %s is installed, and its checks pass." % version())
     clash = command_clash()
     if clash:
         ui.warn(
@@ -521,21 +519,41 @@ def cmd_install(a) -> None:
         ui.note("Add ~/.local/bin to your PATH to type `lets` instead of ~/lets/bin/lets.")
     if profile.answer("updates") == "on":
         ui.note("LETS checks for a new version at most once a day (`lets profile updates` turns it off).")
+    from .upgrade import SETUP_VERSION, describe, outdated_repos
+
+    old = outdated_repos()
     here = git("rev-parse", "--show-toplevel", cwd=os.getcwd(), check=False)
-    if (
-        here
-        and not git("config", "--get", "lets.kind", cwd=here, check=False)
-        and ui.interactive()
-        and ui.confirm("Do you want to set up this repo (%s) now?" % os.path.basename(here), True)
-    ):
+    steps = []
+    if errors:
+        steps.append("Fix what failed: run `lets doctor`.")
+    if trust_hooks:
+        steps.append(
+            "Codex: open Codex once, type /hooks and trust LETS's hooks. Until you do, Codex won't run the guard."
+        )
+    if old:
+        steps.append(
+            "Set up before LETS %s: %s. Run `lets setup` in each: it asks only what's new and keeps your other "
+            "answers." % (SETUP_VERSION, ", ".join(describe(r) for r in old))
+        )
+    offer = not errors and here and not git("config", "--get", "lets.kind", cwd=here, check=False) and ui.interactive()
+    if not offer:
+        steps.append(
+            "Run `lets setup` in %s when you're ready."
+            % ("this repo" if here else "a repo you work in, or in a folder of related repos,")
+            if not old
+            else "To set up another repo, run `lets setup` in it."
+        )
+    if steps:
+        ui.out()
+        ui.out(ui.paint("Next:", "bold"))
+        for n, s_ in enumerate(steps, 1):
+            ui.out("  %d. %s" % (n, s_))
+    if errors:
+        raise LetsError("LETS is installed, but the checks above failed: `lets doctor` can fix most of them.")
+    if offer and ui.confirm("Do you want to set up this repo (%s) now?" % os.path.basename(here), True):
         from .setup import cmd_setup, setup_args
 
         cmd_setup(setup_args())
-        return
-    ui.step(
-        "run `lets setup` in %s when you're ready."
-        % ("this repo" if here else "a repo you work in, or in a folder of related repos,")
-    )
 
 
 # ---------- uninstall ----------

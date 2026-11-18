@@ -217,15 +217,15 @@ CHOICES: list[Choice] = [
         "Long explanations are split across messages, never shortened to fit.",
         [
             Option("short", "Short", "about 250 words, then a pause for questions", _len("250")),
-            Option("medium", "Medium", "about 500 words (recommended)", _len("500")),
+            Option("medium", "Medium", "about 500 words, then a pause for questions (recommended)", _len("500")),
             Option(
                 "natural",
                 "As long as the explanation needs",
-                "no fixed length",
+                "no fixed length; a pause for questions at its end",
                 "as long as the explanation needs\n- No fixed length: stop at the explanation's natural end, then "
                 "pause for my questions.",
             ),
-            Option("custom", "Your own number", "type a word count", None),
+            Option("custom", "Your own number", "type a word count; a pause for questions after each message", None),
         ],
         "medium",
     ),
@@ -438,7 +438,7 @@ def ask_notes(got: str) -> str:
         if remotes.stdout.strip():
             ui.warn(
                 "That repo has a remote (%s). Anything you push from it leaves this computer, so notes made in repos "
-                "whose team doesn't use LETS leave out the repo's name and use made-up examples."
+                "whose team hasn't agreed to agents leave out the repo's name and use made-up examples."
                 % ": ".join(remotes.stdout.split()[:2])
             )
     settings.set_notes_dir(str(folder))

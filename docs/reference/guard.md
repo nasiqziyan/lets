@@ -13,7 +13,7 @@ agents only: you stay free to do anything yourself. It takes about 55 ms a call 
 | Going further with git than `lets.agents` allows | `local` (default): no commits or pushes. `commit`: commits to feature branches, after the floor check and the quick check. `ship`: also pushes a feature branch and opens a PR, once a walkthrough is recorded |
 | A person's job | merging or approving a PR, `--admin`, pushing to a shared branch |
 | AI mentions | an AI in a branch name, commit message, or PR title or description; co-author trailers; in every repo. If you chose an AI credit, its trailer (and pull request note) is required instead, and nothing else may mention an AI |
-| Where plans are private | any `gh` or `glab`; committing the owners' docs, agent config or planning files |
+| Where the team hasn't agreed to agents | any `gh` or `glab`; committing the owners' docs, agent config or planning files |
 
 ## When a block is wrong
 

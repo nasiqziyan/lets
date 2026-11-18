@@ -27,7 +27,7 @@ keeps its own plans:
 - `openspec/`: living specs (`specs/`) and changes (`changes/`, closed ones in `changes/archive/`)
 - `epics/<epic>/`: an epic's map, prerequisites, inputs and overview
 - `research/`, `questionnaires/`, `docs/adr/`, `GLOSSARY.md`, `CODING_STANDARDS.md`, `CONSTRAINTS.md`
-- `additions/`: the team's own steps added to LETS commands
+- `additions/`: rules added to LETS commands for these repos (`/lets:add`)
 - `repos.json`: the code repos these plans are for
 
 Agents commit here locally after each LETS command; people push when they choose.
@@ -225,6 +225,14 @@ def cmd_where(a) -> None:
             }.get(home or "", home)
         )
         st = repo_settings(root)
+        say(
+            "team:          %s"
+            % (
+                "has agreed to agents working here"
+                if git_config("lets.kind", root) == "own"
+                else "hasn't agreed: leave its AI instructions, docs and GitLab/GitHub alone"
+            )
+        )
         say("build:         %s · test-first: %s · git: %s" % (st["build"], st["tests"], st["git"]))
         check = git_config("lets.check", root)
         if check:
@@ -260,6 +268,14 @@ def cmd_where(a) -> None:
         say("planning root: %s" % proot)
         say("code repos:    %s (in %s)" % (", ".join(names), cwd))
         say("home:          a group folder: plan here; build each change in its own repo")
+    if top:
+        from .upgrade import SETUP_VERSION, is_outdated, set_up_by
+
+        if is_outdated(pathlib.Path(top)):
+            say(
+                "setup:         by %s: tell me to run `lets setup` here (it asks only what's new in %s)"
+                % (set_up_by(pathlib.Path(top)), SETUP_VERSION)
+            )
     adds = additions_for(proot)
     if adds:
         say("additions:     %s" % ", ".join(short_path(p) for p in adds))

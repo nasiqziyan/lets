@@ -36,6 +36,7 @@ echo "the command"
 check "lets --version prints the package's version" "\"$LETS\" --version | grep -qx \"LETS \$(python3 -c \"import json;print(json.load(open('$REPO/package.json'))['version'])\")\""
 check "lets --help ends with where to get help" "\"$LETS\" --help | grep -q 'lets doctor'"
 check "an unknown command fails with usage" "! \"$LETS\" nonsense"
+check "the npm package ships everything Codex needs to add the plugin (its marketplace manifest)" "(cd '$REPO' && npm pack --dry-run --json 2>/dev/null) | grep -q '\"path\": \".agents/plugins/marketplace.json\"'"
 check "a Python older than 3.11 is refused with how to install a newer one" "python3 -c 'import sys;sys.version_info=(3,9,0,\"final\",0);sys.argv=[\"x\",\"--version\"];exec(open(\"$REPO/lib/lets/__main__.py\").read())' 2>&1 | grep -q 'apt install'"
 
 echo "install"
@@ -511,7 +512,22 @@ check "setup lets both tools write planning repos where it put them" "grep -q '$
 check "lets where prints the planning root and the code repo" "\"$LETS\" where | grep -q \"planning root: $PL\" && \"$LETS\" where | grep -q \"code repo:     $G\""
 check "the planning repo has the layout, LETS's settings and a first commit" "[ -f '$PL/openspec/config.yaml' ] && [ -f '$PL/README.md' ] && [ \"\$(git -C '$PL' config lets.role)\" = planning ] && [ \"\$(git -C '$PL' config lets.agents)\" = commit ] && git -C '$PL' log --oneline | grep -q 'lets setup: plans for team-app' && grep -q '\"team-app\"' '$PL/repos.json'"
 check "the code repo stays clean: nothing agent-related in it" "[ -z \"\$(git status --porcelain --untracked-files=all)\" ] && [ ! -e plans ] && [ ! -e .lets ]"
-check "Claude Code adds no AI attribution to commits or PRs here" "python3 -c \"import json;d=json.load(open('.claude/settings.local.json'));assert d['attribution']=={'commit':'','pr':''} and d['includeCoAuthoredBy'] is False\""
+check "setup adds no per-repo Claude Code settings (install's global settings already keep AI attribution out)" "[ ! -e .claude/settings.local.json ]"
+check "the repo records which LETS set it up, and lets where says the team hasn't agreed" "[ \"\$(git config lets.version)\" = 1.1.0 ] && \"$LETS\" where | grep -q \"team:  *hasn't agreed\""
+check "without the team's agreement, plans can't go in the repo and agents can't ship" "! \"$LETS\" setup --team-agreed no --planning in-repo --yes </dev/null >/dev/null 2>&1 && ! \"$LETS\" setup --team-agreed no --planning private --agents ship --yes </dev/null >/dev/null 2>&1"
+# an upgrade from 1.0.x: no lets.version, and the per-repo attribution file 1.0.x wrote (plus a permission of mine)
+git config --unset lets.version; mkdir -p .claude
+printf '{"attribution":{"commit":"","pr":""},"includeCoAuthoredBy":false,"permissions":{"allow":["WebSearch"]}}\n' > .claude/settings.local.json
+check "doctor names a repo an older LETS set up, and what to run" "\"$LETS\" doctor | grep -q 'set up before LETS 1.1.0: .*team-app'"
+check "lets where tells the agent to have it updated" "\"$LETS\" where | grep -q 'setup:  *by an earlier LETS'"
+check "the session-start check says so too" "sh '$REPO/agent-hooks/session-start.sh' | grep -q 'set up by an earlier LETS'"
+check "install's next steps list it" "\"$LETS\" install --yes 2>&1 | grep -q 'Set up before LETS 1.1.0: .*team-app'"
+B="$(git config lets.build)/$(git config lets.tests)/$(git config lets.agents)/$(git config lets.plans)"
+"$LETS" setup --team-agreed no --yes </dev/null >"$T/upgrade.log" 2>&1
+check "setup in an older repo asks only what's new, and keeps every other answer" "grep -q 'was set up by an earlier LETS' '$T/upgrade.log' && grep -q 'now up to date with LETS 1.1.0' '$T/upgrade.log' && [ \"\$(git config lets.version)\" = 1.1.0 ] && [ \"\$(git config lets.kind)\" = other ] && [ \"$B\" = \"\$(git config lets.build)/\$(git config lets.tests)/\$(git config lets.agents)/\$(git config lets.plans)\" ]"
+check "it takes out the old attribution settings and keeps my own" "python3 -c \"import json;d=json.load(open('.claude/settings.local.json'));assert 'attribution' not in d and 'includeCoAuthoredBy' not in d and d['permissions']=={'allow':['WebSearch']}\""
+check "afterwards nothing is reported as older" "! \"$LETS\" doctor | grep -q 'set up before LETS' && ! \"$LETS\" where | grep -q 'setup: '"
+rm -rf .claude
 check "lets where in the planning repo says what it is" "(cd '$PL' && \"$LETS\" where | grep -q 'home:  *a planning repo')"
 "$LETS" sync >"$T/sync.log" 2>&1
 check "lets sync without an upstream says so" "grep -q 'no upstream' '$T/sync.log'"
@@ -549,6 +565,22 @@ check "lets where in a member names the group" "(cd '$GR/api' && \"$LETS\" where
 check "lets where in the group folder names the repos" "(cd '$GR' && \"$LETS\" where | grep -q 'home:  *a group folder')"
 mkdir -p "$GR/admin"; (cd "$GR/admin" && git init -q && echo a > README.md && git add . && git commit -qm init)
 check "a new repo beside the group is offered the group's planning repo (no terminal: it joins)" "(cd '$GR/admin' && \"$LETS\" setup --mode one --check '' --yes </dev/null >/dev/null 2>&1) && (cd '$GR/admin' && \"$LETS\" where | grep -q 'group:  *admin, api, web')"
+# a plain folder of clones, with a virtualenv and a folder of loose notes beside them (like NO-ARC)
+NA="$T/no-arc"; mkdir -p "$NA/.venv/bin" "$NA/.codex"; echo "# plan" > "$NA/.codex/PLAN.md"
+for r in core-tools api thinfsm; do mkdir -p "$NA/$r"; (cd "$NA/$r" && git init -q -b main && echo x > a && git add a && git commit -qm init); done
+git init -q --bare "$T/no-arc-plans.git"
+(cd "$NA" && "$LETS" setup --mode group --path "$NA" --repos core-tools,api --team-agreed yes --planning private --url "$T/no-arc-plans.git" --plans-dir "$T/plans-elsewhere" --check '' --yes </dev/null >"$T/na.log" 2>&1); rc=$?
+check "a folder of clones with other folders beside them sets up as a group, with only the repos chosen" "[ $rc -eq 0 ] && (cd '$NA' && \"$LETS\" where | grep -q 'code repos:  *api, core-tools') && [ -z \"\$(git -C '$NA/thinfsm' config lets.kind)\" ] && [ -f '$NA/.codex/PLAN.md' ]"
+check "private plans with the team's agreement: the code repos are marked as agreed" "[ \"\$(git -C '$NA/api' config lets.kind)\" = own ] && [ \"\$(git -C '$NA/api' config lets.sharing)\" = private ]"
+# the base branch is asked whenever there's a choice, with the remote's default first
+BB="$T/base-choice"; git init -q --bare "$BB.git"; git clone -q "$BB.git" "$BB" 2>/dev/null; cd "$BB"; echo x > a; git add a; git commit -qm init; git push -q origin HEAD:main 2>/dev/null; git checkout -q -b develop; git push -q origin develop 2>/dev/null; git remote set-head origin main >/dev/null; cd "$REPO"
+check "setup asks for the base when develop sits beside the remote's default, and keeps the default unset" "python3 -c \"
+import sys;sys.path.insert(0,'$REPO/lib');from lets import setup,ui;import pathlib
+asked=[];ui.interactive=lambda:True
+ui.select=lambda q,o,d=None,e=None:(asked.append([x[0] for x in o]),'develop')[1]
+assert setup.ask_base(pathlib.Path('$BB'),None)=='develop' and asked==[['main','develop']]
+ui.select=lambda q,o,d=None,e=None:'main'
+assert setup.ask_base(pathlib.Path('$BB'),None) is None\""
 
 echo "moving plans: a private planning repo into the repo"
 MV="$T/move-app"; mkdir -p "$MV"; cd "$MV"; git init -q; echo x > a.txt; git add a.txt; git commit -qm init

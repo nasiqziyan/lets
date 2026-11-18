@@ -23,8 +23,9 @@ If it says the repo isn't set up, stop and tell me to run `lets setup`. Paths be
 Code is read and edited in the code repo; planning files are written under the planning root. With plans in this repo
 they are the same folder.
 
-When `home` is a planning repo for the team, run `~/lets/bin/lets sync` first, so you plan on the team's latest
-files. If it can't fast-forward, stop and tell me.
+When the plans are in a separate planning repo with a remote (a team or a private one), run `~/lets/bin/lets sync`
+first, so you plan on the latest files: the team's, or mine from another computer. If it can't fast-forward, stop and
+tell me.
 
 ## Layout
 
@@ -135,8 +136,13 @@ After writing or revising a change, check that its parts agree, and report only 
 
 ## Issues
 
-Optional, offered at the end of `/lets:epic-split` and `/lets:change-start`, only where the plans are shared with the
-team (`lets.kind own`) and `gh` or `glab` works here. Issues point at the plans; they never copy them.
+Optional, offered at the end of `/lets:epic-split` and `/lets:change-start` where `gh` or `glab` works. Issues point
+at the plans; they never copy them. Where they go:
+- **Plans in this repo, or a team planning repo, and the team has agreed** (`lets.kind own`): the code repo's own
+  issues.
+- **A private planning repo**: the planning repo's own project, which only I see. Run `gh` or `glab` inside the
+  planning root, never in the code repo.
+- **A team planning repo where the team hasn't agreed**: don't offer issues.
 - One issue per change (tasks stay in `tasks.md`), plus one for the epic. Title: the change's name in plain words
   ("Take card payment"). Body: a link to the change's folder and the command that builds it; for the epic, a link to
   its overview.

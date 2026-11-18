@@ -3,6 +3,33 @@
 LETS follows [semantic versioning](https://semver.org). Each release lists what changes for you, and anything you
 need to do.
 
+## 1.1.0
+
+### What you need to do
+
+- Update: `npm install -g @nasiq/lets`, then `lets install`. Install lists any repo set up by an older LETS.
+- In each repo it lists, run `lets setup`. It asks only the new question below and keeps every other answer.
+- Codex: open Codex once, type `/hooks` and trust LETS's hooks again.
+
+### Changes
+
+- Setup asks a separate question: has the team agreed to agents working in this repo? If not, agents leave the team's
+  way of working alone: its AI instructions (`CLAUDE.md`, `AGENTS.md`, `.claude/`), its own docs in the repo and its
+  GitLab or GitHub. Where plans live is now only about the plans: a team planning repo is one your teammates read and
+  add to; a private one only you see, and nothing links to it.
+- Each repo records the LETS version it was set up with. `lets install`, `lets doctor`, `lets where` and the session
+  start say when a repo needs `lets setup` again.
+- Setup asks which branch work merges into whenever there's a choice (such as `develop` beside `main`).
+- `lets sync` runs before commands for any planning repo with a remote, so two computers stay in step.
+- `/lets:add` can save a rule for this repo's plans only, including in a private planning repo.
+- Issues can go in a private planning repo's own project.
+- `/lets:retro` ends with what it saved for your agents, and what it suggests for the team.
+- Install always ends with numbered next steps, including trusting the hooks in Codex.
+- Every message-length option says it pauses for questions.
+- Setup no longer writes a per-repo Claude Code settings file: install's global settings already keep AI attribution
+  out. Re-running setup takes the old one out, keeping anything of yours in it.
+- The npm package includes Codex's plugin catalogue, so `lets install` can add the plugin to Codex.
+
 ## 1.0.1
 
 - LETS recognises your home folder when it's reached through a link (as on macOS), so settings keep their short

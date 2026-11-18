@@ -11,9 +11,9 @@ wins where they differ, but never over the guard. This command writes them for m
 2. **Work out which commands it affects.** Read the commands' own steps (`~/lets/plugin/skills/<command>/SKILL.md`)
    to find where the rule applies: a commit message format, for example, affects `build` and `patch`, which draft
    commit messages. Name each command and say why in a few words.
-3. **Ask whose it is:** just mine, in every repo (`~/.config/lets/additions/<command>.md`), or the team's, for
-   everyone working on this repo's plans (`additions/<command>.md` in the planning root `lets where` prints). Offer
-   the team's only when `lets where` says the plans are shared with the team.
+3. **Ask where it applies:** in every repo of mine (`~/.config/lets/additions/<command>.md`), or only for this
+   repo's plans (`additions/<command>.md` in the planning root `lets where` prints). Say who follows the second: with
+   a private planning repo, only me; otherwise everyone working on these plans, since it's committed with them.
 4. **Show the exact lines** for each file: short, imperative, one rule per line, specific enough to follow without
    guessing (an example helps). If the file already exists, read it: say if the new rule repeats or contradicts one
    already there, and show where the new lines go. Then ask whether to save, and wait.

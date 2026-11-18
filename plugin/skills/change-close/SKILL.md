@@ -21,5 +21,6 @@ disable-model-invocation: true
    `proposal.md`, then `openspec archive <change> -y --skip-specs`: the specs don't change. If its epic's map lists it
    under `## Changes`, mark it there as dropped. Commit as the guide says (plans in this repo: draft the message).
 6. If the change has an issue (`x-lets-issue` in its `.openspec.yaml`), close it: shipped, or "Not doing this: <why>".
-   Only where the plans are shared with the team and `gh` or `glab` is allowed here; otherwise tell me to close it.
+   Close it where it was made, as the guide's "Issues" says (the code repo's issues, or a private planning repo's own
+   project); if `gh` or `glab` doesn't work there, tell me to close it.
 7. Shipped: when my profile allows suggestions, suggest `/lets:retro <change>`.

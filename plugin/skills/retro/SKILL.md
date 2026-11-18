@@ -14,7 +14,12 @@ disable-model-invocation: true
    - Lessons go into files in the planning root (`CODING_STANDARDS.md`, `CONSTRAINTS.md`, `GLOSSARY.md`,
      `docs/adr/`), never into agent memory: I switch between Claude Code and Codex.
    - For a coding standard, draw on the checklists in `~/lets/plugin/refs/checklists/`.
-   - Where the plans are private, a check that belongs in the team's CI or linters is a suggestion for me to
-     raise with the team, not a change you make.
+   - A lesson an automatic check could catch (a lint rule, a test, a CI step) belongs in the code repo. Where the
+     team has agreed to agents (`lets where`: team), make it on a branch of its own for a merge request; otherwise
+     don't change the code repo: write it up for me to raise with the team.
    - If the LETS guard should have caught a mistake, say so, and draft an issue for LETS describing the case.
-4. Commit planning files as `~/lets/guides/planning.md` says.
+4. End with two sections, in plain words:
+   - **Saved for your agents**: each planning-root file you changed, with the exact lines added.
+   - **For the team** (if any lesson is for them): the check, the exact config change, and a short message I could
+     post to the team or put in a merge request; where the team has agreed, the branch it's on instead.
+5. Commit planning files as `~/lets/guides/planning.md` says.

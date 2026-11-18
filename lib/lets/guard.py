@@ -17,7 +17,7 @@ For every shell command or file edit an agent makes, it:
 4. Never lets an agent merge or approve a PR/MR, use --admin, or push to a shared branch: those are a person's job.
 5. Keeps AI mentions out of every repo, planning repos included: no branch name, commit message or PR/MR title or
    description that names an AI or carries an AI trailer.
-6. Where the plans are private (anything without `lets.kind own`, which includes repos you haven't set up): no gh or
+6. Where the team hasn't agreed to agents (anything without `lets.kind own`, which includes repos you haven't set up): no gh or
    glab at all, and no commits of the owners' docs, agent config or planning files.
 
 It is a tripwire, not a sandbox: it reads commands as text, so a determined agent could find another route (a
@@ -456,7 +456,7 @@ def on_commit(diff_args, cwd, adds=()):
             touched = [n for n in names if walkthrough.GUEST_PROTECTED.search(n)]
             if touched:
                 block(
-                    "LETS isn't welcome in this repo, and this commit includes the team's docs or agent config, or "
+                    "The team hasn't agreed to agents working in this repo, and this commit includes the team's docs or agent config, or "
                     "planning files (%s). Those need the team's agreement; my planning lives in my planning repo"
                     % ", ".join(touched[:8])
                 )
@@ -518,7 +518,8 @@ def on_forge(prog, args, cwd):
 
     if cwd and walkthrough.is_guest(cwd):
         block(
-            "LETS isn't welcome in this repo, so agents don't use %s here: nothing agent-related reaches its forge or "
+            "The team hasn't agreed to agents working in this repo, so agents don't use %s here: nothing "
+            "agent-related reaches its forge or "
             "tracker. Planning stays in my planning repo; tell me what to look up or post" % prog
         )
     words, skip = [], False
@@ -703,7 +704,7 @@ AGENT_CONFIG = re.compile(
 
 
 def check_agent_config(tool, inp, cwd):
-    """Where LETS isn't welcome, the owners' agent config stays as they wrote it (my planning lives in my planning repo)."""
+    """Where the team hasn't agreed to agents, the owners' agent config stays as they wrote it (my planning lives in my planning repo)."""
     from . import walkthrough
 
     for path in proposed_files(tool, inp, cwd) if tool != "NotebookEdit" else {}:
@@ -715,7 +716,7 @@ def check_agent_config(tool, inp, cwd):
         rel = os.path.relpath(os.path.realpath(path), os.path.realpath(root))
         if AGENT_CONFIG.search(rel) and not rel.endswith(("settings.local.json", "CLAUDE.local.md")):
             block(
-                "LETS isn't welcome in this repo, so its agent config (%s) stays as the owners wrote it. My planning "
+                "The team hasn't agreed to agents working in this repo, so its agent config (%s) stays as the owners wrote it. My planning "
                 "and notes go in my planning repo (`lets where`)" % rel
             )
 
