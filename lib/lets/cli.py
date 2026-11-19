@@ -61,6 +61,7 @@ def cmd_note(a: argparse.Namespace) -> None:
 def parser() -> argparse.ArgumentParser:
     from .checks import cmd_check, cmd_walkthrough
     from .doctor import cmd_doctor
+    from .guardlog import cmd_guard_log
     from .install import cmd_install, cmd_uninstall, cmd_update
     from .planning import cmd_sync, cmd_where
     from .profile import CHOICES, cmd_profile
@@ -137,6 +138,11 @@ def parser() -> argparse.ArgumentParser:
     s.add_argument("--dry-run", action="store_true", help="show the fixes, make none")
     s.add_argument("--yes", action="store_true", help="make the fixes without asking")
     s.set_defaults(fn=cmd_doctor)
+
+    s = sub.add_parser("guard", help="log: what the guard blocked, asked about or crashed on lately")
+    s.add_argument("action", choices=["log"])
+    s.add_argument("--last", type=int, help="how many entries to show (default 20)")
+    s.set_defaults(fn=cmd_guard_log)
 
     s = sub.add_parser("update", help="show what a newer LETS changes, then install it")
     s.add_argument("--yes", action="store_true", help="update without asking")

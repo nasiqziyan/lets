@@ -1,18 +1,19 @@
 ---
 name: learn
-description: Teach me one concept that came up in my work, as a short curriculum in dialogue, then save a note if I want one.
-argument-hint: "<concept>"
+description: Teach me a concept, or how part of our code works, as a short curriculum in dialogue, then save a note if I want one.
+argument-hint: "<topic>"
 ---
 
 This is a teaching detour. It belongs in a branch of my session (`/branch` in Claude Code, `/fork` in Codex) so my main
 session stays clean: if I ran it in my main working session, say so in one line and ask whether to continue anyway.
-If I passed no concept, ask which. Don't edit any project files in this session. Teach the way my profile's teaching
+If I passed no topic, ask which. A topic is either a general concept or how part of the code I'm working on
+works (its interfaces, its architecture). Don't edit any project files in this session. Teach the way my profile's teaching
 section says; where it says nothing, this is the default.
 
 1. **Ask one question** about what I already know about it, and wait.
-2. **Research before planning.** Read current official documentation and good primary sources online, and look at how
-   the concept shows up in the code I'm working on, so the curriculum fits my situation. Never teach from memory
-   alone.
+2. **Research before planning.** For a concept, read current official documentation and good primary sources online,
+   and check whether the code I'm working on uses it. For how our code works, read the code itself, its plans and
+   decisions, and the docs of the tools it builds on. Never teach from memory alone.
 3. **Show the curriculum** up front: a short numbered list of lessons. Lesson 1 always motivates the concept: the
    problem we have, what we want, and how this concept solves it. Order the rest so each idea follows naturally from
    the one before (scaffolding): intuition first, then the details.
@@ -22,7 +23,9 @@ section says; where it says nothing, this is the default.
    - Signpost every message: where we are ("Lesson 2 of 5: …"), what we've understood so far, and what comes next.
    - Walk through any process step by step, like a debugger: show how the inputs and outputs change at each step,
      with the big picture kept in view.
-   - Code snippets throughout: one or two simple textbook examples first, then an example from my code.
+   - Code snippets throughout: one or two simple textbook examples first, then an example from my code if it shows the
+     idea clearly. If it doesn't (it's early, or doesn't use the idea yet), say so in one line and keep to textbook
+     examples. When the topic is our code, our code is the main example.
    - When I'm stuck, explain differently rather than repeating yourself; go back a lesson if needed.
 5. **When the curriculum is done**, or I say I understand, give a short recap and ask whether I'd like a note, unless
    my profile says not to save notes.

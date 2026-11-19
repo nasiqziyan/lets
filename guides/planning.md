@@ -98,6 +98,40 @@ tracker:
 - **Research findings** go in `research/<topic>.md`, linked from the prerequisite's answer. No branches, no pushes.
 - **Out of scope**: set `Status: resolved`, answer "out of scope: <why>", and add a line to the map's Out of scope.
 
+## Research in the background
+
+A research prerequisite needs nothing from me, so it runs while I do something else.
+- Claim it, then start one background agent for it (one per prerequisite). Tell the agent the question, what to
+  read, to write its findings to `research/<topic>.md` and nowhere else, to make no commits, and to report a short
+  summary. Without background agents (Codex, for one), leave it open and ready instead.
+- The session that started an agent records its result when it reports, one result at a time: re-read the
+  prerequisite and the map, write the answer, resolve it, and commit those files and the research file.
+- Keep talking with me meanwhile; research never waits for me, and I never wait for it.
+
+## Ending a step
+
+Every epic step ends the same way, so I always know the next move:
+- What changed, in a line or two, then **Ready now**: number, title and type of each ready prerequisite, with one
+  recommended.
+- The next move, in these words: "Start a fresh session (`/clear` or a new tab), then run `<command>`." Each step
+  reads what it needs from these files, so a fresh session loses nothing. Never offer to carry on here ("Shall I
+  take 01?").
+- Ready research prerequisites that nothing is running: say they need nothing from me and can run in another tab at
+  the same time, with `/lets:epic-resolve <epic> research`.
+- Research agents this session started that are still running: name them, and say "You don't need to wait: start
+  the next step in a new tab. Leave this tab open: it records their answers as they finish, then says it's done."
+  Then stay until the last one is recorded and committed, and finish with "All research recorded; this tab is
+  done." and Ready now again if it changed.
+
+## Two sessions at once
+
+I may work on one prerequisite while research for another finishes in a second session.
+- Re-read the map and a prerequisite just before editing them, and change only your own lines.
+- Commit only the files you changed (`git add <paths>`, never `git add -A`). If git says the index is locked, wait a
+  moment and try again.
+- A claimed prerequisite with no answer may belong to a session that was closed. Say so: if its research file
+  exists, offer to record it now; if not, offer to start its research again.
+
 ## Changes (OpenSpec)
 
 Run OpenSpec's command-line tool from the planning root, never its own agent skills or `/opsx:*` commands:
@@ -163,7 +197,7 @@ trailer, in any repo, the planning repo included. If you'd rather credit AI help
 note) at install or with `lets profile ai-credit`; a repo can choose differently with `lets setup --ai-credit`. Branch
 names never mention an AI.
 
-- **Separate planning repo**: after a command writes planning files, commit them in the planning repo with a message
-  naming the command and what changed (`epic-resolve: 03 One realm or two?`). Never push: I push when I choose.
+- **Separate planning repo**: after a command writes planning files, commit the files it changed (not `git add
+  -A`) in the planning repo with a message naming the command and what changed (`epic-resolve: 03 One realm or two?`). Never push: I push when I choose.
 - **This repo**: planning files are ordinary repo files. Leave them uncommitted and tell me which ones changed. A
   change's folder belongs on the change's branch, so it arrives in the change's pull request.

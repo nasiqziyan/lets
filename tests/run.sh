@@ -124,7 +124,8 @@ check "without python3 the guard blocks git, gh and glab, and lets the rest thro
 check "a guard that crashes blocks the call and says why" "echo 'not json' | LETS_GUARD_STRICT= python3 '$REPO/agent-hooks/guard.py' 2>&1 | grep -q 'internal error'; [ \${PIPESTATUS[1]} -eq 2 ]"
 check "the session-start check is silent when all is well" "[ -z \"\$(sh '$REPO/agent-hooks/session-start.sh')\" ]"
 python3 -c "import json,os;p=os.environ['XDG_CONFIG_HOME']+'/lets/config.json';d=json.load(open(p));d['installed']='0.9.0';json.dump(d,open(p,'w'))"
-check "the session-start check says when LETS changed but wasn't re-wired" "sh '$REPO/agent-hooks/session-start.sh' | grep -q 'lets install'"
+check "the session-start check says when LETS changed but wasn't re-wired" "sh '$REPO/agent-hooks/session-start.sh' | grep -q 'lets update'"
+check "lets update finishes an update made through npm directly, without going online" "\"$LETS\" update --yes >'$T/upd.log' 2>&1; grep -q \"wasn't finished. Finishing it\" '$T/upd.log' && ! sh '$REPO/agent-hooks/session-start.sh' | grep -q 'lets update'"
 "$LETS" install --yes >/dev/null 2>&1
 if command -v claude >/dev/null 2>&1; then
   check "Claude Code loads the plugin as lets@skills-dir" "claude plugin list 2>/dev/null | grep -q 'lets@skills-dir'"
@@ -168,6 +169,13 @@ check "both tools may write to the new notes folder" "grep -q '$NOTES/learning' 
 cd "$NOTES"; blocked "git add learning/closures.md"; blocked "git commit -m notes"; blocked "git push"; allowed "git status"; allowed "git log --oneline"
 cd "$NOTES/learning"; blocked "git commit -am notes"; cd "$REPO"
 blocked "git -C $NOTES commit -m notes"
+allowed 'for r in a b; do git -C "$r" branch --contains abc; done'
+allowed 'git -C "$r" fetch origin'
+blocked 'git -C "$r" commit -m x'
+check "the guard asks when unsure (Claude Code), shows the command when it blocks, and survives its own crashes" "[ -z \"\$(python3 '$REPO/tests/guard_modes.py' '$REPO' \"\$PWD\")\" ]"
+check "lets guard log lists what the guard did, and doctor counts it" "\"$LETS\" guard log | grep -q 'git reset --hard' && \"$LETS\" doctor | grep -q 'guard, last 7 days: blocked'"
+allowed "lets guard log"
+allowed "lets guard"
 eval "$PICK off" >/dev/null 2>&1
 check "choosing no notes: the profile says so, and no notes folder is added" "grep -A1 'Learning notes' \$XDG_CONFIG_HOME/lets/profile.md | grep -q 'Answer: none' && python3 -c \"import sys;sys.path.insert(0,'$REPO/lib');from lets import install;assert not any('learning' in d for d in install.lets_dirs())\""
 cd "$NOTES"; allowed "git add learning/closures.md"; cd "$REPO"

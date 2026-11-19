@@ -64,7 +64,7 @@ Working well with a coding agent takes three layers, and three popular projects 
 
   You can move plans between these locations later.
 - **Respect a team that hasn't agreed to agents:** in its repos, agents leave the team's way of working alone: its AI instructions, its own docs and its GitLab or GitHub. You still get the whole workflow, and you commit and push as usual.
-- **Learning detours:** `/lets:learn <concept>` teaches you a concept in a separate branch of your session, then `/resume` (Claude Code) brings you back to where you left off. Optionally, save what you've learned to a folder of your choice for future reference.
+- **Learning detours:** `/lets:learn <topic>` teaches you a concept, or how part of your code works, in a separate branch of your session, then `/resume` (Claude Code) brings you back to where you left off. Optionally, save what you've learned to a folder of your choice for future reference.
 
 ### Yours, for your whole career
 
@@ -85,6 +85,8 @@ lets install
 `lets install` asks how you like to work, shows every change it would make, and makes only the ones you agree to.
 
 If you use Codex, open it once afterwards, type `/hooks` and trust **LETS**'s hooks: until you do, Codex won't run the guard.
+
+To update later, run `lets update`: it shows what changed, then installs the new version and finishes setting it up.
 
 ## Quick start
 

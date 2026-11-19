@@ -27,10 +27,11 @@ Another tool (a task runner) is also called `lets`. `lets install` warns when it
 
 ## The guard
 
-- A block you think is wrong: the message says why, and for a weakened gate prints the command that approves it on
-  this branch. If the guard is plainly wrong, report it with the command it blocked.
-- The guard hit an internal error: the call is blocked and the error shown. Run `lets doctor`; if it happens again,
-  report it with the details from `~/.local/state/lets/logs/`.
+- A block you think is wrong: the message says why and shows the command, so you can run it yourself (in Claude Code,
+  type `!` and paste it). For a weakened gate it also prints the command that approves it on this branch. If the guard
+  is plainly wrong, report it with the lines from `lets guard log`.
+- The guard crashed: harmless commands still run; one that commits, pushes or opens a PR asks you (Claude Code) or is
+  blocked (Codex). `lets doctor` says so; please report it with the lines from `lets guard log`.
 
 ## An unexpected error
 

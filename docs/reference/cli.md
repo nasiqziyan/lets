@@ -15,8 +15,9 @@ Claude Code and Codex.
 | `lets walkthrough scope \| complete \| status` | What the walkthrough covers; `complete` records yours (only you run it). |
 | `lets note [change <name> \| patch <name> \| reviewed] [--mode pair\|agent]` | What this branch is for. The building commands record it; the status line reads it. |
 | `lets note base <branch \| auto>` | The branch this one merges into, for a stacked pull request: walkthroughs and checks compare against it. |
+| `lets guard log [--last N]` | What the guard blocked, asked about or crashed on lately (20 by default). |
 | `lets doctor [--dry-run] [--yes]` | Check the wiring, fix what can be fixed (shown first), and say what to do about the rest. |
-| `lets update [--yes]` | Show what a newer LETS changes (its changelog, and the files that change how agents behave), then install it. |
+| `lets update [--yes]` | Show what a newer LETS changes (its changelog, and the files that change how agents behave), then install it and finish setting it up. Also finishes an update made with `npm install -g` directly. |
 | `lets uninstall [--dry-run] [--yes]` | Take LETS out of Claude Code and Codex. Your profile, settings and plans stay. |
 | `lets statusline on \| off [--dry-run] [--yes]` | Put LETS's status line in Claude Code (the epic, the change and the task you're on), or take it out. If you have your own, it's only replaced when you agree; `off` (and `lets uninstall`) puts it back. |
 | `lets statusline` | Print the status line (Claude Code passes its JSON on stdin). For your own status line script, call it and print what it prints. |

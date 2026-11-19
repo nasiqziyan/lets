@@ -4,7 +4,7 @@ This takes about an hour. You'll plan one small piece of work in a repo of your 
 it, and be walked through it, ending with a pull request you could open. Pick something small and real: a missing
 validation, an empty state on a page, an export button. Something you'd finish in an afternoon by yourself.
 
-You need LETS installed (`npm install -g @nasiq/lets`, then `lets install`).
+You need LETS installed (`npm install -g @nasiq/lets`, then `lets install`; later, `lets update` updates it).
 
 ## 1. Set up the repo
 

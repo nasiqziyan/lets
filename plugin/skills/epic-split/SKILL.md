@@ -30,6 +30,7 @@ The epic route, step 4 of 4. Nothing is created until both coverage checks pass 
    show each change's repo in the plan. Then `openspec validate <name> --strict`, and fix anything it reports.
 8. Check each change as the guide's "Checking a change" says. Add a `## Changes` section to the map listing them in
    delivery order (one `- <change>` line each). **Issues** (optional): offer them as the guide's "Issues" says.
-   Commit as the guide says, and end with the first change to build: `/lets:build <change>`. With planning in this repo, say that the epic's files and these change folders are ready
+   Commit as the guide says, and end as its "Ending a step" says, with the first change to build:
+   `/lets:build <change>`. With planning in this repo, say that the epic's files and these change folders are ready
    for me to commit on a branch of their own and merge first (a planning pull request my team can review), so each
    change's branch starts from them.

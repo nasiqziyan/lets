@@ -8,6 +8,7 @@ import pathlib
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 
 from . import profile, settings, ui
@@ -682,6 +683,11 @@ def cmd_update(a) -> None:
     """Show what a newer LETS changes (its changelog, and which files change how agents behave), then install it."""
     have = version()
     ui.title("LETS update", "you have %s" % have)
+    installed = settings.load().get("installed")
+    if installed and installed != have:  # updated through npm directly: finish the job first
+        ui.ok("LETS %s is installed, but its setup on this computer wasn't finished. Finishing it:" % have)
+        sys.stdout.flush()
+        os.execvp(str(ROOT / "bin" / "lets"), ["lets", "install"] + (["--yes"] if a.yes else []))
     new = latest_version()
     if new is None:
         raise LetsError("Couldn't reach the npm registry to look for a newer LETS. Check your connection, then re-run.")
@@ -718,7 +724,7 @@ def cmd_update(a) -> None:
                 else ui.select(
                     "Update to %s?" % new,
                     [
-                        ("update", "Update", "install it, then re-run `lets install`"),
+                        ("update", "Update", "install it and finish setting it up"),
                         ("show", "Show the exact changes", ""),
                         ("no", "Not now", ""),
                     ],

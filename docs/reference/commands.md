@@ -8,7 +8,7 @@ kebab-case.
 | Command | Arguments | What it does |
 |---|---|---|
 | `epic-start` | `<epic> [the idea]` | Chart an epic's map and its first prerequisites |
-| `epic-resolve` | `<epic> [prerequisite]` | Resolve one prerequisite (research, grilling, prototype, action) |
+| `epic-resolve` | `<epic> [prerequisite \| research]` | Resolve one prerequisite (research, grilling, prototype, action), or start every ready research one |
 | `epic-overview` | `<epic>` | Write the overview for people, ending with the delivery plan |
 | `epic-revise` | `<epic> [--drop]` | Take the team's comments on the overview one at a time; or stop the epic |
 | `epic-split` | `<epic>` | Turn the overview into changes, checking nothing is lost |
@@ -20,7 +20,7 @@ kebab-case.
 | `review` | `<change>` | Quick check, standards, the change's acceptance, a doubt pass, weakened gates |
 | `walkthrough` | `<change>` | Explain the change in run order, quiz you, then draft the PR description |
 | `ideas` | `[the idea]` | Work out what to build when you're not sure yet |
-| `learn` | `<concept>` | Learn a concept, in a branch of your session |
+| `learn` | `<topic>` | Learn a concept, or how part of your code works, in a branch of your session |
 | `handoff` | `[what's next]` | Save the session's state to carry on later or in the other tool |
 | `pickup` | `[handoff]` | Carry on from a handoff |
 | `retro` | `<change>` | Turn a closed change's lessons into standards, glossary, ADRs or checks |

@@ -53,7 +53,8 @@ only for a decision, a question, an approval, a problem, or something only I can
 ## Done means
 - Show the command output that proves it: tests, type check, build. Never claim done without it.
 - Never weaken a gate to get to green: no new skips, unexplained suppressions, deleted tests, weakened assertions or
-  lowered thresholds. If the guard blocks you, stop and tell me. If you merge or remove tests or change a check's
+  lowered thresholds. If the guard blocks you, stop: tell me what it blocked and why, and show me the command
+  it printed in a code block, so I can run it myself if I choose. If you merge or remove tests or change a check's
   config for a good reason, tell me why: the walkthrough will ask me.
 - Lessons go into planning-root files through `/lets:retro`, not agent memory: I switch between Claude Code and Codex.
 - Stopping part-way: `/lets:handoff`, then `/lets:pickup`. Quick side question: `/btw` (Claude Code), `/side` (Codex).

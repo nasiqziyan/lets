@@ -22,9 +22,11 @@ For every shell command or file edit an agent makes, it:
 
 It is a tripwire, not a sandbox: it reads commands as text, so a determined agent could find another route (a
 file written by a shell command isn't checked until it's committed). CI, protected branches and a human reviewer
-stay the final gates. Exit 2 blocks the call in both tools (stderr goes to the agent). A command that commits, pushes
-or opens a PR and can't be checked is blocked, and so is any call when the guard itself fails (`entry`):
-LETS_GUARD_STRICT=1 shows the full error instead.
+stay the final gates. Exit 2 blocks the call in both tools (stderr goes to the agent), and every block shows the
+exact command so I can run it myself. A command that commits, pushes or opens a PR and can't be checked asks me in
+Claude Code (a permission prompt saying what I'd allow) and is blocked in Codex, which can't ask. If the guard itself
+fails, the crash is logged for `lets doctor`; a harmless command runs, and a risky one is treated as unchecked
+(`entry`). LETS_GUARD_STRICT=1 shows the full error instead.
 """
 
 import json
@@ -162,12 +164,80 @@ class Unchecked(Exception):
     """A command that ships or commits, in a form the guard can't follow."""
 
 
+CALL = {"cmd": None}  # the shell command being checked, for messages and the log
+
+
+def in_claude_code():
+    """Claude Code sets CLAUDE_PROJECT_DIR for its hooks; Codex doesn't, and has no "ask" answer."""
+    return bool(os.environ.get("CLAUDE_PROJECT_DIR"))
+
+
+def log(kind, why):
+    """Keep the last 200 blocks, prompts and crashes, for `lets guard log` and `lets doctor`."""
+    try:
+        base = os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache")
+        path = os.path.join(base, "lets", "guard.log")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        lines = open(path).read().splitlines()[-199:] if os.path.exists(path) else []
+        import time
+
+        entry = {"time": int(time.time()), "kind": kind, "why": why, "command": (CALL["cmd"] or "")[:500]}
+        with open(path, "w") as f:
+            f.write("\n".join(lines + [json.dumps(entry)]) + "\n")
+    except Exception:  # noqa: BLE001  the log never gets in the way
+        pass
+
+
+def effect(cmd):
+    """What a command does that the guard cares about, in plain words."""
+    found = []
+    for rx, words in (
+        (r"\bgit\b.*\bcommit\b", "makes a commit"),
+        (r"\bgit\b.*\bpush\b", "pushes to a remote"),
+        (r"\bgit\b.*\b(merge|rebase|cherry-pick|revert|am|pull)\b", "changes a branch's history"),
+        (r"\b(gh|glab)\b", "runs gh or glab against GitHub or GitLab"),
+    ):
+        if re.search(rx, cmd or ""):
+            found.append(words)
+    return ", ".join(found) or "changes files or settings"
+
+
 def block(why):
-    sys.stderr.write(
-        "Blocked by the LETS guard: %s\nGates stay on. If this one is wrong here, stop and tell "
-        "me; I can do it myself.\n" % why
-    )
+    log("block", why)
+    msg = "Blocked by the LETS guard: %s\n" % why
+    if CALL["cmd"]:
+        msg += (
+            "Don't try another way round it. Tell me what was blocked and why, and show me this command exactly, in a "
+            "code block, so I can run it myself if I choose (in Claude Code I type ! and paste it; or in a terminal):"
+            "\n\n%s\n" % CALL["cmd"]
+        )
+    else:
+        msg += "Don't try another way round it. Tell me what was blocked and why; I can make the change myself.\n"
+    sys.stderr.write(msg)
     sys.exit(2)
+
+
+def unsure(why):
+    """The guard can't check this call. Claude Code asks me, showing what I'd allow; Codex can't ask, so it blocks."""
+    if not in_claude_code():
+        block("it couldn't check this call: %s" % why)
+    log("ask", why)
+    reason = "LETS couldn't check this: %s. If you allow it, it runs exactly as shown and %s." % (
+        why.rstrip("."),
+        effect(CALL["cmd"]),
+    )
+    sys.stdout.write(
+        json.dumps(
+            {
+                "hookSpecificOutput": {
+                    "hookEventName": "PreToolUse",
+                    "permissionDecision": "ask",
+                    "permissionDecisionReason": reason,
+                }
+            }
+        )
+    )
+    sys.exit(0)
 
 
 def run(args, cwd, timeout=None, env=None):
@@ -906,6 +976,8 @@ def check_lets(toks):
             return
         if sub == "walkthrough" and args[:1] in (["scope"], ["status"]):
             return
+        if sub == "guard" and args[:1] in ([], ["log"]):
+            return
         if sub == "doctor" and "--yes" not in args:
             return
         if sub == "profile" and not args:
@@ -946,6 +1018,8 @@ def notes_folder():
 
 
 def in_notes_repo(repo):
+    if not repo:  # the guard can't tell where it runs; commands that change anything are refused before this
+        return False
     folder = notes_folder()
     if not folder or not os.path.isdir(folder):
         return False
@@ -959,9 +1033,9 @@ def check_shell(cmd, cwd, depth=0, adds=None):
         bare = re.sub(r"<<-?\s*['\"]?(\w+)['\"]?\n.*?\n\1\b", " ", cmd, flags=re.S)
         for rx in OPAQUE:
             if re.search(rx, bare):
-                block(
-                    "this command commits, pushes or opens a PR in a form I can't check (eval, a command substitution, "
-                    "a pipe into a shell, xargs, an alias or a script). Run it in a plain form, or ask me to run it"
+                unsure(
+                    "it commits, pushes or opens a PR in a form the guard can't follow (eval, a command substitution, "
+                    "a pipe into a shell, xargs, an alias or a script)"
                 )
     where, previous, dirs = cwd, cwd, []
     adds = [] if adds is None else adds
@@ -1059,11 +1133,10 @@ def check_shell(cmd, cwd, depth=0, adds=None):
         except SystemExit:
             raise
         except Exception as e:  # a command that commits, pushes or ships must be checked, or it doesn't run
-            if RISKY.search(plain):
-                block(
-                    "this command couldn't be checked (%s). Run it in a simpler form, or ask me to run it"
-                    % (e if isinstance(e, Unchecked) else e.__class__.__name__)
-                )
+            if isinstance(e, Unchecked):
+                if RISKY.search(plain):
+                    unsure(str(e))
+                continue
             raise
 
 
@@ -1147,12 +1220,15 @@ def main():
         else:
             cmd = " ".join(shlex.quote(str(c)) for c in cmd)
     if isinstance(cmd, str):
+        CALL["cmd"] = cmd
         check_commit_message(cmd, cwd)
         check_shell(cmd, cwd)
 
 
 def entry():
-    """Run the guard. If it crashes, the call is blocked and the error shown: a gate that can't check stays shut."""
+    """Run the guard. If it crashes, the crash is logged for `lets doctor`. A command that commits, pushes or ships
+    still can't run unchecked (Claude Code asks me; Codex blocks it); anything else runs, since the guard's own bug
+    shouldn't stop harmless work."""
     try:
         main()
     except SystemExit:
@@ -1160,7 +1236,9 @@ def entry():
     except Exception as e:  # noqa: BLE001
         if os.environ.get("LETS_GUARD_STRICT"):
             raise
-        block(
-            "the guard hit an internal error (%s: %s), so this call wasn't checked. Run `lets doctor`, and "
-            "report it if it happens again." % (type(e).__name__, e)
-        )
+        why = "the guard hit an internal error (%s: %s)" % (type(e).__name__, e)
+        if CALL["cmd"] and not RISKY.search(CALL["cmd"]):
+            log("crash", why)
+            sys.exit(0)
+        log("crash", why)
+        unsure(why)

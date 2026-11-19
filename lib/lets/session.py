@@ -1,7 +1,7 @@
 """What LETS says at the start of a session, and its once-a-day update check.
 
 The session-start hook prints only when something needs saying (an agent reads it and tells you): the guard can't
-run, LETS changed and needs `lets install`, or a newer LETS is out. The update check asks the npm registry for the
+run, LETS changed and needs `lets update` to finish, or a newer LETS is out. The update check asks the npm registry for the
 latest version number, at most once a day, and only when your profile says to (LETS_NO_UPDATE_CHECK=1 turns it off).
 """
 
@@ -68,7 +68,8 @@ def cmd_session_start(a=None) -> None:
     installed = settings.load().get("installed")
     if installed and installed != version():
         lines.append(
-            "LETS was updated to %s but not re-wired (it was %s). Tell me to run `lets install`."
+            "LETS was updated to %s but its setup on this computer wasn't finished (it was %s). Tell me to run "
+            "`lets update`: it finishes the job."
             % (version(), installed)
         )
     try:

@@ -3,6 +3,38 @@
 LETS follows [semantic versioning](https://semver.org). Each release lists what changes for you, and anything you
 need to do.
 
+## 1.1.1
+
+### What you need to do
+
+- Run `lets update`. It shows these changes, installs 1.1.1 and finishes setting it up. No repo needs `lets setup`
+  again.
+
+### Changes
+
+- The guard gets in the way less:
+  - It no longer crashes on a git command whose repo it can't tell in advance, such as `git -C "$repo" fetch` in a
+    loop.
+  - If it crashes anyway, a command that doesn't commit, push or open a PR still runs.
+  - When it can't check a command that does, Claude Code asks you, saying what you'd allow, instead of blocking it.
+    Codex can't ask, so it still blocks there.
+  - Every block shows the exact command, ready to copy, so you can run it yourself.
+  - `lets guard log` lists what it blocked, asked about or crashed on, and `lets doctor` counts the last week's.
+- `lets update` is the one command for updating. If you update with `npm install -g` instead, it finishes the job
+  (before, you needed `lets install`).
+- `/lets:learn` can teach how part of your code works, not only general concepts, and uses an example from your code
+  only when it shows the idea clearly.
+- `/lets:epic-start` with no arguments asks for the epic's name first, then creates `epics/<name>/inputs/` and asks
+  you to describe the work or put your notes there. An epic counts as started once its `map.md` exists, so adding
+  inputs first no longer stops it.
+- Research starts in the background while you're still charting or resolving, and the session that started it
+  records each answer as it arrives. If research is still running when a step ends, you can start the next step in a
+  new tab straight away.
+- Every epic step ends with what's ready and the exact next move: start a fresh session (`/clear` or a new tab) and
+  run the command it names. Steps no longer offer to carry on in the same session.
+- `/lets:epic-resolve <epic> research` starts every ready research prerequisite at once. It also points out a
+  prerequisite left claimed with no answer (for example when a tab was closed early) and offers to finish it.
+
 ## 1.1.0
 
 ### What you need to do

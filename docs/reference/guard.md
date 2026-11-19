@@ -17,13 +17,30 @@ agents only: you stay free to do anything yourself. It takes about 55 ms a call 
 
 ## When a block is wrong
 
-A block message says why. For a weakened gate that's right on this branch, it prints the exact command that approves
-it (`git config --add branch.<name>.letsAllow '<finding>'`), which only you can run.
+A block message says why, and shows the exact command, ready to copy: run it yourself if you mean it (in Claude Code,
+type `!` and paste it; or paste it in a terminal). For a weakened gate that's right on this branch, it also prints the
+command that approves it (`git config --add branch.<name>.letsAllow '<finding>'`), which only you can run.
+
+## When the guard can't tell
+
+Some commands that commit, push or open a PR can't be checked in advance: a loop over repos, a shell variable, a
+script. In Claude Code the guard asks you, with a permission prompt saying what you'd allow ("it pushes to a remote");
+you decide in one click. Codex can't ask, so there the command is blocked and shown for you to run yourself.
+
+## What it did lately
+
+`lets guard log` lists what the guard blocked, asked about or crashed on, newest last. `lets doctor` counts the last
+week's. If a block was wrong, report it at https://github.com/nasiqziyan/lets/issues with the lines from
+`lets guard log` (take out anything private).
 
 ## When the guard can't run
 
-Without Python 3.11+, or if the guard itself fails, `git`, `gh` and `glab` commands are blocked (so nothing is
-committed, pushed or opened unchecked) and the session-start check tells you. Run `lets doctor`.
+Without Python 3.11+, `git`, `gh` and `glab` commands are blocked for agents (so nothing is committed, pushed or opened
+unchecked) and the session-start check tells you. Run `lets doctor`.
+
+If the guard itself crashes, that's a bug in LETS: the crash is logged, a command that doesn't commit, push or open a
+PR runs anyway, and one that does is treated as one the guard can't tell about (above). `lets doctor` asks you to
+report it.
 
 It's a tripwire, not a sandbox: it reads commands as text. CI, protected branches and a human reviewer stay the final
 gates.

@@ -20,5 +20,6 @@ The epic route, step 3 of 4.
      with a name (short and verb-led, as the guide says: `add-cart-api`), a goal in one line, and what it waits on.
 5. Write for people who weren't in the sessions: define terms on first use, no session talk, nothing that names an
    AI.
-6. Commit as the guide says. Tell me the overview is ready to read and share, then `/lets:epic-split <epic>`. If
-   the team comments on it, `/lets:epic-revise <epic>` takes the comments one at a time.
+6. Commit as the guide says. Tell me the overview is ready to read and share, then end as the guide's "Ending a
+   step" says, with `/lets:epic-split <epic>`. If the team comments on it, `/lets:epic-revise <epic>` takes the
+   comments one at a time.

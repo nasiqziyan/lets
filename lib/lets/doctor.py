@@ -148,6 +148,10 @@ def cmd_doctor(a) -> None:
             "  set up before LETS %s: %s. Run `lets setup` there: it asks only what's new."
             % (SETUP_VERSION, describe(r))
         )
+    from .guardlog import doctor_lines
+
+    for line in doctor_lines():
+        say(line)
     if not found:
         say("Doctor: all checks pass.")
         return
