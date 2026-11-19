@@ -1,6 +1,6 @@
 {
   "name": "@nasiq/lets",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "LETS: one way of working with coding agents in Claude Code and Codex: plan, build in pairs, review, walk through.",
   "keywords": [
     "claude-code",
