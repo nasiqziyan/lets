@@ -2,10 +2,7 @@
 
 A complete workflow for [Claude Code](https://code.claude.com/docs) and [Codex](https://developers.openai.com/codex), combining [Matt Pocock's skills](https://github.com/mattpocock/skills), [Addy Osmani's agent skills](https://github.com/addyosmani/agent-skills) and [OpenSpec](https://github.com/Fission-AI/OpenSpec) under one coherent vocabulary.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/statusline-dark.png">
-  <img alt="The LETS status line in Claude Code: user-accounts ●●◉○ › add-password-reset ●◉○○ › Email the reset link ✎ pair" src="docs/images/statusline-light.png">
-</picture>
+<img alt="The LETS status line in Claude Code: user-accounts ●●◉○ › add-password-reset ●◉○○ › Email the reset link ✎ pair" src="docs/images/statusline-dark.png">
 
 Enable the status line in Claude Code with `lets statusline on` to display the `epic`, the `change` and the `task` you're on.
 
@@ -21,19 +18,13 @@ Working well with a coding agent takes three layers, and three popular projects 
 
 **LETS** brings them together as one set of commands with one vocabulary, so each kind of work has one clear way through, from an idea to a merged pull request.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/three-layers-dark.png">
-  <img alt="Matt Pocock's skills (grilling, glossary, test-first), Addy Osmani's agent skills (security, APIs, performance) and OpenSpec (living changes and specs) feed into LETS: one vocabulary, one coherent route, running idea, plan, build, review, walkthrough, merge." src="docs/images/three-layers-light.png">
-</picture>
+<img alt="Matt Pocock's skills (grilling, glossary, test-first), Addy Osmani's agent skills (security, APIs, performance) and OpenSpec (living changes and specs) feed into LETS: one vocabulary, one coherent route, running idea, plan, build, review, walkthrough, merge." src="docs/images/three-layers-dark.png">
 
 ## Features
 
 ### Building
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/change-flow-dark.png">
-  <img alt="How one change flows, with the order-tracking example: an idea (customers want to track their orders) is planned with /lets:change-start add-order-tracking. Its tasks are built and reviewed in order: show-order-status and email-status-changes in agent mode, link-to-courier in pair mode, each with /lets:build add-order-tracking <task> then /lets:review add-order-tracking. Then /lets:walkthrough, and you open a pull request. If changes are requested, /lets:change-revise add-order-tracking <comment> adds a task (clarify-status-labels), which is built and reviewed the same way. Otherwise /lets:change-close add-order-tracking, and you merge." src="docs/images/change-flow-light.png">
-</picture>
+<img alt="How one change flows, with the order-tracking example: an idea (customers want to track their orders) is planned with /lets:change-start add-order-tracking. Its tasks are built and reviewed in order: show-order-status and email-status-changes in agent mode, link-to-courier in pair mode, each with /lets:build add-order-tracking <task> then /lets:review add-order-tracking. Then /lets:walkthrough, and you open a pull request. If changes are requested, /lets:change-revise add-order-tracking <comment> adds a task (clarify-status-labels), which is built and reviewed the same way. Otherwise /lets:change-close add-order-tracking, and you merge." src="docs/images/change-flow-dark.png">
 
 - **Pair mode and agent mode**, chosen per repo, per pull request, or on the fly (`--pair`, `--agent`):
   - **Pair mode:** the agent walks you through the implementation in an order that's easy to follow, telling you exactly what to write and why it's done that way. You write it, and the agent checks it.
@@ -47,15 +38,9 @@ Working well with a coding agent takes three layers, and three popular projects 
 - **Defined routes for context:** every **LETS** command has defined inputs and outputs. It reads exactly what the previous step produced and writes exactly what the next one needs. Context is transported between sessions as plain files, not chat history, so nothing is lost and nothing irrelevant is loaded.
 - **One route for each size of work:** a `patch` for a small fix, a `change` for one pull request, an `epic` for work too big or too unclear to plan in one go.
 
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/hierarchy-dark.png">
-    <img alt="An epic splits into changes 1 to n; each change splits into its own tasks (4, 2, 3, ... n). An epic is work too big or too unclear to plan in one go, a change is one pull request, and a task is a vertical slice that fits in one fresh context window." src="docs/images/hierarchy-light.png">
-  </picture>
+  <img alt="An epic splits into changes 1 to n; each change splits into its own tasks (4, 2, 3, ... n). An epic is work too big or too unclear to plan in one go, a change is one pull request, and a task is a vertical slice that fits in one fresh context window." src="docs/images/hierarchy-dark.png">
 
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/epic-flow-dark.png">
-    <img alt="How an epic flows, with the order-self-service example: an idea (customers want to manage their orders online) is started with /lets:epic-start, which creates map.md and the prerequisites. Each prerequisite is resolved with /lets:epic-resolve: which-courier-apis (research, adds research notes), cancel-after-dispatch (grilling, adds an ADR) and returns-label-flow (prototype); each updates map.md. Then /lets:epic-overview writes overview.md; team comments go through /lets:epic-revise. /lets:epic-split creates the changes: add-order-tracking builds in the background in its own worktree (--agent --bg, running) while add-order-cancellation is paired in your checkout (in progress), and add-returns waits for it (not started)." src="docs/images/epic-flow-light.png">
-  </picture>
+  <img alt="How an epic flows, with the order-self-service example: an idea (customers want to manage their orders online) is started with /lets:epic-start, which creates map.md and the prerequisites. Each prerequisite is resolved with /lets:epic-resolve: which-courier-apis (research, adds research notes), cancel-after-dispatch (grilling, adds an ADR) and returns-label-flow (prototype); each updates map.md. Then /lets:epic-overview writes overview.md; team comments go through /lets:epic-revise. /lets:epic-split creates the changes: add-order-tracking builds in the background in its own worktree (--agent --bg, running) while add-order-cancellation is paired in your checkout (in progress), and add-returns waits for it (not started)." src="docs/images/epic-flow-dark.png">
 
 - **Choose where plans live** to match how your team works:
   - In the code repo, under `plans/`, committed alongside the code: when your team uses **LETS** and plans are reviewed in the same pull requests as the code.
