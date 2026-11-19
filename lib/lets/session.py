@@ -69,8 +69,7 @@ def cmd_session_start(a=None) -> None:
     if installed and installed != version():
         lines.append(
             "LETS was updated to %s but its setup on this computer wasn't finished (it was %s). Tell me to run "
-            "`lets update`: it finishes the job."
-            % (version(), installed)
+            "`lets update`: it finishes the job." % (version(), installed)
         )
     try:
         from .core import git

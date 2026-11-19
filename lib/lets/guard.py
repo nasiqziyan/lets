@@ -178,7 +178,10 @@ def log(kind, why):
         base = os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache")
         path = os.path.join(base, "lets", "guard.log")
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        lines = open(path).read().splitlines()[-199:] if os.path.exists(path) else []
+        lines = []
+        if os.path.exists(path):
+            with open(path) as f:
+                lines = f.read().splitlines()[-199:]
         import time
 
         entry = {"time": int(time.time()), "kind": kind, "why": why, "command": (CALL["cmd"] or "")[:500]}

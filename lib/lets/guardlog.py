@@ -51,8 +51,11 @@ def cmd_guard_log(a) -> None:
         return
     for e in shown:
         when = time.strftime("%Y-%m-%d %H:%M", time.localtime(e.get("time", 0)))
-        say("%s  %s: %s" % (when, WORDS.get(e.get("kind"), e.get("kind")), e.get("why", "").splitlines()[0]))
+        say("%s  %s: %s" % (when, WORDS.get(str(e.get("kind")), e.get("kind")), e.get("why", "").splitlines()[0]))
         if e.get("command"):
             say("      %s" % e["command"].replace("\n", "\n      "))
     say()
-    say("If one of these was wrong, please report it: %s/new (paste the lines above; take out anything private)." % ISSUES)
+    say(
+        "If one of these was wrong, please report it: %s/new (paste the lines above; take out anything private)."
+        % ISSUES
+    )
