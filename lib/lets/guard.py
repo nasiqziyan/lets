@@ -17,8 +17,9 @@ For every shell command or file edit an agent makes, it:
 4. Never lets an agent merge or approve a PR/MR, use --admin, or push to a shared branch: those are a person's job.
 5. Keeps AI mentions out of every repo, planning repos included: no branch name, commit message or PR/MR title or
    description that names an AI or carries an AI trailer.
-6. Where the team hasn't agreed to agents (anything without `lets.kind own`, which includes repos you haven't set up): no gh or
-   glab at all, and no commits of the owners' docs, agent config or planning files.
+6. Where the team hasn't agreed to agents (anything without `lets.kind own`, which includes repos you haven't set up):
+   agents read anything but change nothing the team sees: gh and glab only to read (a repo named with -R counts too),
+   and no commits of the owners' docs, agent config or planning files.
 
 It is a tripwire, not a sandbox: it reads commands as text, so a determined agent could find another route (a
 file written by a shell command isn't checked until it's committed). CI, protected branches and a human reviewer
@@ -584,16 +585,75 @@ def option_value(args, names):
     return None
 
 
+FORGE_READS = {
+    "issue": ("list", "ls", "view", "status"),
+    "pr": ("list", "view", "diff", "status", "checks", "checkout"),
+    "mr": ("list", "view", "diff", "checkout"),
+    "repo": ("view", "list"),
+    "release": ("list", "view"),
+    "run": ("list", "view"),
+    "ci": ("list", "view", "status", "get"),
+    "label": ("list",),
+    "milestone": ("list",),
+    "auth": ("status",),
+    "search": None,
+    "browse": None,
+}
+
+
+def forge_reads_only(words, args, method):
+    """True for gh/glab commands that only read: listing and viewing issues, PRs/MRs, pipelines, and API GETs."""
+    if not words:
+        return True
+    if words[0] == "api":
+        joined = " ".join(args)
+        if len(words) > 1 and words[1] == "graphql":  # queries read; mutations write
+            return not re.search(r"\bmutation\b", joined)
+        fields = re.search(r"(^|\s)(-f|-F|--field|--raw-field|--input)\b", joined)
+        return method == "GET" or (not method and not fields)
+    allowed = FORGE_READS.get(words[0], ())
+    return allowed is None or (len(words) > 1 and words[1] in allowed)
+
+
+def forge_target_is_guest(args):
+    """The repo a -R/--repo option names, if LETS set it up and its team hasn't agreed to agents."""
+    target = option_value(args, ["-R", "--repo"])
+    if not target:
+        return None
+    from . import upgrade, walkthrough
+
+    want = re.sub(r"\.git$", "", target.rstrip("/")).split(":")[-1].split("github.com/")[-1]
+    want = re.sub(r"^https?://[^/]+/", "", want).lower()
+    for r in upgrade.known_repos():
+        url = git_out(["remote", "get-url", "origin"], str(r)).lower()
+        path = re.sub(r"\.git$", "", url.rstrip("/")).split(":")[-1]
+        path = re.sub(r"^//[^/]+/", "", path)
+        same = path and want and (path == want or path.endswith("/" + want) or want.endswith("/" + path))
+        if same and walkthrough.is_guest(str(r)):
+            return str(r)
+    return None
+
+
 def on_forge(prog, args, cwd):
-    """gh and glab: none at all in a repo that isn't yours; never merging, approving or --admin; opening or readying a
-    PR/MR is shipping, which needs `lets.agents ship`."""
+    """gh and glab: only reading in a repo whose team hasn't agreed to agents; never merging, approving or --admin;
+    opening or readying a PR/MR is shipping, which needs `lets.agents ship`."""
     from . import walkthrough
 
-    if cwd and walkthrough.is_guest(cwd):
+    words, skip = [], False
+    for a in args:
+        if skip:
+            skip = False
+        elif a in ("-R", "--repo", "--hostname", "-H", "-X", "--method"):
+            skip = True
+        elif not a.startswith("-"):
+            words.append(a)
+    method = (option_value(args, ["-X", "--method"]) or "").upper()
+    guest = forge_target_is_guest(args) or (cwd if cwd and walkthrough.is_guest(cwd) else None)
+    if guest and not forge_reads_only(words, args, method):
         block(
-            "The team hasn't agreed to agents working in this repo, so agents don't use %s here: nothing "
-            "agent-related reaches its forge or "
-            "tracker. Planning stays in my planning repo; tell me what to look up or post" % prog
+            "The team hasn't agreed to agents working in this repo, so agents only read from its GitLab or GitHub: "
+            "this %s command writes (it comments, creates, edits or closes). Tell me what to post and I'll do it "
+            "myself" % prog
         )
     words, skip = [], False
     for a in args:

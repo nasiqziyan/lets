@@ -7,8 +7,8 @@
 - **Yes** (your own repo, or the team has agreed): agents may work with the team's AI instructions (`CLAUDE.md`,
   `AGENTS.md`, `.claude/`), its own docs in the repo, and its GitLab or GitHub (`glab`, `gh`), as far as the git
   setting you choose allows.
-- **No**: agents leave the team's way of working alone: its AI instructions, its own docs in the repo (glossary, ADRs,
-  coding standards) and its GitLab or GitHub. Nothing agent-related is committed there, and the guard enforces it.
+- **No**: agents can read anything, including the team's issues and merge requests, but change nothing the team
+  sees: its AI instructions, its own docs in the repo (glossary, ADRs, coding standards) and its GitLab or GitHub. Nothing agent-related is committed there, and the guard enforces it.
   Agents still help you write code; you commit and push it as usual. Agents can't open merge requests, so the git
   setting stops at Commit.
 

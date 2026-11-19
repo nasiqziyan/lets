@@ -230,7 +230,7 @@ def cmd_where(a) -> None:
             % (
                 "has agreed to agents working here"
                 if git_config("lets.kind", root) == "own"
-                else "hasn't agreed: leave its AI instructions, docs and GitLab/GitHub alone"
+                else "hasn't agreed: read anything; change nothing the team sees (AI instructions, docs, GitLab/GitHub)"
             )
         )
         say("build:         %s · test-first: %s · git: %s" % (st["build"], st["tests"], st["git"]))

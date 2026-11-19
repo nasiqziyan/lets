@@ -23,7 +23,7 @@ decisions and risks in it, and only you can record it as done.
 ## Gates the agent can't loosen
 
 The guard runs on every agent command and edit. It keeps git as local as you choose, refuses edits that weaken a test
-or a check, keeps AI mentions out of every repo, and keeps agents off a team's forge where the team hasn't agreed to them.
+or a check, keeps AI mentions out of every repo, and keeps agents to reading a team's forge where the team hasn't agreed to them.
 
 ## Plans live where the team works
 

@@ -15,3 +15,11 @@ gh api repos/team/shop-tools/issues/5/comments
 glab mr note 12 -m "Rebased on main; ready for review."
 %%
 git add analysis/src/shop_analysis/checkout.py && git commit -m "Fix discount sign"
+%%
+gh issue comment 5 -b "Seen this too."
+%%
+glab issue close 9
+%%
+gh api -X POST repos/team/shop-tools/issues -f title="Discount sign"
+%%
+gh api graphql -f query='mutation { addComment(input:{subjectId:"x", body:"hi"}) { clientMutationId } }'

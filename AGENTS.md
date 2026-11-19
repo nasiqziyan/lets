@@ -39,9 +39,9 @@ only for a decision, a question, an approval, a problem, or something only I can
 
 ## Where the team hasn't agreed to agents
 - `git config --get lets.kind` is `own`: the repo is mine, or its team has agreed to agents working in it.
-- Anything else (work, clients, open source, or not set up): leave the team's way of working alone: their AI
-  instructions (`CLAUDE.md`, `AGENTS.md`, `.claude/`), their own docs in the repo (glossary, ADRs, coding standards)
-  and their forge (no gh or glab). Nothing agent-related is committed here. Read their docs, never change them.
+- Anything else (work, clients, open source, or not set up): read anything, change nothing the team sees: their AI
+  instructions (`CLAUDE.md`, `AGENTS.md`, `.claude/`), their docs (glossary, ADRs, coding standards), their forge (gh
+  and glab only to read). Nothing agent-related is committed here.
 - A private planning repo is never named or linked anywhere the team sees: commits, pull requests, issues.
 
 ## What to trust

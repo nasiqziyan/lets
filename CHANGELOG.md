@@ -3,6 +3,22 @@
 LETS follows [semantic versioning](https://semver.org). Each release lists what changes for you, and anything you
 need to do.
 
+## 1.1.2
+
+### What you need to do
+
+- Run `lets update`. No repo needs `lets setup` again.
+
+### Changes
+
+- Where the team hasn't agreed to agents, agents can now read the team's GitLab or GitHub: list and view issues,
+  merge requests and pull requests, their diffs and pipelines, and API calls that only read. Anything that writes
+  (commenting, labelling, creating, editing, closing) is still blocked.
+- The guard also checks a repo named with `-R` or `--repo`, so a command run from somewhere else can't write to a
+  team's repo either.
+- The setup question, `lets where` and the agents' map now say it plainly: agents read anything, and change nothing
+  the team sees.
+
 ## 1.1.1
 
 ### What you need to do

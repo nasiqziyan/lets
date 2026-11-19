@@ -8,6 +8,9 @@ create issues. Issues point at the plans; they never copy them. Where they go de
   in the team's repo.
 - **A team planning repo where the team hasn't agreed:** issues aren't offered.
 
+Wherever the plans live, agents can read the team's issues and merge requests (`glab issue view 42`, `gh pr diff`);
+only writing to them needs the team's agreement.
+
 - One issue per change (its tasks stay in `tasks.md`), plus one for an epic. The title is the change's name in plain
   words; the body links to the change's folder and gives the command that builds it.
 - **GitHub**: the epic's issue has the type Epic; each change's issue is its sub-issue, blocked by the issues of the

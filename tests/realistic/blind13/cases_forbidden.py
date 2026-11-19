@@ -188,10 +188,10 @@ R = "ingestd"
 for label, cmd in [
     ("AI branch claude/", "git switch -c claude/fix-race"), ("AI branch ai-", "git checkout -b ai-fix-store"),
     ("AI branch codex/", "git branch codex/eviction"), ("AI branch copilot in name", "git checkout -b fix/copilot-suggested-lock"),
-    ("AI branch rename", "git branch -m fix/claude-store"), ("gh issue list", "gh issue list"), ("glab mr list", "glab mr list"),
-    ("glab mr create", "glab mr create --fill"), ("env gh", "env -- gh pr list"), ("commit", "git commit -m 'fix race'"),
+    ("AI branch rename", "git branch -m fix/claude-store"), ("gh issue comment", "gh issue comment 4 -b hi"), ("glab mr note", "glab mr note 3 -m hi"),
+    ("glab mr create", "glab mr create --fill"), ("env gh", "env -- gh pr comment 3 -b hi"), ("commit", "git commit -m 'fix race'"),
     ("set kind own", "git config lets.kind own"), ("set kind own --local", "git config --local lets.kind own"),
-    ("bash -c glab", "bash -c 'glab ci status'"), ("abs glab", "/usr/local/bin/glab mr view 3"),
+    ("bash -c glab", "bash -c 'glab ci retry 9'"), ("abs glab", "/usr/local/bin/glab mr note 3 -m hi"),
     ("switch -c AI with Co-Authored commit", "git switch -c feature/x && git commit -m 'x' -m 'Co-Authored-By: Claude <noreply@anthropic.com>'"),
 ]:
     bash(f"shF not-mine: {label}", X, R, cmd)
@@ -246,4 +246,4 @@ bash("shF not-mine: AI branch gpt-", X, R, "git checkout -b gpt5-store-fix")
 bash("shF not-mine: AI branch 'agent' suffix with Claude", X, R, "git switch -c fix/store-Claude")
 bash("shF not-mine: AI branch via quoted name", X, R, "git switch -c \"claude/fix\"")
 bash("shF not-mine: AI branch via worktree add -b", X, R, "git worktree add -b claude/wt ../wt")
-bash("shF not-mine: gh via npx", X, R, "npx gh pr list")
+bash("shF not-mine: gh via npx", X, R, "npx gh pr comment 3 -b hi")

@@ -129,7 +129,12 @@ def ask_team(repos: list[pathlib.Path], flag: str | None, planning_flag: str | N
         "Has the team agreed to agents working in %s?" % label,
         [
             ("yes", "Yes", "it's my own repo, or the team has agreed to agents working in it"),
-            ("no", "No", "the team hasn't agreed: agents leave the team's way of working alone"),
+            (
+                "no",
+                "No",
+                "the team hasn't agreed: agents can read the repo, its issues and merge requests, but change nothing the "
+                "team sees",
+            ),
         ],
         "yes" if guess == "own" else "no",
         "Agents never merge, approve or push to a shared branch, whatever you choose.",

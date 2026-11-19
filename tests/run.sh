@@ -390,10 +390,18 @@ check "the block tells the agent the commit is mine" "python3 -c 'import json,sy
 
 echo "guard: a repo that isn't mine"
 N="$T/notmine"; mkdir -p "$N"; cd "$N"; git init -q; echo x > a.txt; git add a.txt; git commit -qm init
-for c in "gh issue list" "gh pr view 3" "gh api repos/o/r/issues" "glab mr list" "glab issue note 7 -m hi" \
+for c in "gh issue list" "gh pr view 3" "gh pr diff 3" "gh api repos/o/r/issues" "glab mr list" "glab issue view 7"; do allowed "$c"; done
+for c in "glab issue note 7 -m hi" "gh issue comment 5 -b hi" "glab issue close 3" "gh issue create -t x -b y" \
+         "gh api -X POST repos/o/r/issues -f title=x" "glab mr update 2 --label bug" \
          "git checkout -b claude/fix-parser" "git switch -c fix/codex-cleanup" "git branch copilot-wip" \
          "git worktree add -b claude/x ../x" "git branch -m feat/claude-tweaks"; do blocked "$c"; done
-check "a repo nobody has set up is treated as not mine" "[ \$(agent 'gh issue list') = 2 ]"
+check "a repo nobody has set up is treated as not mine" "[ \$(agent 'gh issue comment 5 -b hi') = 2 ] && [ \$(agent 'gh issue list') = 0 ]"
+git remote add origin git@gitlab.example.com:team/notmine.git; git config lets.version 1.1.0
+python3 -c "import sys,pathlib;sys.path.insert(0,'$REPO/lib');from lets.upgrade import remember_repo;remember_repo(pathlib.Path('$N'))"
+cd "$L"
+blocked "glab -R team/notmine issue note 7 -m hi"; blocked "gh --repo gitlab.example.com/team/notmine issue comment 7 -b hi"
+allowed "glab -R team/notmine issue view 7"; allowed "glab -R someone/else issue note 7 -m hi"
+cd "$N"
 git config lets.kind other
 for c in "git checkout -b fix/cart-parser" "git switch -c feat/ai-model-loader" "git branch -m fix/agent-based-sim"; do allowed "$c"; done
 git config lets.agents commit; git checkout -q -b fix/parser
@@ -553,7 +561,7 @@ stage src/x.ts 'export const x = 1'; allowed "git commit -m code"; reset
 mkdir -p packages/web; echo "# web" > packages/web/AGENTS.md; git add -f packages/web/AGENTS.md
 blocked "git commit -m nested-agents-md"; git reset -q; rm -rf packages
 mkdir -p plans/openspec/specs; echo x > plans/openspec/specs/x.md; blocked "git add -f plans && git commit -m planning-files"; git reset -q; rm -rf plans
-blocked "gh issue list"
+allowed "gh issue list"; blocked "gh issue comment 3 -b hi"
 git config --unset lets.agents
 git checkout -q -b gfeat; stage src/y.ts 'export const y = 1'; git commit -qm y; echo "a term" >> GLOSSARY.md
 check "the team's docs, edited locally, don't hold up a walkthrough" "\"$LETS\" walkthrough complete"
@@ -659,13 +667,14 @@ git -C "$RR/shop-tools" config lets.kind own; git -C "$RR/shop-tools" config let
 check "a day of ordinary work in a monorepo is never blocked" "python3 '$REPO/tests/realistic/allowed.py' '$REPO/agent-hooks/guard.py' '$RR/shop-tools' '$REPO/tests/realistic/daily.txt'"
 python3 "$REPO/tests/realistic/allowed.py" "$REPO/agent-hooks/guard.py" "$RR/shop-tools" "$REPO/tests/realistic/daily.txt" | tail -1
 GC="$RR/guest-clone"; git clone -q "$RR/origin.git" "$GC"; git -C "$GC" config lets.kind other
-check "in a repo that isn't mine, every gh and glab call is blocked, reads included (the fourth tester's tracker list)" "cd '$GC' && python3 -c \"
-import json,subprocess,sys
+check "in a repo that isn't mine, gh and glab may read but never write (the fourth tester's tracker list)" "cd '$GC' && python3 -c \"
+import json,re,subprocess,sys
 cmds=[c.strip() for c in open(sys.argv[1]).read().split('%%') if c.strip() and c.strip().startswith(('gh ','glab '))]
 assert len(cmds) >= 8
 for c in cmds:
     r=subprocess.run([sys.executable,sys.argv[2]],input=json.dumps({'tool_name':'Bash','tool_input':{'command':c},'cwd':sys.argv[3]}),universal_newlines=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-    assert r.returncode==2, c
+    writes=re.search(r' (note|comment|close|create)\\b|mutation|-X POST', c)
+    assert r.returncode==(2 if writes else 0), (c, r.returncode)
 \" '$REPO/tests/realistic/guest.txt' '$REPO/agent-hooks/guard.py' '$GC'"
 if git -C "$REPO" rev-parse --git-dir >/dev/null 2>&1; then
   FC="$RR/fork-clone"; git clone -q "$REPO" "$FC" 2>/dev/null; git -C "$FC" checkout -q -b intake/test; git -C "$FC" config lets.kind own
