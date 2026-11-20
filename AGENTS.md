@@ -19,12 +19,12 @@ only for a decision, a question, an approval, a problem, or something only I can
 - When you change a planning file, show me only what changed and why, never the whole file.
 
 ## The routes (the change is the unit: one change, one pull request)
-- Small work that changes no behaviour (a typo, a refactor, config, a bump, a fix that restores what a spec says):
-  `/lets:patch`. It sends me to a change when behaviour would change.
-- One change: `/lets:change-start`, then for each task `/lets:build` (it drafts the commit message; I commit) and
-  `/lets:review`. Then `/lets:walkthrough` (it drafts the pull request description; I record completion with
-  `lets walkthrough complete`), and I open the pull request. Review comments: `/lets:change-revise`. Approved:
-  `/lets:change-close`, then I merge. Not doing it after all: `/lets:change-close <change> --drop`.
+- Small work with a clear, checkable result (a typo, a refactor, config, a bump, a fix, a small visible edit):
+  `/lets:patch`. It sends me to a change when it needs a decision, breaks a promise others rely on, or a spec.
+- One change: `/lets:change-start`, then for each task `/lets:build` (it drafts the commit message; I commit;
+  `/lets:review` when a task modifies something earlier work depends on). Then `/lets:walkthrough` (it drafts the pull request description; I record completion with
+  `lets walkthrough complete`), and I open the pull request. Review comments: `/lets:change-revise`. Plans in the
+  repo: `/lets:change-close` before the final approval; a planning repo: LETS closes it after I merge. Drop: `--drop`.
 - An epic (several pull requests, much undecided): `/lets:epic-start`, `/lets:epic-resolve` once per prerequisite,
   `/lets:epic-overview` (comments on it: `/lets:epic-revise`), `/lets:epic-split`; then each change as above.
 - Lenses (`/lets:lens security` and the rest) only report: code they lead to goes through a change.
@@ -37,8 +37,8 @@ only for a decision, a question, an approval, a problem, or something only I can
   `lets where` shows (by default none: no AI mention and no co-author trailers).
 - Never merge, approve, push to a shared branch or use `--admin`.
 
-## Where the team hasn't agreed to agents
-- `git config --get lets.kind` is `own`: the repo is mine, or its team has agreed to agents working in it.
+## Individual use and full use
+- `git config --get lets.kind` is `own` (full use): the repo is mine, or its team has agreed to agents working in it.
 - Anything else (work, clients, open source, or not set up): read anything, change nothing the team sees: their AI
   instructions (`CLAUDE.md`, `AGENTS.md`, `.claude/`), their docs (glossary, ADRs, coding standards), their forge (gh
   and glab only to read). Nothing agent-related is committed here.

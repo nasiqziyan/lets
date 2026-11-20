@@ -102,23 +102,24 @@ def choice_for_repo(key: str, flag: str | None, label: str, current: str, hide: 
     )
 
 
-TEAM_NOT_AGREED_SHIP = "opening merge requests uses the team's GitLab or GitHub, which needs the team's agreement"
+TEAM_NOT_AGREED_SHIP = "opening merge requests changes the team's GitLab or GitHub, which needs full use"
 NOT_AGREED = [
-    "Agents will leave the team's way of working alone:",
+    "In individual use, agents change nothing the team sees:",
     "- the team's AI instructions: CLAUDE.md, AGENTS.md, .claude/",
     "- the team's own docs in the repo: its glossary, ADRs and coding standards",
-    "- the team's GitLab or GitHub: no glab or gh",
+    "- the team's GitHub or GitLab project, which is read-only for agents",
     "Agents still help you write code; you commit and push it as usual.",
 ]
 
 
 def ask_team(repos: list[pathlib.Path], flag: str | None, planning_flag: str | None) -> str:
-    """Has the team agreed to agents working in these repos? Returns lets.kind: own (yes) or other (no). Without a
-    terminal, an older script's --planning keeps its old meaning (private: no; in-repo or team: yes)."""
+    """How should LETS work in these repos? Returns lets.kind: own (full use) or other (individual use). `flag` is
+    --use (individual or full) or the older --team-agreed (yes or no). Without a terminal, an older script's --planning
+    keeps its old meaning (private: individual; in-repo or team: full)."""
     if flag is not None:
-        if flag not in ("yes", "no"):
-            raise LetsError("--team-agreed takes yes or no.")
-        return "own" if flag == "yes" else "other"
+        if flag not in ("yes", "no", "full", "individual"):
+            raise LetsError("--use takes individual or full.")
+        return "own" if flag in ("yes", "full") else "other"
     current = {git_config("lets.kind", r) for r in repos} - {""}
     by_flag = {"private": "other", "in-repo": "own", "team": "own"}.get(planning_flag or "")
     guess = by_flag or (current.pop() if len(current) == 1 else "other")
@@ -126,23 +127,29 @@ def ask_team(repos: list[pathlib.Path], flag: str | None, planning_flag: str | N
         return guess
     label = repos[0].name if len(repos) == 1 else "these repos"
     pick = ui.select(
-        "Has the team agreed to agents working in %s?" % label,
+        "How should LETS work in %s?" % label,
         [
-            ("yes", "Yes", "it's my own repo, or the team has agreed to agents working in it"),
             (
-                "no",
-                "No",
-                "the team hasn't agreed: agents can read the repo, its issues and merge requests, but change nothing the "
-                "team sees",
+                "individual",
+                "Individual use",
+                "agents read the code, docs, issues and merge requests and help you write code, but change nothing "
+                "the team sees",
+            ),
+            (
+                "full",
+                "Full use",
+                "your own repo, or the team has agreed: agents can also update its AI instructions, docs, issues and "
+                "merge requests, within your other settings",
             ),
         ],
-        "yes" if guess == "own" else "no",
-        "Agents never merge, approve or push to a shared branch, whatever you choose.",
+        "full" if guess == "own" else "individual",
+        "Both choices assume you're allowed to use AI agents on this code.\n"
+        "Agents never merge, approve or push to a shared branch, whichever you choose.",
     )
-    if pick == "no":
+    if pick == "individual":
         for line in NOT_AGREED:
             ui.note(line)
-    return "own" if pick == "yes" else "other"
+    return "own" if pick == "full" else "other"
 
 
 def upgrade_setup(repos: list[pathlib.Path], a: argparse.Namespace, screen) -> None:
@@ -151,13 +158,13 @@ def upgrade_setup(repos: list[pathlib.Path], a: argparse.Namespace, screen) -> N
     screen("LETS setup", "what's new")
     for r in repos:
         ui.note("%s was set up by %s." % (r.name, set_up_by(r)))
-    ui.out("LETS %s asks a new question about the team; your other answers stay as they are." % SETUP_VERSION)
+    ui.out("LETS %s asks how LETS should work here; your other answers stay as they are." % SETUP_VERSION)
     kind = ask_team(repos, a.team_agreed, None)
     bases = {r.name: ask_base(r, a.base) for r in repos}
     changes = []
     for r in repos:
         agents = git_config("lets.agents", r)
-        what = ["the team %s (git config; nothing committed)" % ("has agreed" if kind == "own" else "hasn't agreed")]
+        what = ["%s (git config; nothing committed)" % ("full use" if kind == "own" else "individual use")]
         if kind == "other" and agents == "ship":
             what.append("git: Commit instead of Ship (" + TEAM_NOT_AGREED_SHIP + ")")
         local = r / ".claude" / "settings.local.json"
@@ -272,7 +279,7 @@ def cmd_setup(a: argparse.Namespace) -> None:
         upgrade_setup(repos, a, screen)
         return
 
-    screen("LETS setup", "2 · team and plans")
+    screen("LETS setup", "2 · how LETS works here, and plans")
     for d in DOCS_DIRS:
         hits = [r.name for r in repos if (r / d).is_dir()]
         if hits:
@@ -318,7 +325,7 @@ def cmd_setup(a: argparse.Namespace) -> None:
             raise LetsError("Plans can live in the repo only when you set up one repo.")
         if kind != "own":
             raise LetsError(
-                "Plans can live in the repo only where the team has agreed to agents working in it: committing "
+                "Plans can live in the repo only with full use: committing "
                 "them puts agent-made files in the team's repo. Choose a planning repo instead."
             )
         if foreign_plans(repos[0]):
@@ -327,22 +334,24 @@ def cmd_setup(a: argparse.Namespace) -> None:
                 "mix with it: rename that folder, or choose a planning repo instead." % repos[0].name
             )
         others = agent_setup_in(repos[0])
-        if others and not uses_lets_here(repos[0]):
+        if "openspec/" in others and not uses_lets_here(repos[0]):
             raise LetsError(
-                "%s already has agent setup (%s). LETS is for repos without one, so it won't add its "
-                "plans here. Choose a planning repo instead, or remove that setup first."
-                % (repos[0].name, ", ".join(others))
+                "%s already has its own openspec/ folder. Two sets of specs for the same code would leave nobody sure "
+                "which is true, so LETS won't add plans/ here: choose a planning repo instead." % repos[0].name
+            )
+        if others and not uses_lets_here(repos[0]):
+            ui.note(
+                "Found the repo's own agent setup (%s). LETS leaves it untouched and adds only plans/."
+                % ", ".join(others)
             )
     else:
         found = {r.name: agent_setup_in(r) for r in repos}
         found = {k: v for k, v in found.items() if v}
         if found:
-            ui.warn(
-                "Agent setup found: %s. LETS leaves it untouched and doesn't merge with it."
+            ui.note(
+                "Found the repos' own agent setup (%s). LETS leaves it untouched."
                 % "; ".join("%s: %s" % (k, ", ".join(v)) for k, v in found.items())
             )
-            if not (a.yes or ui.confirm("Do you want to set up LETS beside it anyway?", False)):
-                raise LetsError("Nothing was changed.")
 
     # 3. The planning repo, if separate
     url, dest = a.url, joined
@@ -514,6 +523,8 @@ def setup_changes(
         assert dest is not None
 
         def make_planning_repo(dest: pathlib.Path = dest, url: str | None = url, sharing: str = planning) -> None:
+            from .planning import is_lets_file
+
             if not (dest / ".git").exists():
                 if dest.exists() and any(dest.iterdir()):
                     raise LetsError("%s exists and isn't a git repo. Move it, then re-run." % short_path(dest))
@@ -528,22 +539,31 @@ def setup_changes(
                 ("lets.sharing", sharing),
             ):
                 git("config", k, v, cwd=dest)
+
+            def changed(paths: list[str]) -> set[str]:
+                if not (dest / ".git").exists():
+                    return set()
+                out = git("ls-files", "-m", "-o", "--exclude-standard", "--", *paths, cwd=dest, check=False) or ""
+                return {line for line in out.splitlines() if line.strip()}
+
+            mine = ["openspec", "repos.json", "README.md"]
+            before = changed(mine)  # someone's own uncommitted work here stays out of the commit
             init_planning(dest)
             group = members(dest)
             for r in repos:
                 group[r.name] = {"remote": git("remote", "get-url", "origin", cwd=r, check=False) or ""}
                 git("config", "letsrepo.%s.path" % r.name, str(r), cwd=dest)
             (dest / "repos.json").write_text(json.dumps({"repos": group}, indent=2, sort_keys=True) + "\n")
-            (dest / "README.md").write_text(PLANNING_README.format(names=", ".join(sorted(group))))
+            if is_lets_file(dest / "README.md", "kept by LETS (`lets setup`)"):
+                (dest / "README.md").write_text(PLANNING_README.format(names=", ".join(sorted(group))))
             exclude(dest, [".lets/"])
-            git("add", "-A", cwd=dest)
-            if git("status", "--porcelain", cwd=dest):
+            ours = sorted(changed(mine) - before)
+            if ours:
                 if not git("rev-parse", "--verify", "--quiet", "HEAD", cwd=dest, check=False):
                     git("checkout", "-q", "-B", "main", cwd=dest, check=False)
-                run(
-                    ["git", "commit", "-q", "--no-verify", "-m", "lets setup: plans for %s" % ", ".join(sorted(group))],
-                    cwd=dest,
-                )
+                git("add", "--", *ours, cwd=dest)
+                msg = "lets setup: plans for %s" % ", ".join(sorted(group))
+                run(["git", "commit", "-q", "--no-verify", "-m", msg, "--only", "--", *ours], cwd=dest)
 
         names = ", ".join(r.name for r in repos)
         summary = (
@@ -556,8 +576,8 @@ def setup_changes(
                 dest,
                 summary,
                 apply=make_planning_repo,
-                details="%s; openspec/, repos.json and README.md, committed locally (not pushed)"
-                % (url or "existing repo"),
+                details="%s; only LETS's own files (openspec/config.yaml, repos.json, a README.md if there isn't one), "
+                "committed locally (not pushed); anything else in the repo stays as it is" % (url or "existing repo"),
             )
         )
         if tilde(dest.parent) not in [tilde(d) for d in settings.plans_dirs()]:
@@ -568,7 +588,7 @@ def setup_changes(
                     apply=lambda d=dest.parent: settings.remember_plans_dir(d),
                 )
             )
-            changes += folder_changes([str(dest.parent)], "planning repos in %s" % short_path(dest.parent))
+        changes += folder_changes([str(dest)], "the planning repo %s (only that folder)" % short_path(dest))
     for r in repos:
 
         def configure(r: pathlib.Path = r) -> None:

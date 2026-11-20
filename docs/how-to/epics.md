@@ -14,9 +14,13 @@ Use the epic route when the work needs several pull requests and much is still u
    `/lets:epic-resolve shop-checkout research` starts every ready research prerequisite. If a step says research is
    still running, start the next step in a new tab and leave that one open: it records the research as it finishes.
 3. `/lets:epic-overview shop-checkout` writes the overview: the document for people who weren't in the sessions. It
-   ends with **Delivery**: the changes, one per pull request, in order.
-4. Share the overview. When the team comments, `/lets:epic-revise shop-checkout` takes the comments one at a time.
+   ends with **Delivery**: it proposes the changes, one per pull request, in order, and settles the list with you, so
+   the team reviews how the work is delivered along with the rest.
+4. Share the overview. When the team comments, `/lets:epic-revise shop-checkout` reads the comments on the planning
+   pull request (or takes the ones you give it) and goes through them one at a time.
 5. `/lets:epic-split shop-checkout` turns the overview into those changes, checks that nothing is lost on the way, and
    lists them in the map's `## Changes` section. Then build each change as usual.
 
-To stop an epic: `/lets:epic-revise shop-checkout --drop`. Its open changes are dropped with a reason.
+To stop an epic, at any point (before its overview too): `/lets:epic-revise shop-checkout --drop`, or tell
+`/lets:epic-resolve` to drop it when a finding shows it isn't worth doing. Its open changes are dropped with a reason,
+recorded on the map.

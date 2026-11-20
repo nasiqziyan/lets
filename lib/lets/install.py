@@ -37,6 +37,7 @@ SESSION_ENTRY = {"hooks": [{"type": "command", "command": SESSION, "timeout": 30
 STATUSLINE = {"type": "command", "command": "~/lets/bin/lets statusline", "padding": 0, "refreshInterval": 5}
 NO_ATTRIBUTION = {"commit": "", "pr": ""}
 CODEX_ROOTS_TAG = "# lets: learning notes and planning repos"
+CODEX_FALLBACK_TAG = "# lets: read CLAUDE.md-only repos"
 
 
 def ours(entry: dict) -> bool:
@@ -55,13 +56,61 @@ def hooks_text(text: str, add: bool = True) -> str:
     return json.dumps(data, indent=2) + "\n"
 
 
-def claude_settings_text(text: str, dirs: list[str], statusline: bool | None) -> str:
+LEDGER = "host-settings.json"  # in LETS's state folder: what LETS changed in each tool's settings, to undo exactly
+ABSENT = "<absent>"
+UNKNOWN = "<unknown>"
+
+
+def ledger() -> dict:
+    return json_of(P.state / LEDGER)
+
+
+def save_ledger(data: dict) -> None:
+    P.state.mkdir(parents=True, exist_ok=True)
+    (P.state / LEDGER).write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+
+
+def note_claude_priors(text: str, dirs: list[str]) -> None:
+    """Before LETS first writes a Claude Code setting, remember what was there, so uninstall can put it back. A value
+    already equal to LETS's with no record means an older LETS wrote it: unknown, so uninstall leaves it."""
+    data = json.loads(text) if text.strip() else {}
+    led = ledger()
+    claude = led.setdefault("claude", {})
+    wrote = {"attribution": dict(NO_ATTRIBUTION), "includeCoAuthoredBy": False}
+    for key, value in wrote.items():
+        if key in claude:
+            continue
+        if key not in data:
+            prior = ABSENT
+        elif data[key] == value and not led.get("since"):
+            prior = UNKNOWN
+        else:
+            prior = data[key]
+        claude[key] = {"prior": prior, "wrote": value}
+    allowed = data.get("permissions", {}).get("additionalDirectories", [])
+    added = claude.setdefault("added_dirs", [])
+    added += [d for d in dirs if d not in allowed and d not in added]
+    led.setdefault("since", "recorded")
+    save_ledger(led)
+
+
+def broad_planning_grants(allowed: list[str]) -> list[str]:
+    """Folders an older LETS granted for planning repos (the folder they sit in, siblings and all): only those it
+    recorded adding, or, with no record, the planning folders themselves."""
+    added = ledger().get("claude", {}).get("added_dirs")
+    parents = [str(d) for d in settings.plans_dirs()]
+    planning = {str(p) for p in planning_repos_known().values()}
+    return [d for d in allowed if d in parents and d not in planning and (added is None or d in added)]
+
+
+def claude_settings_text(text: str, dirs: list[str], statusline: bool | None, drop: tuple[str, ...] = ()) -> str:
     """Claude Code's settings with LETS's parts: no AI attribution, the folders LETS writes to, and (if chosen) the
-    status line."""
+    status line. `drop`: folders LETS granted before that are wider than it needs."""
     data = json.loads(text) if text.strip() else {}
     data["attribution"] = dict(NO_ATTRIBUTION)
     data["includeCoAuthoredBy"] = False
     allowed = data.setdefault("permissions", {}).setdefault("additionalDirectories", [])
+    allowed[:] = [d for d in allowed if d not in drop]
     for d in dirs:
         if d not in allowed:
             allowed.append(d)
@@ -74,7 +123,7 @@ def codex_config_text(text: str, roots: list[str]) -> str:
     """Codex's config.toml with LETS's two settings: read CLAUDE.md-only repos, and write to LETS's folders."""
     text = "".join(line for line in text.splitlines(True) if CODEX_ROOTS_TAG not in line)
     if not re.search(r"^\s*project_doc_fallback_filenames\s*=", text, re.M):
-        line = 'project_doc_fallback_filenames = ["CLAUDE.md"]  # lets: read CLAUDE.md-only repos\n'
+        line = 'project_doc_fallback_filenames = ["CLAUDE.md"]  %s\n' % CODEX_FALLBACK_TAG
         table = re.search(r"^\s*\[", text, re.M)
         text = (
             text[: table.start()] + line + text[table.start() :]
@@ -98,10 +147,18 @@ def codex_roots(text: str) -> list[str]:
 
 
 def lets_dirs() -> list[str]:
-    """The folders agents may write to outside the repo: learning notes, your additions (`/lets:add`) and planning
-    repos."""
+    """The folders agents may write to outside the repo: learning notes, your additions (`/lets:add`) and each planning
+    repo itself (never the folder it sits in, which may hold code repos too)."""
     notes = settings.notes_dir()
-    return ([str(notes)] if notes else []) + [str(P.additions)] + [str(d) for d in settings.plans_dirs()]
+    return (
+        ([str(notes)] if notes else []) + [str(P.additions)] + sorted(str(p) for p in planning_repos_known().values())
+    )
+
+
+def planning_repos_known() -> dict[str, pathlib.Path]:
+    from .planning import planning_repos_known as known
+
+    return known()
 
 
 def folder_changes(dirs: list[str], label: str) -> list[Change]:
@@ -112,7 +169,15 @@ def folder_changes(dirs: list[str], label: str) -> list[Change]:
         data = json_of(cs)
         missing = [d for d in dirs if d not in data.get("permissions", {}).get("additionalDirectories", [])]
         if missing:
-            out.append(Change(cs, "let Claude Code write %s" % label, edit=lambda old, m=missing: _add_dirs(old, m)))
+
+            def add(old: str, m: list[str] = missing) -> str:
+                led = ledger()
+                added = led.setdefault("claude", {}).setdefault("added_dirs", [])
+                added += [d for d in m if d not in added]
+                save_ledger(led)
+                return _add_dirs(old, m)
+
+            out.append(Change(cs, "let Claude Code write %s" % label, edit=add))
     if uses_codex():
         cfg = P.codex_config
         text = read(cfg)
@@ -130,7 +195,8 @@ def folder_changes(dirs: list[str], label: str) -> list[Change]:
         else:
 
             def edit(old: str, want: tuple[str, ...] = tuple(dirs)) -> str:
-                return codex_config_text(old, sorted(set(want) | set(codex_roots(old))))
+                broad = {str(d) for d in settings.plans_dirs()} - set(want)
+                return codex_config_text(old, sorted(set(want) | (set(codex_roots(old)) - broad)))
 
             if edit(text) != text:
                 out.append(
@@ -207,15 +273,20 @@ def install_changes(statusline: bool | None) -> list[Change]:
             changes.append(Change(P.claude_md, "load LETS's map and your profile in every session", new))
         old = read(P.claude_settings)
         dirs = lets_dirs()
-        if claude_settings_text(old, dirs, statusline) != old:
+        current = (json.loads(old) if old.strip() else {}).get("permissions", {}).get("additionalDirectories", [])
+        drop = tuple(broad_planning_grants(current))
+        if claude_settings_text(old, dirs, statusline, drop) != old:
+            note_claude_priors(old, dirs)
             what = ["no AI attribution in commits and pull requests", "let it write LETS's folders"] + (
                 ["show LETS's progress in the status line"] if statusline else []
             )
+            if drop:
+                what.append("narrow %s to the planning repos inside it" % ", ".join(short_path(d) for d in drop))
             changes.append(
                 Change(
                     P.claude_settings,
                     "; ".join(what),
-                    edit=lambda t, d=dirs, s=statusline: claude_settings_text(t, d, s),
+                    edit=lambda t, d=dirs, s=statusline, x=drop: claude_settings_text(t, d, s, x),
                 )
             )
     if uses_codex():
@@ -569,12 +640,26 @@ def uninstall_changes() -> list[Change]:
         if path.exists() and without_block(read(path)) != read(path):
             out.append(Change(path, "take out LETS's map and your profile", edit=without_block))
     if P.claude_settings.exists():
+        claude = ledger().get("claude", {})
+        kept = []
 
         def undo_claude(text: str) -> str:
             data = json.loads(text) if text.strip() else {}
             allowed = data.get("permissions", {}).get("additionalDirectories", [])
+            ours = claude.get("added_dirs")
+            ours = set(ours) if ours is not None else set(lets_dirs()) | {str(d) for d in settings.plans_dirs()}
             if allowed:
-                data["permissions"]["additionalDirectories"] = [d for d in allowed if d not in lets_dirs()]
+                data["permissions"]["additionalDirectories"] = [d for d in allowed if d not in ours]
+            for key in ("attribution", "includeCoAuthoredBy"):  # put back what you had, unless you changed it since
+                rec = claude.get(key)
+                if not rec or rec["prior"] == UNKNOWN or data.get(key, ABSENT) != rec["wrote"]:
+                    if key in data and key not in kept:
+                        kept.append(key)
+                    continue
+                if rec["prior"] == ABSENT:
+                    data.pop(key, None)
+                else:
+                    data[key] = rec["prior"]
             if data.get("statusLine") == STATUSLINE:
                 del data["statusLine"]
                 saved = settings.load().get("your_statusline")
@@ -586,18 +671,28 @@ def uninstall_changes() -> list[Change]:
             out.append(
                 Change(
                     P.claude_settings,
-                    "take out LETS's folders and status line (attribution stays off)",
+                    "take out LETS's folders and status line, and put back your attribution settings"
+                    + (
+                        " (kept as they are, since LETS can't tell what you had or you changed them: %s)"
+                        % ", ".join(kept)
+                        if kept
+                        else ""
+                    ),
                     edit=undo_claude,
                 )
             )
     if P.codex_hooks.exists() and hooks_text(read(P.codex_hooks), add=False) != read(P.codex_hooks):
         out.append(Change(P.codex_hooks, "take out LETS's hooks", edit=lambda t: hooks_text(t, add=False)))
-    if CODEX_ROOTS_TAG in read(P.codex_config):
+    if CODEX_ROOTS_TAG in read(P.codex_config) or CODEX_FALLBACK_TAG in read(P.codex_config):
         out.append(
             Change(
                 P.codex_config,
-                "take out LETS's folders",
-                edit=lambda t: "".join(line for line in t.splitlines(True) if CODEX_ROOTS_TAG not in line),
+                "take out LETS's folders and its CLAUDE.md fallback",
+                edit=lambda t: "".join(
+                    line
+                    for line in t.splitlines(True)
+                    if CODEX_ROOTS_TAG not in line and CODEX_FALLBACK_TAG not in line
+                ),
             )
         )
     if is_ours(P.link) or (P.link.is_symlink() and os.path.realpath(str(P.link)) == str(ROOT.resolve())):
@@ -609,6 +704,7 @@ def cmd_uninstall(a) -> None:
     agree(uninstall_changes(), "uninstall", a.yes, a.dry_run, one_by_one=False)
     if a.dry_run:
         return
+    (P.state / LEDGER).unlink(missing_ok=True)  # done: a second uninstall changes nothing
     if codex_cli():
         run([codex_cli(), "plugin", "remove", "lets@%s" % MARKETPLACE], check=False)
         run([codex_cli(), "plugin", "marketplace", "remove", MARKETPLACE], check=False)

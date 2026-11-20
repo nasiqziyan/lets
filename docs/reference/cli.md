@@ -15,6 +15,8 @@ Claude Code and Codex.
 | `lets walkthrough scope \| complete \| status` | What the walkthrough covers; `complete` records yours (only you run it). |
 | `lets note [change <name> \| patch <name> \| reviewed] [--mode pair\|agent]` | What this branch is for. The building commands record it; the status line reads it. |
 | `lets note base <branch \| auto>` | The branch this one merges into, for a stacked pull request: walkthroughs and checks compare against it. |
+| `lets changes [<change>] [--offline] [--json]` | Where each change stands: its tasks, its branch (including changes found only on another local branch) and its pull request's state on GitLab or GitHub (read only). |
+| `lets note examples real\|made-up` | The examples in learning notes made in this repo. |
 | `lets guard log [--last N]` | What the guard blocked, asked about or crashed on lately (20 by default). |
 | `lets doctor [--dry-run] [--yes]` | Check the wiring, fix what can be fixed (shown first), and say what to do about the rest. |
 | `lets update [--yes]` | Show what a newer LETS changes (its changelog, and the files that change how agents behave), then install it and finish setting it up. Also finishes an update made with `npm install -g` directly. |
@@ -29,7 +31,7 @@ Every question has a flag, for scripts: `--mode one|group`, `--path <repo or fol
 `--planning in-repo|team|private`, `--url <planning repo clone URL>`, `--plans-dir <folder>`,
 `--build pair|agent`, `--tests propose|always|ask`, `--agents local|commit|ship`, `--check '<command>'`,
 `--base <branch>` (the branch work merges into; `auto` to detect it),
-`--team-agreed yes|no` (has the team agreed to agents working in the repo?),
+`--use individual|full` (how LETS works in the repo; the older `--team-agreed no|yes` still works),
 `--ai-credit never|trailer|trailer-pr|profile` (`trailer:'<line>'` for a trailer of your own), `--yes`.
 `--remove` clears a repo's LETS settings (its plans stay).
 

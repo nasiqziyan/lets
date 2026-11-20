@@ -3,6 +3,70 @@
 LETS follows [semantic versioning](https://semver.org). Each release lists what changes for you, and anything you
 need to do.
 
+## 1.2.0
+
+### What you need to do
+
+- Run `lets update`. It shows these changes, installs 1.2.0 and finishes setting it up; the setup preview also
+  narrows any folder permission LETS gave too widely (see below). No repo needs `lets setup` again.
+- With plans in the code repo, run `/lets:change-close` **before** the final approval from now on, not after. With a
+  planning repo, you no longer run it at all.
+
+### Merges are tracked, and changes finish themselves
+
+- **`lets changes`** shows where each change stands: its tasks, its branch, and its pull request's state on GitLab or
+  GitHub (in review, approved, merged), read only. It also lists changes found only on another local branch, without
+  switching branches. `/lets:next` uses it.
+- **A change counts as merged only when it is.** The status line and `/lets:next` no longer show a dropped change, or
+  one closed but never merged, as done: ● merged, ◐ closed but not known to be merged, × dropped. A background build
+  waits for its prerequisites to actually merge.
+- **With a planning repo, you just merge.** The next time you use LETS in that project (a new session, `/lets:next`,
+  a new change), it sees the merge and closes the change itself: specs updated, archived, committed locally, never
+  pushed. A change remembers its branch, so this works after a squash merge and a deleted branch.
+- **With plans in the code repo, the spec update joins the pull request before the final approval**, so code and
+  specs are approved and merged together, and nothing pushed afterwards cancels an approval. If a pull request merged
+  without it, LETS says so and suggests a small follow-up.
+
+### Setup
+
+- **"How should LETS work in this repo?"** replaces "Has the team agreed…?": **Individual use** (agents read
+  everything and help you write code, but change nothing the team sees) or **Full use** (your own repo, or the team
+  has agreed). Same behaviour, clearer names; your existing setups are unchanged. `--use individual|full` joins
+  `--team-agreed`.
+- **Plans can go in a repo that already has its own `AGENTS.md`, `CLAUDE.md` or `.claude/`**: LETS leaves them
+  untouched and adds only `plans/`. It still won't, next to the repo's own `openspec/` folder.
+- **Setting up an existing planning repo commits only LETS's own files.** Your README, OpenSpec config, drafts and
+  anything you'd staged stay exactly as they were.
+- **Agents get access to each planning repo itself,** never the folder it sits in (which may hold your code repos
+  too). `lets update` proposes narrowing older, wider grants.
+- **`lets uninstall` puts back your own Claude Code attribution settings** as they were before LETS, unless you've
+  changed them since, and removes Codex's CLAUDE.md fallback line it added.
+
+### Commands
+
+- **Building:** after a task, LETS suggests the next task. It suggests `/lets:review` only when a task modified
+  something an earlier task depends on; the walkthrough still offers a review when one is due. The README's
+  diagram shows the new flow.
+- **Reviewing:** both reviewers see the same, current version of your work: committed, staged, unstaged and new files.
+- **Revising:** `/lets:change-revise` and `/lets:epic-revise` read the comments on the pull request themselves
+  (read only) instead of asking you to paste them.
+- **Patches:** a small, clear edit with a checkable result is a patch, even if people can see it (renaming a
+  button). LETS sends it to a change, saying why, when it needs a decision, changes something others rely on (a
+  published CSV column, an API field), or needs a spec.
+- **Epics:** there's no longer a separate "Where do the pull requests split?" prerequisite: `/lets:epic-overview`
+  proposes the merge requests and settles them with you, and the team reviews them with the rest. An epic can be
+  dropped at any point, before its overview too, keeping the finding that led to it.
+- **Learning notes** use your real code by default, and offer made-up examples instead; say so once and LETS
+  remembers it for that repo (`lets note examples made-up`). Repos set up for individual use always get made-up
+  examples.
+- The team guide explains why two people's copies of the plans can both show a prerequisite as free.
+
+### Fixes
+
+- Addy Osmani's skills' links to his reference files now work: the files ship where his skills point. A check stops
+  any shipped link from breaking again.
+- LETS needs Node.js 20.19 or newer, the minimum of the OpenSpec it ships with; a CI job checks that version.
+
 ## 1.1.2
 
 ### What you need to do

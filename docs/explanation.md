@@ -11,7 +11,8 @@ Work too big for one pull request is an **epic**: a map of decisions and open qu
 at a time, written up as an overview for people, then split into changes. The epic route is
 [Matt Pocock's wayfinding](https://github.com/mattpocock/skills), with the epic's files as its tracker.
 
-Work that changes no behaviour is a **patch**, and has no plan at all.
+Small, clear work with a checkable result (no decision, no promise others rely on, no spec to update) is a
+**patch**, and has no plan at all.
 
 ## Pairing by default
 
@@ -23,13 +24,13 @@ decisions and risks in it, and only you can record it as done.
 ## Gates the agent can't loosen
 
 The guard runs on every agent command and edit. It keeps git as local as you choose, refuses edits that weaken a test
-or a check, keeps AI mentions out of every repo, and keeps agents to reading a team's forge where the team hasn't agreed to them.
+or a check, keeps AI mentions out of every repo, and keeps agents to reading a team's forge in individual use.
 
 ## Plans live where the team works
 
 Plans are plain Markdown: in the repo's `plans/` folder when the team uses LETS, in a planning repo shared by the team
-(or a group of repos), or in a private planning repo when the plans are yours alone. Separately, you say whether the
-team has agreed to agents working in its repo. You can change either later.
+(or a group of repos), or in a private planning repo when the plans are yours alone. Separately, you say how LETS
+works in the repo: individual use (agents change nothing the team sees) or full use. You can change either later.
 
 ## Small and quiet
 

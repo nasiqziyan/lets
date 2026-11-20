@@ -14,8 +14,8 @@ kebab-case.
 | `epic-split` | `<epic>` | Turn the overview into changes, checking nothing is lost |
 | `change-start` | `[change] [what it's about]` | Plan one pull request in one session of questions, and write its tasks |
 | `change-revise` | `<change> [comment]` | Turn review comments or a finding (given here, or pasted when asked) into decisions and tasks |
-| `change-close` | `<change> [--drop]` | After approval: update the specs and archive it; or drop it with a reason |
-| `patch` | `<what to fix>` | A small fix with no behaviour change, without planning |
+| `change-close` | `<change> [--drop]` | Update the specs and archive it (plans in the repo: before the final approval; a planning repo: LETS runs it after the merge); or drop it with a reason |
+| `patch` | `<what to fix>` | Small, clear work with a checkable result, without planning |
 | `build` | `<change> [task] [--pair \| --agent] [--bg]` | Build tasks, pairing or in agent mode; draft each commit message |
 | `review` | `<change>` | Quick check, standards, the change's acceptance, a doubt pass, weakened gates |
 | `walkthrough` | `<change>` | Explain the change in run order, quiz you, then draft the PR description |

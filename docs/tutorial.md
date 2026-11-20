@@ -54,7 +54,12 @@ If you're using Claude Code's status line, it now reads:
 add-order-export ●◉○ › Filter handling   ✎ pair
 ```
 
-## 4. Review, and the rest of the tasks
+## 4. The rest of the tasks, and review
+
+Build the next task with `/lets:build add-order-export`. Start a fresh session for each task: it keeps the agent's
+attention on the task in hand.
+
+When a task modifies something an earlier task depends on, the agent says so and suggests a review first:
 
 ```text
 /lets:review add-order-export
@@ -62,8 +67,7 @@ add-order-export ●◉○ › Filter handling   ✎ pair
 
 It runs the repo's quick check, reviews against your standards and the change's requirements, and takes a hard look
 at the riskiest decisions. It reports one table; "must fix" means something is wrong, not a matter of taste. Fix what
-needs fixing, then `/lets:build` the next task. Start a fresh session for each task: it keeps the agent's attention on
-the task in hand.
+needs fixing, then carry on. The walkthrough offers a review too, if one is due.
 
 ## 5. The walkthrough
 
@@ -82,17 +86,22 @@ lets walkthrough complete
 
 The agent then drafts the pull request description. Open the pull request.
 
-## 6. After approval
+## 6. Before the final approval
+
+When reviewers have nothing more to ask for:
 
 ```text
 /lets:change-close add-order-export
 ```
 
 It merges the change's requirements into the living specs (`plans/openspec/specs/`) and archives the change. Commit
-that, then merge.
+and push that to the pull request, so the specs and the code are approved and merged together. Then merge.
+
+With a planning repo instead, skip this: after you merge, LETS notices the next time you use it and closes the change
+itself.
 
 ## Where next
 
-- Something tiny that changes no behaviour? `/lets:patch` skips the planning.
+- Something small and clear? `/lets:patch` skips the planning.
 - Something too big for one pull request? See [Plan an epic](how-to/epics.md).
 - Want the agent to write the code? `/lets:build <change> --agent`. See [Agent mode](how-to/agent-mode.md).

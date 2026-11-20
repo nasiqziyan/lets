@@ -52,6 +52,43 @@ def notice() -> str | None:
     return "LETS %s is out (you have %s): run `lets update`." % (v, version()) if v else None
 
 
+def merged_notes() -> list[str]:
+    """Open changes whose pull request has merged since: with a planning repo, finish them now; with plans in the
+    code repo, the spec update didn't land with the merge, so say so."""
+    import shutil
+
+    from .core import git
+    from .planning import planning_root
+    from .work import gather, in_repo
+
+    if not (shutil.which("gh") or shutil.which("glab")):
+        return []
+    top = git("rev-parse", "--show-toplevel", check=False)
+    if not top:
+        return []
+    proot, _ = planning_root(pathlib.Path(top))
+    if proot is None:
+        return []
+    out = []
+    for r in gather(pathlib.Path(top)):
+        if r.get("state") != "merged" or r.get("where") != "here":
+            continue
+        into = " into %s" % r["target"] if r.get("target") else ""
+        if in_repo(proot):
+            out.append(
+                "%s was merged%s (%s) without its spec update. Tell me, and suggest a small follow-up pull request "
+                "with it: `/lets:change-close %s` on a new branch."
+                % (r["change"], into, r.get("request", ""), r["change"])
+            )
+        else:
+            out.append(
+                "%s was merged%s (%s). Before anything else, finish it as `/lets:change-close %s` says (it's merged, "
+                "so don't ask), then tell me in one line what you did."
+                % (r["change"], into, r.get("request", ""), r["change"])
+            )
+    return out
+
+
 def cmd_session_start(a=None) -> None:
     lines = []
     from .doctor import problems
@@ -81,6 +118,10 @@ def cmd_session_start(a=None) -> None:
                 "This repo was set up by %s. Tell me to run `lets setup` here: it asks only what's new in %s "
                 "and keeps my other answers." % (set_up_by(pathlib.Path(top)), SETUP_VERSION)
             )
+    except Exception:  # noqa: BLE001  never let a notice get in the way
+        pass
+    try:
+        lines += merged_notes()
     except Exception:  # noqa: BLE001  never let a notice get in the way
         pass
     n = notice()
