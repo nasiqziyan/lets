@@ -17,7 +17,7 @@ import shutil
 import subprocess
 import sys
 
-DONE, NOW, TODO, UNSURE, DROPPED = "●", "◉", "○", "◐", "×"
+DONE, NOW, TODO = "●", "◉", "○"
 MODES = {"pair": "✎ pair", "agent": "⚙ agent"}
 CODES = {"epic": "35", "change": "36", "task": "37", "dim": "2"}
 TITLE_MAX = 32
@@ -74,11 +74,9 @@ def epic_changes(proot: pathlib.Path, epic: str) -> list[str]:
     return names
 
 
-def epic_dot(proot: pathlib.Path, name: str, branch: str) -> str:
-    """● merged, ◐ closed but not known to be merged, × dropped, ○ still open."""
-    from .work import local_outcome
-
-    return {"merged": DONE, "unconfirmed": UNSURE, "dropped": DROPPED}.get(local_outcome(proot, name, branch), TODO)
+def archived(proot: pathlib.Path, name: str) -> bool:
+    d = proot / "openspec" / "changes" / "archive"
+    return d.exists() and any(re.match(r"^\d{4}-\d{2}-\d{2}-%s$" % re.escape(name), p.name) for p in d.iterdir())
 
 
 def planning_root(top: str, cfg: dict[str, str]) -> pathlib.Path | None:
@@ -133,7 +131,7 @@ def line(cwd: str, width: int = 120) -> str:
     epic_part = ""
     if epic:
         order = epic_changes(proot, epic)
-        dots = "".join(NOW if n == change else epic_dot(proot, n, branch) for n in order)
+        dots = "".join(NOW if n == change else DONE if archived(proot, n) else TODO for n in order)
         epic_part = paint(epic, "epic") + (" " + dots if dots else "") + " › "
     parts = [
         epic_part,

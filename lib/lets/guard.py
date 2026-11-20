@@ -17,7 +17,7 @@ For every shell command or file edit an agent makes, it:
 4. Never lets an agent merge or approve a PR/MR, use --admin, or push to a shared branch: those are a person's job.
 5. Keeps AI mentions out of every repo, planning repos included: no branch name, commit message or PR/MR title or
    description that names an AI or carries an AI trailer.
-6. In individual use (anything without `lets.kind own`, which includes repos you haven't set up):
+6. Where the team hasn't agreed to agents (anything without `lets.kind own`, which includes repos you haven't set up):
    agents read anything but change nothing the team sees: gh and glab only to read (a repo named with -R counts too),
    and no commits of the owners' docs, agent config or planning files.
 
@@ -153,7 +153,6 @@ LETS_AGENT_OK = {
     "where",
     "sync",
     "note",
-    "changes",
     "statusline",
     "--version",
     "-h",
@@ -531,7 +530,7 @@ def on_commit(diff_args, cwd, adds=()):
             touched = [n for n in names if walkthrough.GUEST_PROTECTED.search(n)]
             if touched:
                 block(
-                    "This repo is set up for individual use, and this commit includes the team's docs or agent config, or "
+                    "The team hasn't agreed to agents working in this repo, and this commit includes the team's docs or agent config, or "
                     "planning files (%s). Those need the team's agreement; my planning lives in my planning repo"
                     % ", ".join(touched[:8])
                 )
@@ -652,7 +651,7 @@ def on_forge(prog, args, cwd):
     guest = forge_target_is_guest(args) or (cwd if cwd and walkthrough.is_guest(cwd) else None)
     if guest and not forge_reads_only(words, args, method):
         block(
-            "This repo is set up for individual use, so agents only read from its GitLab or GitHub: "
+            "The team hasn't agreed to agents working in this repo, so agents only read from its GitLab or GitHub: "
             "this %s command writes (it comments, creates, edits or closes). Tell me what to post and I'll do it "
             "myself" % prog
         )
@@ -850,7 +849,7 @@ def check_agent_config(tool, inp, cwd):
         rel = os.path.relpath(os.path.realpath(path), os.path.realpath(root))
         if AGENT_CONFIG.search(rel) and not rel.endswith(("settings.local.json", "CLAUDE.local.md")):
             block(
-                "This repo is set up for individual use, so its agent config (%s) stays as the owners wrote it. My planning "
+                "The team hasn't agreed to agents working in this repo, so its agent config (%s) stays as the owners wrote it. My planning "
                 "and notes go in my planning repo (`lets where`)" % rel
             )
 

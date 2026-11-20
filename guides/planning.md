@@ -156,9 +156,7 @@ A change folder holds:
 
 With a group (several code repos sharing the plans), each change is one pull request in one repo: its
 `.openspec.yaml` names that repo with `x-lets-repo: <repo>` (the name `lets where` prints). OpenSpec ignores keys
-starting `x-`, so these are LETS's own labels (`x-lets-repo`, `x-lets-epic`, `x-lets-issue`, and `x-lets-branch` and
-`x-lets-merged`, which `lets note` and `/lets:change-close` write so a change's pull request can be found and its merge
-known). Building commands
+starting `x-`, so these are LETS's own labels (`x-lets-repo`, `x-lets-epic`, `x-lets-issue`). Building commands
 (`build`, `review`, `walkthrough`, `change-close`) check `x-lets-repo`: if `lets where` prints a different code repo,
 stop and tell me to cd into the right one. Work that spans repos is split into one change per repo.
 
@@ -174,11 +172,11 @@ After writing or revising a change, check that its parts agree, and report only 
 
 Optional, offered at the end of `/lets:epic-split` and `/lets:change-start` where `gh` or `glab` works. Issues point
 at the plans; they never copy them. Where they go:
-- **Plans in this repo, or a team planning repo, with full use** (`lets.kind own`): the code repo's own
+- **Plans in this repo, or a team planning repo, and the team has agreed** (`lets.kind own`): the code repo's own
   issues.
 - **A private planning repo**: the planning repo's own project, which only I see. Run `gh` or `glab` inside the
   planning root, never in the code repo.
-- **A team planning repo with individual use**: don't offer issues.
+- **A team planning repo where the team hasn't agreed**: don't offer issues.
 - One issue per change (tasks stay in `tasks.md`), plus one for the epic. Title: the change's name in plain words
   ("Take card payment"). Body: a link to the change's folder and the command that builds it; for the epic, a link to
   its overview.

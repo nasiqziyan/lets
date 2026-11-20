@@ -114,26 +114,15 @@ def init_planning(proot: pathlib.Path, readme: str | None = None) -> None:
 
     proot.mkdir(parents=True, exist_ok=True)
     cfg = proot / "openspec" / "config.yaml"
-    fresh = not cfg.exists()
-    if fresh:
+    if not cfg.exists():
         run(
             [openspec_bin(), "init", "--tools", "none", "--no-animation", "."],
             cwd=proot,
             env=dict(os.environ, CI="1", OPENSPEC_TELEMETRY="0"),
         )
-    if fresh or is_lets_file(cfg, "Copied into each planning root by `lets setup`"):
-        shutil.copy(str(ROOT / "openspec" / "config.yaml"), str(cfg))
+    shutil.copy(str(ROOT / "openspec" / "config.yaml"), str(cfg))
     if readme and not (proot / "README.md").exists():
         (proot / "README.md").write_text(readme)
-
-
-def is_lets_file(path: pathlib.Path, marker: str) -> bool:
-    """True when LETS may write this file: it doesn't exist yet, or LETS wrote it (it carries LETS's marker line).
-    Anything else there is someone's own, and stays as it is."""
-    try:
-        return marker in path.read_text()
-    except OSError:
-        return not path.exists()
 
 
 def git_repos_in(folder: os.PathLike | str) -> list[pathlib.Path]:
@@ -237,11 +226,11 @@ def cmd_where(a) -> None:
         )
         st = repo_settings(root)
         say(
-            "use:           %s"
+            "team:          %s"
             % (
-                "full: agents may also update its AI instructions, docs, issues and merge requests"
+                "has agreed to agents working here"
                 if git_config("lets.kind", root) == "own"
-                else "individual: read anything; change nothing the team sees (AI instructions, docs, GitLab/GitHub)"
+                else "hasn't agreed: read anything; change nothing the team sees (AI instructions, docs, GitLab/GitHub)"
             )
         )
         say("build:         %s · test-first: %s · git: %s" % (st["build"], st["tests"], st["git"]))

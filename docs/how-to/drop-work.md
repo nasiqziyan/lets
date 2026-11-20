@@ -1,7 +1,7 @@
 # Stop a change or an epic
 
-Most changes ship, so `/lets:change-close` assumes that: with every task ticked, it closes the change as shipped
-without asking (with a planning repo, LETS does this by itself once the pull request is merged).
+Most changes ship, so `/lets:change-close` assumes that: with every task ticked and the pull request approved, it
+closes the change as shipped without asking.
 
 When tasks are still open, it asks: **Keep it open** (the default) or **Drop it**. To drop straight away:
 

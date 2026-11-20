@@ -24,7 +24,7 @@ Working well with a coding agent takes three layers, and three popular projects 
 
 ### Building
 
-<img alt="How one change flows, with the order-tracking example: an idea (customers want to track their orders) is planned with /lets:change-start add-order-tracking. Its tasks are built in order: show-order-status and email-status-changes in agent mode, link-to-courier in pair mode, each with /lets:build add-order-tracking <task>. Review triggered: email-status-changes modified something show-order-status depends on, so /lets:review add-order-tracking follows it. Then /lets:walkthrough, and you open a pull request. If changes are requested, /lets:change-revise add-order-tracking <comment> adds a task (clarify-status-labels), which is built the same way. Otherwise /lets:change-close add-order-tracking, and you merge." src="docs/images/change-flow-dark.png">
+<img alt="How one change flows, with the order-tracking example: an idea (customers want to track their orders) is planned with /lets:change-start add-order-tracking. Its tasks are built and reviewed in order: show-order-status and email-status-changes in agent mode, link-to-courier in pair mode, each with /lets:build add-order-tracking <task> then /lets:review add-order-tracking. Then /lets:walkthrough, and you open a pull request. If changes are requested, /lets:change-revise add-order-tracking <comment> adds a task (clarify-status-labels), which is built and reviewed the same way. Otherwise /lets:change-close add-order-tracking, and you merge." src="docs/images/change-flow-dark.png">
 
 - **Pair mode and agent mode**, chosen per repo, per pull request, or on the fly (`--pair`, `--agent`):
   - **Pair mode:** the agent walks you through the implementation in an order that's easy to follow, telling you exactly what to write and why it's done that way. You write it, and the agent checks it.
@@ -48,7 +48,7 @@ Working well with a coding agent takes three layers, and three popular projects 
   - In a private planning repo: when the plans are for you alone, so they stay out of your team's repositories.
 
   You can move plans between these locations later.
-- **Individual use in a team's repo:** agents read everything and help you write code, but change nothing the team sees: its AI instructions, its own docs and its GitLab or GitHub. You still get the whole workflow, and you commit and push as usual.
+- **Respect a team that hasn't agreed to agents:** in its repos, agents leave the team's way of working alone: its AI instructions, its own docs and its GitLab or GitHub. You still get the whole workflow, and you commit and push as usual.
 - **Learning detours:** `/lets:learn <topic>` teaches you a concept, or how part of your code works, in a separate branch of your session, then `/resume` (Claude Code) brings you back to where you left off. Optionally, save what you've learned to a folder of your choice for future reference.
 
 ### Yours, for your whole career
@@ -59,7 +59,7 @@ Working well with a coding agent takes three layers, and three popular projects 
 
 ## Install
 
-You need Linux or macOS (on Windows, use WSL), Python 3.11 or newer, Node.js 20.19 or newer, git, and
+You need Linux or macOS (on Windows, use WSL), Python 3.11 or newer, Node.js 20 or newer, git, and
 [Claude Code](https://code.claude.com/docs) or [Codex](https://developers.openai.com/codex).
 
 ```bash
@@ -89,9 +89,9 @@ Every **LETS** command, such as `/lets:change-start`, `/lets:build` and `/lets:r
 |---|---|
 | `/lets:change-start` `add-order-tracking` | Plan one pull request |
 | `/lets:build` `add-order-tracking` `show-order-status` | Build a task, pairing (or `--agent`) |
-| `/lets:review` `add-order-tracking` | Review the change so far (suggested when a task affects earlier work) |
+| `/lets:review` `add-order-tracking` | Review it |
 | `/lets:walkthrough` `add-order-tracking` | Be walked through it, then get the PR description |
-| `/lets:change-close` `add-order-tracking` | Update the specs: before the final approval with plans in the repo, by itself after you merge with a planning repo |
+| `/lets:change-close` `add-order-tracking` | After approval: update the specs; then you merge |
 
 Not sure what's next? `/lets:next` shows your open work and the next step. Questions about **LETS** itself: `/lets:help`.
 

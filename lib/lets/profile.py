@@ -437,8 +437,8 @@ def ask_notes(got: str) -> str:
         remotes = subprocess.run(["git", "-C", top.stdout.strip(), "remote", "-v"], text=True, capture_output=True)
         if remotes.stdout.strip():
             ui.warn(
-                "That repo has a remote (%s). Anything you push from it leaves this computer, so notes use your real "
-                "code unless you ask for made-up examples (always made up in repos set up for individual use)."
+                "That repo has a remote (%s). Anything you push from it leaves this computer, so notes made in repos "
+                "whose team hasn't agreed to agents leave out the repo's name and use made-up examples."
                 % ": ".join(remotes.stdout.split()[:2])
             )
     settings.set_notes_dir(str(folder))

@@ -8,7 +8,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import os
-import pathlib
 import sys
 import traceback
 
@@ -39,8 +38,6 @@ def cmd_note(a: argparse.Namespace) -> None:
         git("config", key + "lets-" + a.what, a.name)
         if a.mode:
             git("config", key + "lets-mode", a.mode)
-        if a.what == "change":
-            remember_branch(a.name, branch)
         say("%s is for the %s %s%s." % (branch, a.what, a.name, " (%s)" % a.mode if a.mode else ""))
     elif a.what == "base":
         if not a.name:
@@ -51,11 +48,6 @@ def cmd_note(a: argparse.Namespace) -> None:
         else:
             git("config", key + "lets-base", a.name)
             say("%s merges into %s: walkthroughs and checks compare against it." % (branch, a.name))
-    elif a.what == "examples":
-        if a.name not in ("real", "made-up"):
-            raise LetsError("`lets note examples real` or `lets note examples made-up`.")
-        git("config", "lets.note-examples", a.name)
-        say("Learning notes made in this repo use %s examples." % a.name)
     elif a.what == "reviewed":
         git("config", key + "lets-reviewed", git("rev-parse", "HEAD"))
         say("Recorded: %s reviewed at %s." % (branch, git("rev-parse", "--short", "HEAD")))
@@ -64,18 +56,6 @@ def cmd_note(a: argparse.Namespace) -> None:
             v = git_config(key + "lets-" + k)
             if v:
                 say("%s: %s" % (k, v))
-
-
-def remember_branch(change: str, branch: str) -> None:
-    """Record the branch on the change itself (`x-lets-branch`), so its pull request can still be found after the
-    branch is merged and deleted."""
-    from .planning import planning_root
-    from .work import label, set_label
-
-    proot, _ = planning_root(pathlib.Path.cwd())
-    folder = proot / "openspec" / "changes" / change if proot else None
-    if folder and folder.is_dir() and not label(folder, "x-lets-branch"):
-        set_label(folder, "x-lets-branch", branch)
 
 
 def parser() -> argparse.ArgumentParser:
@@ -120,13 +100,11 @@ def parser() -> argparse.ArgumentParser:
     s.add_argument("--check", help="the repo's quick check, e.g. 'npm run -s check' ('' for none)")
     s.add_argument("--base", help="the branch work here merges into, e.g. develop ('auto' to detect it)")
     s.add_argument(
-        "--use",
-        dest="team_agreed",
-        choices=["individual", "full"],
-        help="how LETS works here: individual (agents change nothing the team sees) or full (your own repo, or the "
-        "team has agreed)",
+        "--team-agreed",
+        choices=["yes", "no"],
+        help="has the team agreed to agents working in the repo? (no: agents leave its AI instructions, docs and "
+        "GitLab/GitHub alone)",
     )
-    s.add_argument("--team-agreed", dest="team_agreed", choices=["yes", "no"], help=argparse.SUPPRESS)
     s.add_argument(
         "--ai-credit",
         help="AI credit here: never, trailer, trailer-pr (or trailer:'<line>'), or profile to follow your profile",
@@ -151,18 +129,10 @@ def parser() -> argparse.ArgumentParser:
     s.set_defaults(fn=cmd_walkthrough)
 
     s = sub.add_parser("note", help="what this branch is for (the building commands record it)")
-    s.add_argument(
-        "what", nargs="?", choices=["change", "patch", "base", "reviewed", "examples", "show"], default="show"
-    )
+    s.add_argument("what", nargs="?", choices=["change", "patch", "base", "reviewed", "show"], default="show")
     s.add_argument("name", nargs="?")
     s.add_argument("--mode", choices=["pair", "agent"])
     s.set_defaults(fn=cmd_note)
-
-    s = sub.add_parser("changes", help="where each change stands: tasks, branch, and its pull request (read only)")
-    s.add_argument("change", nargs="?")
-    s.add_argument("--json", action="store_true", help="for agents")
-    s.add_argument("--offline", action="store_true", help="local files only; don't read GitLab or GitHub")
-    s.set_defaults(fn=lambda a: __import__("lets.work", fromlist=["cmd_changes"]).cmd_changes(a))
 
     s = sub.add_parser("doctor", help="check LETS is wired up on this computer, and fix what it can")
     s.add_argument("--dry-run", action="store_true", help="show the fixes, make none")
